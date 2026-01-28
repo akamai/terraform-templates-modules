@@ -1,0 +1,19 @@
+
+data "akamai_property_rules_builder" "rule_increase_availability" {
+  rules_v2025_10_16 {
+    name                  = "Increase availability"
+    comments              = "Control how to respond when your origin or third parties are slow or even down to minimize the negative impact on user experience."
+    criteria_must_satisfy = "all"
+    children = concat(
+      [
+        data.akamai_property_rules_builder.rule_simulate_failover.json,
+        data.akamai_property_rules_builder.rule_site_failover.json,
+        data.akamai_property_rules_builder.rule_origin_health.json,
+      ],
+      # Add rule_script_management ONLY if product_id is NOT "Site_Accel", (only for Ion and Ion Premier)
+      var.product_id != "Site_Accel" ? [
+        data.akamai_property_rules_builder.rule_script_management.json
+      ] : []
+    )
+  }
+}

@@ -1,19 +1,18 @@
-
-data "akamai_property_rules_builder" "devops_rule_additional_origins" {
-  rules_v2024_10_21 {
+data "akamai_property_rules_builder" "rule_additional_origins" {
+  rules_v2025_10_16 {
     name                  = "Additional Origins"
     comments              = "Parent rule for adding extra origins based on hostname matches."
     criteria_must_satisfy = "all"
     children = concat(
-      [for instance in data.akamai_property_rules_builder.devops_rule_additional_origin : instance.json]
+      [for instance in data.akamai_property_rules_builder.rule_additional_origin : instance.json]
     )
   }
 }
 
-data "akamai_property_rules_builder" "devops_rule_additional_origin" {
+data "akamai_property_rules_builder" "rule_additional_origin" {
   count = var.additional_origins != null ? length(keys(var.additional_origins)) : 0
 
-  rules_v2024_10_21 {
+  rules_v2025_10_16 {
     name                  = var.additional_origins[keys(var.additional_origins)[count.index]].origin_name
     criteria_must_satisfy = "all"
 

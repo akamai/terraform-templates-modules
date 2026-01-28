@@ -49,3 +49,5 @@ repos:
         args: 
           - config . --severity CRITICAL
       - id: terraform_validate
+        args:
+          - --hook-config=--retry-once-with-cleanup=true
