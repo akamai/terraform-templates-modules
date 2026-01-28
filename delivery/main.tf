@@ -18,32 +18,19 @@ locals {
   edge_hostnames = (var.etls && var.secure_by_default) ? [] : var.hostnames
 
   ehn_certificate = (var.etls == true && var.secure_by_default == false) ? var.certificate_id : null
+}
 
-  rule_format = (
-    var.product_id == "Site_Accel" && var.etls ?
-    data.akamai_property_rules_builder.devops_rule_default_dsa_etls.rule_format :
-
-    var.product_id == "Site_Accel" && !var.etls ?
-    data.akamai_property_rules_builder.devops_rule_default_dsa_stls.rule_format :
-
-    var.product_id != "Site_Accel" && var.etls ?
-    data.akamai_property_rules_builder.devops_rule_default_ion_etls.rule_format :
-
-    data.akamai_property_rules_builder.devops_rule_default_ion_stls.rule_format
-  )
-
-  rules = (
-    var.product_id == "Site_Accel" && var.etls ?
-    data.akamai_property_rules_builder.devops_rule_default_dsa_etls.json :
-
-    var.product_id == "Site_Accel" && !var.etls ?
-    data.akamai_property_rules_builder.devops_rule_default_dsa_stls.json :
-
-    var.product_id != "Site_Accel" && var.etls ?
-    data.akamai_property_rules_builder.devops_rule_default_ion_etls.json :
-
-    data.akamai_property_rules_builder.devops_rule_default_ion_stls.json
-  )
+module "rules" {
+  source                 = "./rules"
+  product_id             = var.product_id
+  etls                   = var.etls
+  default_origin         = var.default_origin
+  cpcode_id              = tonumber(trimprefix(akamai_cp_code.this.id, "cpc_"))
+  cpcode_name            = var.cpcode_name
+  sure_route_test_object = var.sure_route_test_object
+  td_region              = var.td_region
+  enable_mPulse          = var.enable_mPulse
+  additional_origins     = var.additional_origins
 }
 
 resource "akamai_cp_code" "this" {
@@ -79,8 +66,8 @@ resource "akamai_property" "this" {
     }
   }
 
-  rule_format = local.rule_format
-  rules       = local.rules
+  rule_format = module.rules.rule_format
+  rules       = module.rules.rules
 
   depends_on = [akamai_edge_hostname.edge_hostname, akamai_cp_code.this]
 
@@ -93,7 +80,7 @@ resource "akamai_property_activation" "staging" {
   count                          = var.activate_to_staging || var.activation_to_staging_exists ? 1 : 0
   network                        = "STAGING"
   property_id                    = akamai_property.this.id
-  version                        = akamai_property.this.latest_version
+  version                        = var.activate_to_staging ? akamai_property.this.latest_version : akamai_property.this.staging_version
   note                           = var.activation_notes
   contact                        = var.notification_emails
   auto_acknowledge_rule_warnings = true
@@ -107,7 +94,7 @@ resource "akamai_property_activation" "production" {
   count                          = var.activate_to_production || var.activation_to_production_exists ? 1 : 0
   network                        = "PRODUCTION"
   property_id                    = akamai_property.this.id
-  version                        = akamai_property.this.latest_version
+  version                        = var.activate_to_production ? akamai_property.this.latest_version : akamai_property.this.production_version
   note                           = var.activation_notes
   contact                        = var.notification_emails
   auto_acknowledge_rule_warnings = true

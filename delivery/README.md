@@ -39,6 +39,7 @@ module "example" {
   	 cpcode_name  = <string> | default: null
   	 customer_email  = <string> | default: null
   	 ehn_domain  = <string> | default: null
+  	 enable_mPulse  = <bool> | default: true
   	 ip_behavior  = <string> | default: "IPV6_COMPLIANCE"
   	 noncompliance_reason  = <list(string)> | default: []
   	 other_noncompliance_reason  = <string> | default: null
@@ -69,61 +70,12 @@ module "example" {
 | [akamai_property.this](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/property) | resource |
 | [akamai_property_activation.production](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/property_activation) | resource |
 | [akamai_property_activation.staging](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/property_activation) | resource |
-| [akamai_property_rules_builder.devops_rule_accelerate_delivery_dsa](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_accelerate_delivery_ion](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_adaptive_acceleration](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_additional_origin](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_additional_origins](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_allowed_methods](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_augment_insights](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_bots](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_compressible_objects](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_css_and_java_script](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_default_dsa_etls](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_default_dsa_stls](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_default_ion_etls](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_default_ion_stls](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_delete](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_files](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_fonts](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_geolocation](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_graph_ql](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_hsts](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_html_pages](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_images](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_increase_availability_dsa](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_increase_availability_ion](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_log_delivery](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_m_pulse_rum](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_minimize_payload](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_obfuscate_backend_info](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_obfuscate_debug_info](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_offload_origin_etls](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_offload_origin_stls](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_options](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_origin_connectivity](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_origin_health](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_other_static_objects](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_patch](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_post](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_post_responses](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_prefetchable_objects](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_prefetching](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_prefetching_objects](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_protocol_optimizations_dsa](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_protocol_optimizations_ion](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_put](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_redirects](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_script_management](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_simulate_failover](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_site_failover](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_strengthen_security](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_traffic_reporting](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
-| [akamai_property_rules_builder.devops_rule_uncacheable_objects](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/property_rules_builder) | data source |
 
 ## Modules
 
-No modules.
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_rules"></a> [rules](#module\_rules) | ./rules | n/a |
 
 ## Inputs
 
@@ -146,6 +98,7 @@ No modules.
 | <a name="input_cpcode_name"></a> [cpcode\_name](#input\_cpcode\_name) | Default CP Code name. Will be the property name (var.name) if null. | `string` | `null` | no |
 | <a name="input_customer_email"></a> [customer\_email](#input\_customer\_email) | Email address of the customer that acknowledged, tested and accepted the change | `string` | `null` | no |
 | <a name="input_ehn_domain"></a> [ehn\_domain](#input\_ehn\_domain) | EdgeHostname domain, e.g. edgesuite.net or edgekey.net. Will default to one or<br/>the other, based on the value of etls variable. | `string` | `null` | no |
+| <a name="input_enable_mPulse"></a> [enable\_mPulse](#input\_enable\_mPulse) | Boolean tod ecide whether to inject the mpulse behavior | `bool` | `true` | no |
 | <a name="input_ip_behavior"></a> [ip\_behavior](#input\_ip\_behavior) | EdgeHostname IP behaviour. | `string` | `"IPV6_COMPLIANCE"` | no |
 | <a name="input_noncompliance_reason"></a> [noncompliance\_reason](#input\_noncompliance\_reason) | Allowed values for noncompliance\_reason are "NO\_PRODUCTION\_TRAFFIC", "EMERGENCY", "NONE". (OR null for the customer, as None will require the complaince block) | `list(string)` | `[]` | no |
 | <a name="input_other_noncompliance_reason"></a> [other\_noncompliance\_reason](#input\_other\_noncompliance\_reason) | Describes the reason why the activation must occur immediately, out of compliance with the standard procedure | `string` | `null` | no |

@@ -36,6 +36,13 @@ variable "version_notes" {
 variable "hostnames" {
   description = "List of hostnames."
   type        = list(string)
+
+  validation {
+    condition = alltrue([
+      for h in var.hostnames : h == lower(h)
+    ])
+    error_message = "All hostnames must be lowercase."
+  }
 }
 
 variable "etls" {
@@ -70,6 +77,12 @@ variable "td_region" {
   EOD
   type        = string
   default     = "CH2"
+}
+
+variable "enable_mPulse" {
+  description = "Boolean tod ecide whether to inject the mpulse behavior"
+  type        = bool
+  default     = true
 }
 
 ## ----------------------------------------------------------------------------

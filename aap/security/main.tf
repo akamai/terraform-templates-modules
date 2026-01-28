@@ -24,7 +24,7 @@ resource "akamai_appsec_configuration" "config" {
 
 resource "akamai_appsec_version_notes" "version_notes" {
   config_id     = akamai_appsec_configuration.config.config_id
-  version_notes = var.version_notes
+  version_notes = "${var.version_notes}${var.dummy_variable}"
 }
 
 data "akamai_appsec_security_policy" "policy" {

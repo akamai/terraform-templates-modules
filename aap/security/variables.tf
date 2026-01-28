@@ -24,6 +24,13 @@ variable "description" {
 variable "hostnames" {
   description = "Hostnames to protect by the security config"
   type        = list(string)
+
+  validation {
+    condition = alltrue([
+      for h in var.hostnames : h == lower(h)
+    ])
+    error_message = "All hostnames must be lowercase."
+  }
 }
 
 variable "version_notes" {
@@ -191,4 +198,9 @@ variable "penalty_box_action" {
   description = "Action for WAF Penalty Box"
   type        = string
   default     = "alert"
+}
+
+variable "dummy_variable" {
+  type    = string
+  default = "dummy"
 }
