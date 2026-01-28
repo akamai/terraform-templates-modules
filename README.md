@@ -8,4 +8,4 @@ The Terraform Modules contained in this repository cover various onboarding scen
 * Ion
 * Ion-Premier
 
-Even though these modules could be used as stand-alone with little tweaking the purpose is to use them via the official [PS Terraform Templates](https://git.source.akamai.com/projects/GSS-DEVOPS/repos/ps-terraform-templates/browse).
+Even though these modules could be used as stand-alone with little tweaking the purpose is to use them via the official [PS Terraform Templates](https://github.com/akamai/terraform-templates).
