@@ -326,10 +326,13 @@ This repository follows [Conventional Commits](https://www.conventionalcommits.o
 
 ### Breaking Changes
 
-Add `!` after type or include `BREAKING CHANGE:` in commit body:
+Add `!` immediately before the `:` include `BREAKING CHANGE:` in commit body:
 
 ```bash
 git commit -m "feat!: require PowerShell 7+"
+
+# With scope:
+git commit -m "feat(aap)!: Bot Manager support"
 
 # Or with body:
 git commit -m "feat: upgrade Akamai provider
