@@ -38,6 +38,7 @@ module "example" {
   	 certificate_id  = <number> | default: null
   	 cpcode_name  = <string> | default: null
   	 customer_email  = <string> | default: null
+  	 dummy_test  = <string> | default: "dummy_test"
   	 ehn_domain  = <string> | default: null
   	 enable_mPulse  = <bool> | default: true
   	 ip_behavior  = <string> | default: "IPV6_COMPLIANCE"
@@ -97,6 +98,7 @@ module "example" {
 | <a name="input_certificate_id"></a> [certificate\_id](#input\_certificate\_id) | Certificate enrollment id. Only applicable if enhanced\_tls is true, and secure\_by\_default<br>is false.<br><br>Can be retrieved using AkamaiPowershell or the Akamai CPS CLI. | `number` | `null` | no |
 | <a name="input_cpcode_name"></a> [cpcode\_name](#input\_cpcode\_name) | Default CP Code name. Will be the property name (var.name) if null. | `string` | `null` | no |
 | <a name="input_customer_email"></a> [customer\_email](#input\_customer\_email) | Email address of the customer that acknowledged, tested and accepted the change | `string` | `null` | no |
+| <a name="input_dummy_test"></a> [dummy\_test](#input\_dummy\_test) | n/a | `string` | `"dummy_test"` | no |
 | <a name="input_ehn_domain"></a> [ehn\_domain](#input\_ehn\_domain) | EdgeHostname domain, e.g. edgesuite.net or edgekey.net. Will default to one or<br>the other, based on the value of etls variable. | `string` | `null` | no |
 | <a name="input_enable_mPulse"></a> [enable\_mPulse](#input\_enable\_mPulse) | Boolean tod ecide whether to inject the mpulse behavior | `bool` | `true` | no |
 | <a name="input_ip_behavior"></a> [ip\_behavior](#input\_ip\_behavior) | EdgeHostname IP behaviour. | `string` | `"IPV6_COMPLIANCE"` | no |

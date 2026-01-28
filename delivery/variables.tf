@@ -308,3 +308,8 @@ variable "ip_behavior" {
     error_message = "ERROR: Valid types are IPV4, IPV6_COMPLIANCE or IPV6_PERFORMANCE."
   }
 }
+
+variable "dummy_test" {
+  type    = string
+  default = "dummy_test"
+}
