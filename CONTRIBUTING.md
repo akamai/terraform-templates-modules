@@ -32,18 +32,24 @@ When contributing to this repository, please first discuss the change you wish t
 pre-commit install
 ```
 
-This will automatically run validation checks (format, docs, lint) on every commit. To manually run all checks:
+This installs hooks for both `pre-commit` and `commit-msg` stages:
+- **Pre-commit stage**: Formats code, generates docs, runs linting
+- **Commit-msg stage**: Validates conventional commit message format
+
+To manually run all checks:
 
 ```bash
 pre-commit run --all-files   
 ```
 
-**Why required?** The PR validation workflow will **fail** if:
-- Code is not formatted (`terraform fmt`)
-- README.md is outdated (needs `terraform-docs`)
-- Linting issues exist (`tflint`)
+**Why required?** The hooks enforce:
+- Code formatting (`terraform fmt`)
+- Up-to-date documentation (`terraform-docs`)
+- Linting best practices (`tflint`)
+- **Conventional commit message format** - Validates at commit time before you push
+- The PR validation workflow will **fail** if any of the above checks are caught
 
-Pre-commit hooks catch these issues locally before you push.
+Pre-commit hooks catch these issues locally before the PR validation workflow runs. 
 
 ## Branching Strategy
 
@@ -75,7 +81,7 @@ feature branch → integration (PR validation + auto-docs) → main (release aut
 
 ### Branch Naming Convention
 
-Use descriptive branch names that match commit types for consistency:
+Use descriptive branch names that match [commit types](#commit-conventions) for consistency:
 
 **Format:** `<type>/<short-description>` or `<type>/<issue>-<short-description>`
 
@@ -89,17 +95,14 @@ feat/DOHRMY-126-botman-integration
 fix/rate-policy-import
 fix/DOHRMY-456-state-file-conflict
 
-# Improvements
-improvement/deploy-script-retry
-
 # Documentation
 docs/update-readme-examples
 
 # Refactoring
 refactor/module-structure
 
-# CI/CD changes
-ci/add-security-scan
+# Chores
+chore/new-release-version
 ```
 
 **Guidelines:**
@@ -126,7 +129,7 @@ git checkout -b feat/add-custom-rate-policies
 - Follow Terraform best practices
 - Update documentation (`main.tf` comments, `.tfvars.dist` examples)
 - Test locally using `deploy.ps1`
-- Pre-commit hooks will auto-run on `git commit` (formats code, updates README.md)
+- Pre-commit hooks will auto-run on `git commit` (formats code, updates `README.md`)
 - Or run manually: `pre-commit run --all-files`
 
 ### 3. Commit with Conventional Commits
@@ -149,11 +152,11 @@ Open PR against **`integration`** branch (not `main`). This triggers the **PR Va
 ### 5. Integration Testing
 
 After PR is merged to `integration`:
-- **Terraform Docs workflow auto-runs** - Updates template README.md files automatically
+- **Terraform Docs workflow auto-runs** - Updates template `README.md` files automatically
 - Test the integrated changes thoroughly
 - Verify multiple templates work together
 - Confirm template release version compatibility
-- Template README.md files should now reflect latest changes (auto-committed by workflow)
+- Template `README.md` files should now reflect latest changes (auto-committed by workflow)
 
 ### 6. Promote to Production
 
@@ -174,7 +177,7 @@ This repository uses **three automated workflows** that execute in sequence:
 
 **Runs:**
 1. **Terraform Format Check** - Ensures consistent formatting
-2. **Terraform Validate** - Tests all templates (AAP, AAP+ASM, Property)
+2. **Terraform Validate** - Tests all templates (AAP, AAP+ASM, Property, etc)
 3. **TFLint** - Static analysis for best practices
 4. **Trivy Security Scan** - Identifies vulnerabilities (uploads to GitHub Security tab)
 
@@ -184,13 +187,13 @@ This repository uses **three automated workflows** that execute in sequence:
 
 **Trigger:** Pushes to `integration` branch (i.e., when PRs are merged)
 
-**Purpose:** Auto-generate and commit updated README.md files for all templates
+**Purpose:** Auto-generate and commit updated `README.md` files for all templates
 
-**Runs:**
+**Runs (example):**
 1. **Generate terraform-docs for AAP Configuration** - Updates `new-aap-configuration/README.md`
 2. **Generate terraform-docs for AAP/ASM Configuration** - Updates `new-aapasm-configuration/README.md`
 3. **Generate terraform-docs for Property** - Updates `new-property/README.md`
-4. **Auto-commit** - Pushes updated README.md files back to `integration` branch
+4. **Auto-commit** - Pushes updated `README.md` files back to `integration` branch
 
 **Note:** This workflow runs AFTER merge to `integration`, ensuring documentation stays in sync with code changes.
 
@@ -210,9 +213,9 @@ This repository uses **three automated workflows** that execute in sequence:
 7. Publishes GitHub release with extracted release notes
 
 **Version Bump Logic:**
-- `feat!:` or `BREAKING CHANGE:` → **Major** (1.0.0 → 2.0.0)
-- `feat:` or `feature:` → **Minor** (1.0.0 → 1.1.0)
-- `fix:` or `bugfix:` → **Patch** (1.0.0 → 1.0.1)
+- Commits with `BREAKING CHANGE:` footer → **Major** (1.0.0 → 2.0.0)
+- `feat:` → **Minor** (1.0.0 → 1.1.0)
+- `fix:` → **Patch** (1.0.0 → 1.0.1)
 
 ### 4. Automated Template Updates (`.github/workflows/release.yml`)
 
@@ -282,24 +285,11 @@ The Release Automation workflow requires a **Personal Access Token (PAT)** to cr
    - Navigate to the **`terraform-templates-modules`** repository (the modules repo, not templates)
    - Go to **Settings** → **Secrets and variables** → **Actions**
    - Click **New repository secret**
-   - **Name:** `PAT_TOKEN` (must match exactly as referenced in workflow)
+   - **Name:** `TEMPLATES_TOKEN` (must match exactly as referenced in workflow)
    - **Value:** Paste the token you just copied
    - Click **Add secret**
 
-6. **Token Rotation:**
-   - Set a reminder to rotate the token before expiration
-   - When rotating, generate a new token with identical permissions
-   - Update the `PAT_TOKEN` secret with the new value
-   - Test the workflow by creating a test release
-
-**Security Best Practices:**
-- ✅ Use fine-grained tokens instead of classic tokens (more secure, scoped permissions)
-- ✅ Limit token to only the `terraform-templates` repository
-- ✅ Set expiration dates and rotate regularly
-- ✅ Never commit the token to version control
-- ✅ Audit token usage periodically in GitHub settings
-- ❌ Never use tokens with broader organization-wide permissions
-- ❌ Never share tokens across multiple workflows unless necessary
+   **Token Rotation:** Set a reminder to rotate the token before expiration
 
 ## Commit Conventions
 
@@ -315,10 +305,8 @@ This repository follows [Conventional Commits](https://www.conventionalcommits.o
 
 | Type | Purpose | Version Bump | Example |
 |------|---------|--------------|---------|
-| `feat!:` | Breaking changes | Major (1.0.0→2.0.0) | `feat!: upgrade to Terraform 1.9` |
-| `feat:` or `feature:` | New features | Minor (1.0.0→1.1.0) | `feat(aap): add custom rate policies` |
-| `fix:` or `bugfix:` | Bug fixes | Patch (1.0.0→1.0.1) | `fix(asm): correct match target config` |
-| `improvement:` | Enhancements | Patch | `improvement: optimize state backend` |
+| `feat:` | New features | Minor (1.0.0→1.1.0) | `feat(aap): add custom rate policies` |
+| `fix:` | Bug fixes | Patch (1.0.0→1.0.1) | `fix(asm): correct match target config` |
 | `docs:` | Documentation | None | `docs: update README examples` |
 | `refactor:` | Code restructuring | None | `refactor: simplify module calls` |
 | `chore:` | Maintenance | None (skipped) | `chore: update dependencies` |
@@ -326,19 +314,19 @@ This repository follows [Conventional Commits](https://www.conventionalcommits.o
 
 ### Breaking Changes
 
-Add `!` immediately before the `:` include `BREAKING CHANGE:` in commit body:
+To trigger a **major version bump**, include `BREAKING CHANGE:` in the commit body:
 
 ```bash
-git commit -m "feat!: require PowerShell 7+"
-
-# With scope:
-git commit -m "feat(aap)!: Bot Manager support"
-
-# Or with body:
+# Breaking change with body footer (triggers major bump)
 git commit -m "feat: upgrade Akamai provider
 
 BREAKING CHANGE: Provider v9.0 requires Terraform >= 1.9.0"
+
+# Alternative multi-line format
+git commit -m "feat: require PowerShell 7+" -m "BREAKING CHANGE: PowerShell 5.1 no longer supported"
 ```
+
+**Note:** The `feat!:` syntax is NOT supported by the changelog action. Always use the `BREAKING CHANGE:` footer.
 
 ### Scopes (Optional)
 
@@ -359,13 +347,13 @@ git commit -m "feat(aap): add support for custom rate policies"
 # Bug fix (patch bump)
 git commit -m "fix(asm): correct match target configuration"
 
-# Breaking change (major bump)
-git commit -m "feat!: upgrade to Terraform 1.6"
+# Breaking change (major bump) - requires BREAKING CHANGE footer
+git commit -m "feat: upgrade to Terraform 1.9" -m "BREAKING CHANGE: Terraform 1.8 no longer supported"
 
-# Documentation
+# Documentation (no version bump)
 git commit -m "docs: update README with new examples"
 
-# Chore
+# Chore (no version bump, excluded from changelog)
 git commit -m "chore: update dependencies"
 ```
 
@@ -394,7 +382,6 @@ git commit -m "chore: update dependencies"
 5. **Push to remote**:
    ```bash
    git push origin feat/your-feature-name
-   # Git will output a URL - click it to create PR
    ```
 
 6. **Create PR against `integration`**:
@@ -425,13 +412,13 @@ Before submitting, ensure:
 - [ ] Module version references are pinned (never use `ref=main`)
 - [ ] PR validation workflow passes (all checks green)
 
-**Note:** Template README.md files are auto-generated by the Terraform Docs workflow after merge to `integration`, so you don't need to update them manually.
+**Note:** Template `README.md` files are auto-generated by the Terraform Docs workflow after merge to `integration`, so you don't need to update them manually.
 
 **Note:** If PR validation fails on formatting/docs, run `pre-commit run --all-files` locally and push the fixes.
 
 ## Module Versioning
 
-Each merge to `main` will trigger the release workflow, which will tag the module with a version based on the `conventional-changelog-action@v6.`
+Each merge to `main` will trigger the release workflow, which will tag the module with a version based on the `conventional-changelog-action` GitHub action.
 
 ### Using Modules in Templates Repository
 

@@ -9,9 +9,9 @@ on:
 env:
   TF_VERSION: '1.12.1'
   # Update these values when migrating to official repository
-  TEMPLATES_REPO: 'akamai/terraform-templates'  # Consumer repository that uses these modules
-  MODULES_REPO: 'akamai/terraform-templates-modules'  # This repository (modules)
-  MODULE_GIT_PREFIX: 'git::ssh://git@github.com/akamai/terraform-templates-modules.git'  # Git source URL prefix
+  TEMPLATES_REPO: 'jaescalo/terraform-templates'  # Consumer repository that uses these modules
+  MODULES_REPO: 'jaescalo/terraform-templates-modules'  # This repository (modules)
+  MODULE_GIT_PREFIX: 'git::ssh://git@github.com/jaescalo/terraform-templates-modules.git'  # Git source URL prefix
 
 permissions:
   contents: write

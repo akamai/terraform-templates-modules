@@ -55,7 +55,7 @@ resource "akamai_property" "this" {
   product_id    = "prd_${var.product_id}"
   contract_id   = var.contract_id
   group_id      = var.group_id
-  version_notes = "${var.version_notes}${var.dummy_test}"
+  version_notes = var.version_notes
 
   dynamic "hostnames" {
     for_each = var.hostnames

@@ -217,8 +217,3 @@ variable "penalty_box_action" {
   type        = string
   default     = "alert"
 }
-
-variable "dummy_test" {
-  type    = string
-  default = "dummy_test"
-}
