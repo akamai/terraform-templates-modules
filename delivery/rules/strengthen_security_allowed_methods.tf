@@ -1,0 +1,86 @@
+
+data "akamai_property_rules_builder" "rule_allowed_methods" {
+  rules_v2025_10_16 {
+    name                  = "Allowed methods"
+    comments              = "Allow the use of HTTP methods. Consider enabling additional methods under a path match for increased origin security."
+    criteria_must_satisfy = "all"
+    behavior {
+      all_http_in_cache_hierarchy {
+        enabled = true
+      }
+    }
+    children = [
+      data.akamai_property_rules_builder.rule_post.json,
+      data.akamai_property_rules_builder.rule_options.json,
+      data.akamai_property_rules_builder.rule_put.json,
+      data.akamai_property_rules_builder.rule_delete.json,
+      data.akamai_property_rules_builder.rule_patch.json,
+    ]
+  }
+}
+
+data "akamai_property_rules_builder" "rule_post" {
+  rules_v2025_10_16 {
+    name                  = "POST"
+    comments              = "Allow use of the POST HTTP request method."
+    criteria_must_satisfy = "all"
+    behavior {
+      allow_post {
+        allow_without_content_length = false
+        enabled                      = true
+      }
+    }
+  }
+}
+
+data "akamai_property_rules_builder" "rule_options" {
+  rules_v2025_10_16 {
+    name                  = "OPTIONS"
+    comments              = "Allow use of the OPTIONS HTTP request method."
+    criteria_must_satisfy = "all"
+    behavior {
+      allow_options {
+        enabled = true
+      }
+    }
+  }
+}
+
+data "akamai_property_rules_builder" "rule_put" {
+  rules_v2025_10_16 {
+    name                  = "PUT"
+    comments              = "Allow use of the PUT HTTP request method."
+    criteria_must_satisfy = "all"
+    behavior {
+      allow_put {
+        enabled = false
+      }
+    }
+  }
+}
+
+data "akamai_property_rules_builder" "rule_delete" {
+  rules_v2025_10_16 {
+    name                  = "DELETE"
+    comments              = "Allow use of the DELETE HTTP request method."
+    criteria_must_satisfy = "all"
+    behavior {
+      allow_delete {
+        enabled = false
+      }
+    }
+  }
+}
+
+data "akamai_property_rules_builder" "rule_patch" {
+  rules_v2025_10_16 {
+    name                  = "PATCH"
+    comments              = "Allow use of the PATCH HTTP request method."
+    criteria_must_satisfy = "all"
+    behavior {
+      allow_patch {
+        enabled = false
+      }
+    }
+  }
+}

@@ -39,6 +39,7 @@ module "example" {
   	 client_lists_pragmabypass  = <list(string)> | default: []
   	 client_lists_rcbypass  = <list(string)> | default: []
   	 client_lists_securitybypass  = <list(string)> | default: []
+  	 dummy_variable  = <string> | default: "dummy"
   	 inspection_size  = <number> | default: 32
   	 penalty_box_action  = <string> | default: "alert"
   	 waf_cmd_action  = <string> | default: "alert"
@@ -133,6 +134,7 @@ No modules.
 | <a name="input_client_lists_pragmabypass"></a> [client\_lists\_pragmabypass](#input\_client\_lists\_pragmabypass) | ID(s) for the Pragma Bypass Client List | `list(string)` | `[]` | no |
 | <a name="input_client_lists_rcbypass"></a> [client\_lists\_rcbypass](#input\_client\_lists\_rcbypass) | ID(s) for the Rate Control Bypass Client List | `list(string)` | `[]` | no |
 | <a name="input_client_lists_securitybypass"></a> [client\_lists\_securitybypass](#input\_client\_lists\_securitybypass) | ID(s) for the Security Bypass Client List | `list(string)` | `[]` | no |
+| <a name="input_dummy_variable"></a> [dummy\_variable](#input\_dummy\_variable) | n/a | `string` | `"dummy"` | no |
 | <a name="input_inspection_size"></a> [inspection\_size](#input\_inspection\_size) | Request body inspection limit | `number` | `32` | no |
 | <a name="input_penalty_box_action"></a> [penalty\_box\_action](#input\_penalty\_box\_action) | Action for WAF Penalty Box | `string` | `"alert"` | no |
 | <a name="input_waf_cmd_action"></a> [waf\_cmd\_action](#input\_waf\_cmd\_action) | Action for WAF attack group: Command Injection | `string` | `"alert"` | no |

@@ -1,0 +1,140 @@
+name: Release to Prod
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+env:
+  TF_VERSION: '1.12.1'
+  # Update these values when migrating to official repository
+  TEMPLATES_REPO: 'akamai/terraform-templates'  # Consumer repository that uses these modules
+  MODULES_REPO: 'akamai/terraform-templates-modules'  # This repository (modules)
+  MODULE_GIT_PREFIX: 'git::ssh://git@github.com/akamai/terraform-templates-modules.git'  # Git source URL prefix
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Analyzes conventional commits since last tag to determine version bump
+      # Outputs: skipped (true if no releasable commits), version, tag, clean_changelog
+      - name: Conventional Changelog Action
+        id: changelog
+        uses: TriPSs/conventional-changelog-action@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          output-file: "CHANGELOG.md"
+          skip-version-file: true
+          skip-commit: true
+          skip-tag: true
+          preset: "angular"  # Uses Angular commit convention (feat:, fix:, etc.)
+          tag-prefix: "v"
+          release-count: 0
+          create-summary: true
+
+      # Only update VERSION file if there are releasable commits (feat:, fix:, feat!:)
+      # Skips if only docs/chore commits exist to avoid empty releases
+      - name: Update VERSION file
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git stash
+          git pull --rebase origin ${{ github.ref_name }}
+          git stash pop || true
+          echo "${{ steps.changelog.outputs.version }}" > VERSION
+          git add VERSION CHANGELOG.md
+          # [skip ci] prevents this commit from triggering the workflow again (infinite loop prevention)
+          git commit -m "chore(release): ${{ steps.changelog.outputs.version }} [skip ci]"
+          git tag -a "${{ steps.changelog.outputs.tag }}" -m "Release ${{ steps.changelog.outputs.tag }}"
+          git push --follow-tags
+
+      # Create GitHub release with auto-generated changelog if there are releasable commits (feat:, fix:, feat!:)
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
+        with:
+          tag_name: ${{ steps.changelog.outputs.tag }}
+          name: ${{ steps.changelog.outputs.tag }}
+          body: ${{ steps.changelog.outputs.clean_changelog }}
+          draft: false
+          prerelease: false
+
+    outputs:
+      version: ${{ steps.changelog.outputs.version }}
+      tag: ${{ steps.changelog.outputs.tag }}
+      skipped: ${{ steps.changelog.outputs.skipped }}
+
+  update-templates:
+    name: Update Templates Repository
+    runs-on: ubuntu-latest
+    needs: release
+    if: ${{ needs.release.outputs.skipped == 'false' }}
+    
+    steps:
+      - name: Checkout templates repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.TEMPLATES_REPO }}
+          token: ${{ secrets.TEMPLATES_TOKEN }}
+          ref: integration
+          fetch-depth: 0
+
+      - name: Create update branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          BRANCH_NAME="chore/update-modules-${{ needs.release.outputs.tag }}"
+          git checkout -b "$BRANCH_NAME"
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+
+      - name: Update module versions
+        run: |
+          # Find all main.tf files and update the module version references
+          find . -name "main.tf" -type f -exec sed -i.bak \
+            's|${{ env.MODULE_GIT_PREFIX }}//\([^?]*\)?ref=[^"]*|${{ env.MODULE_GIT_PREFIX }}//\1?ref=${{ needs.release.outputs.tag }}|g' {} \;
+          
+          # Remove backup files
+          find . -name "*.bak" -type f -delete
+
+      - name: Commit and push changes
+        run: |
+          git add .
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            echo "HAS_CHANGES=false" >> $GITHUB_ENV
+          else
+            git commit -m "chore: update ${{ env.MODULES_REPO }} to ${{ needs.release.outputs.tag }}"
+            git push origin "$BRANCH_NAME"
+            echo "HAS_CHANGES=true" >> $GITHUB_ENV
+          fi
+
+      - name: Create Pull Request
+        if: env.HAS_CHANGES == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.TEMPLATES_TOKEN }}
+        run: |
+          gh pr create \
+            --title "chore: update ${{ env.MODULES_REPO }} to ${{ needs.release.outputs.tag }}" \
+            --body "This PR updates all module references to the latest release ${{ needs.release.outputs.tag }} of ${{ env.MODULES_REPO }}.
+          
+          **Changes:**
+          - Updated module source references in all main.tf files
+          
+          **Release Notes:**
+          See the [release changelog](${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ needs.release.outputs.tag }}) for details." \
+            --base integration \
+            --head "$BRANCH_NAME" \
+            --repo ${{ env.TEMPLATES_REPO }}

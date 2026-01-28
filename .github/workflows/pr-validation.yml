@@ -1,0 +1,135 @@
+name: Integration PR Validation
+
+on:
+  pull_request:
+    branches:
+      - integration
+    paths:
+      - '**.tf'
+      - '.github/workflows/**.yml'
+      
+env:
+  TF_VERSION: '1.12.1'
+
+jobs:
+  terraform-checks:
+    name: Terraform PR Checks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      security-events: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform Format Check
+        run: |
+          echo "Checking Terraform formatting..."
+          terraform fmt -check -recursive
+        continue-on-error: false
+
+      - name: Terraform Validate - AAP - Activate Security Module
+        working-directory: ./aap/activate-security
+        run: |
+          terraform init -backend=false
+          terraform validate
+
+      - name: Terraform Validate - AAP - Bot Manager Module
+        working-directory: ./aap/bot-manager
+        run: |
+          terraform init -backend=false
+          terraform validate
+
+      - name: Terraform Validate - AAP - Client Lists Module
+        working-directory: ./aap/client-lists
+        run: |
+          terraform init -backend=false
+          terraform validate
+      
+      - name: Terraform Validate - AAP - Security Module
+        working-directory: ./aap/security
+        run: |
+          terraform init -backend=false
+          terraform validate
+
+      - name: Terraform Validate - AAP/ASM - Activate Security Module
+        working-directory: ./aap-asm/activate-security
+        run: |
+          terraform init -backend=false
+          terraform validate
+
+      - name: Terraform Validate - AAP/ASM - Activate Bot Manager Module
+        working-directory: ./aap-asm/bot-manager
+        run: |
+          terraform init -backend=false
+          terraform validate
+
+      - name: Terraform Validate - AAP/ASM - Client Lists Module
+        working-directory: ./aap-asm/client-lists
+        run: |
+          terraform init -backend=false
+          terraform validate
+
+      - name: Terraform Validate - AAP/ASM - Client Reputation Module
+        working-directory: ./aap-asm/client-reputation
+        run: |
+          terraform init -backend=false
+          terraform validate
+
+      - name: Terraform Validate - AAP/ASM - Security Module
+        working-directory: ./aap-asm/security
+        run: |
+          terraform init -backend=false
+          terraform validate
+
+      - name: Terraform Validate - Delivery 
+        working-directory: ./delivery
+        run: |
+          terraform init -backend=false
+          terraform validate
+
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: latest
+
+      - name: Init TFLint
+        run: tflint --init
+
+      - name: Run TFLint - AAP Configuration
+        working-directory: ./aap
+        run: tflint --recursive
+
+      - name: Run TFLint - AAP/ASM Configuration
+        working-directory: ./aap-asm
+        run: tflint --recursive
+
+      - name: Run TFLint - Delivery
+        working-directory: ./delivery
+        run: tflint --recursive
+
+      - name: Run Trivy Security Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'config'
+          scan-ref: '.'
+          severity: 'CRITICAL,HIGH'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+        continue-on-error: true
+
+      # Note: SARIF upload requires GitHub Advanced Security (available in organization repos)
+      # This step will fail for personal/private repos but is kept for when repo moves to organization
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v4
+        if: always() && hashFiles('trivy-results.sarif') != ''
+        with:
+          sarif_file: 'trivy-results.sarif'
+        continue-on-error: true
