@@ -1,3 +1,5 @@
+[![Release to Prod](https://github.com/akamai/terraform-templates-modules/actions/workflows/release.yml/badge.svg)](https://github.com/akamai/terraform-templates-modules/actions/workflows/release.yml)
+
 # PS Terraform Templates Modules
 
 The Terraform Modules contained in this repository cover various onboarding scenarios:
