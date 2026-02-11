@@ -46,6 +46,7 @@ pre-commit run --all-files
 - Code formatting (`terraform fmt`)
 - Up-to-date documentation (`terraform-docs`)
 - Linting best practices (`tflint`)
+- Security scanning (`trivy`)
 - **Conventional commit message format** - Validates at commit time before you push
 - The PR validation workflow will **fail** if any of the above checks are caught
 
@@ -506,4 +507,4 @@ If automation fails, manually update:
 
 ---
 
-Thank you for contributing to PS Terraform Templates!
+Thank you for contributing to the Terraform Templates!
