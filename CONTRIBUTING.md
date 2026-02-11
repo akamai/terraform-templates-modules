@@ -1,6 +1,6 @@
 # Contributing
 
-When contributing to this repository, please first discuss the change you wish to make via issue preferably ([GS Terraform Templates Request](https://gsinput.akamai.com/GS_TERRAFORM_REQUEST_FORM)), email, or any other method with the owners of this repository before making a change.
+When contributing to this repository, please first discuss the change you wish to make via issue preferably a GitHub Issue, email, or any other method with the owners of this repository before making a change.
 
 ## Table of Contents
 
@@ -51,72 +51,11 @@ pre-commit run --all-files
 
 Pre-commit hooks catch these issues locally before the PR validation workflow runs. 
 
-## Branching Strategy
-
-This repository uses a **three-stage branching model** with automated CI/CD:
-
-```
-feature branch → integration (PR validation + auto-docs) → main (release automation)
-```
-
-### Branch Purposes
-
-| Branch | Purpose | Triggers |
-|--------|---------|----------|
-| **Feature branches** | Active development work | Nothing |
-| **`integration`** | Pre-release testing and validation | **PR validation workflow** (on PR) + **Terraform Docs workflow** (on merge) |
-| **`main`/`master`** | Production-ready code | **Release automation workflow** |
-
-### Branch Protection Rules
-
-**Required for `integration` branch:**
-- Require pull request reviews before merging
-- Require status checks to pass (PR validation workflow)
-- Require branches to be up to date before merging
-
-**Required for `main` branch:**
-- All of the above, plus:
-- Restrict push access (only allow merges from `integration`)
-- Require linear history (squash or rebase merges)
-
-### Branch Naming Convention
-
-Use descriptive branch names that match [commit types](#commit-conventions) for consistency:
-
-**Format:** `<type>/<short-description>` or `<type>/<issue>-<short-description>`
-
-**Examples:**
-```bash
-# New features
-feat/custom-rate-policies
-feat/DOHRMY-126-botman-integration
-
-# Bug fixes
-fix/rate-policy-import
-fix/DOHRMY-456-state-file-conflict
-
-# Documentation
-docs/update-readme-examples
-
-# Refactoring
-refactor/module-structure
-
-# Chores
-chore/new-release-version
-```
-
-**Guidelines:**
-- Use lowercase with hyphens (kebab-case)
-- Be descriptive but concise (3-5 words max)
-- Include issue/ticket number when applicable
-- Match the commit type you'll use later
-- Avoid special characters except hyphens and forward slashes
-
 ## Development Workflow
 
 ### 1. Create Feature Branch
 
-Always branch from `integration`, not `main`. See [Branch Naming Convention](#branch-naming-convention) above for required format.
+Always branch from `integration`, not `main`. See [Branch Naming Convention](#branch-naming-convention) for required format.
 
 ```bash
 git checkout integration
@@ -127,8 +66,8 @@ git checkout -b feat/add-custom-rate-policies
 ### 2. Make Changes
 
 - Follow Terraform best practices
-- Update documentation (`main.tf` comments, `.tfvars.dist` examples)
-- Test locally using `deploy.ps1`
+- Update documentation (`main.tf` comments)
+- Test locally using `deploy.ps1` from the [terraform-templates](https://github.com/akamai/terraform-templates) repository
 - Pre-commit hooks will auto-run on `git commit` (formats code, updates `README.md`)
 - Or run manually: `pre-commit run --all-files`
 
@@ -164,6 +103,7 @@ When ready for release, create PR from `integration` to `main`. Once merged, thi
 - Analyzes commits and determines version bump
 - Updates `VERSION` file and `CHANGELOG.md`
 - Creates Git tag and GitHub release
+- Creates a pull request for the [terraform-templates](https://github.com/akamai/terraform-templates) repository to update the module references to the newest version/tag.
 
 ## GitHub Workflows
 
@@ -290,6 +230,67 @@ The Release Automation workflow requires a **Personal Access Token (PAT)** to cr
    - Click **Add secret**
 
    **Token Rotation:** Set a reminder to rotate the token before expiration
+
+## Branching Strategy
+
+This repository uses a **three-stage branching model** with automated CI/CD:
+
+```
+feature branch → integration (PR validation + auto-docs) → main (release automation)
+```
+
+### Branch Purposes
+
+| Branch | Purpose | Triggers |
+|--------|---------|----------|
+| **Feature branches** | Active development work | Nothing |
+| **`integration`** | Pre-release testing and validation | **PR validation workflow** (on PR) + **Terraform Docs workflow** (on merge) |
+| **`main`/`master`** | Production-ready code | **Release automation workflow** |
+
+### Branch Protection Rules
+
+**Required for `integration` branch:**
+- Require pull request reviews before merging
+- Require status checks to pass (PR validation workflow)
+- Require branches to be up to date before merging
+
+**Required for `main` branch:**
+- All of the above, plus:
+- Restrict push access (only allow merges from `integration`)
+- Require linear history (squash or rebase merges)
+
+### Branch Naming Convention
+
+Use descriptive branch names that match [commit types](#commit-conventions) for consistency:
+
+**Format:** `<type>/<short-description>` or `<type>/<issue>-<short-description>`
+
+**Examples:**
+```bash
+# New features
+feat/custom-rate-policies
+feat/DOHRMY-126-botman-integration
+
+# Bug fixes
+fix/rate-policy-import
+fix/DOHRMY-456-state-file-conflict
+
+# Documentation
+docs/update-readme-examples
+
+# Refactoring
+refactor/module-structure
+
+# Chores
+chore/new-release-version
+```
+
+**Guidelines:**
+- Use lowercase with hyphens (kebab-case)
+- Be descriptive but concise (3-5 words max)
+- Include issue/ticket number when applicable
+- Match the commit type you'll use later
+- Avoid special characters except hyphens and forward slashes
 
 ## Commit Conventions
 
@@ -502,8 +503,6 @@ If automation fails, manually update:
 ## Questions or Issues?
 
 - Open an issue: [GitHub Issues](https://github.com/akamai/terraform-templates/issues)
-- Request features: [GS Terraform Templates Request Form](https://gsinput.akamai.com/GS_TERRAFORM_REQUEST_FORM)
-- Support: [Webex Space: Terraform Templates Support](webexteams://im?space=52d5bcf0-42d2-11f0-9dd9-91df9cb369f0)
 
 ---
 
