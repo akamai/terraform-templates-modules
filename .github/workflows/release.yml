@@ -110,19 +110,20 @@ jobs:
           find . -name "*.bak" -type f -delete
 
       - name: Commit and push changes
+        id: commit_changes
         run: |
           git add .
           if git diff --staged --quiet; then
             echo "No changes to commit"
-            echo "HAS_CHANGES=false" >> $GITHUB_ENV
+            echo "has_changes=false" >> $GITHUB_OUTPUT
           else
             git commit -m "chore: update ${{ env.MODULES_REPO }} to ${{ needs.release.outputs.tag }}"
             git push origin "$BRANCH_NAME"
-            echo "HAS_CHANGES=true" >> $GITHUB_ENV
+            echo "has_changes=true" >> $GITHUB_OUTPUT
           fi
 
       - name: Create Pull Request
-        if: env.HAS_CHANGES == 'true'
+        if: steps.commit_changes.outputs.has_changes == 'true'
         env:
           GH_TOKEN: ${{ secrets.TEMPLATES_TOKEN }}
         run: |
