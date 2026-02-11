@@ -1,3 +1,12 @@
+## [1.1.1](https://github.com/akamai/terraform-templates-modules/compare/v1.1.0...v1.1.1) (2026-02-11)
+
+
+### Bug Fixes
+
+* **ci:** pass values between steps in the correct way ([4005b2d](https://github.com/akamai/terraform-templates-modules/commit/4005b2d5738add6dbbae4a50bc9e0dc4bb013a73))
+
+
+
 # [1.1.0](https://github.com/akamai/terraform-templates-modules/compare/v1.0.0...v1.1.0) (2026-02-10)
 
 
