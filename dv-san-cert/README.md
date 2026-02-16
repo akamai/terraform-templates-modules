@@ -78,8 +78,6 @@ module "example" {
   	 acknowledge_pre_verification_warnings  = <bool> | default: true
   	 allow_duplicate_common_name  = <bool> | default: false
   	 certificate_chain_type  = <string> | default: "default"
-  	 config_section  = <string> | default: "aps"
-  	 edgerc_path  = <string> | default: "~/.edgerc"
   	 sans  = <list(string)> | default: []
   	 secure_network  = <string> | default: "enhanced-tls"
   	 signature_algorithm  = <string> | default: "SHA-256"
@@ -118,8 +116,6 @@ No modules.
 | <a name="input_acknowledge_pre_verification_warnings"></a> [acknowledge\_pre\_verification\_warnings](#input\_acknowledge\_pre\_verification\_warnings) | Acknowledge warnings before verification. | `bool` | `true` | no |
 | <a name="input_allow_duplicate_common_name"></a> [allow\_duplicate\_common\_name](#input\_allow\_duplicate\_common\_name) | Whether to allow duplicate common names. | `bool` | `false` | no |
 | <a name="input_certificate_chain_type"></a> [certificate\_chain\_type](#input\_certificate\_chain\_type) | Certificate chain type (default or test). | `string` | `"default"` | no |
-| <a name="input_config_section"></a> [config\_section](#input\_config\_section) | n/a | `string` | `"aps"` | no |
-| <a name="input_edgerc_path"></a> [edgerc\_path](#input\_edgerc\_path) | n/a | `string` | `"~/.edgerc"` | no |
 | <a name="input_sans"></a> [sans](#input\_sans) | List of Subject Alternative Names (SANs). | `list(string)` | `[]` | no |
 | <a name="input_secure_network"></a> [secure\_network](#input\_secure\_network) | Secure network type. Valid values: enhanced-tls, standard-tls. | `string` | `"enhanced-tls"` | no |
 | <a name="input_signature_algorithm"></a> [signature\_algorithm](#input\_signature\_algorithm) | Signature algorithm (e.g., SHA-256). | `string` | `"SHA-256"` | no |
