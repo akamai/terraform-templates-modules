@@ -1,3 +1,13 @@
+## [1.1.2](https://github.com/akamai/terraform-templates-modules/compare/v1.1.1...v1.1.2) (2026-02-16)
+
+
+### Bug Fixes
+
+* **certs:** removed default edgerc file and section ([b94a6dc](https://github.com/akamai/terraform-templates-modules/commit/b94a6dce7b38b778a0faf32120618daff15d3785))
+* **certs:** removed default edgerc file and section ([cde31a2](https://github.com/akamai/terraform-templates-modules/commit/cde31a283c0385402f633ca3a2f137eca6835080))
+
+
+
 ## [1.1.1](https://github.com/akamai/terraform-templates-modules/compare/v1.1.0...v1.1.1) (2026-02-11)
 
 
