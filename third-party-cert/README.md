@@ -90,8 +90,6 @@ module "example" {
   	 allow_duplicate_common_name  = <bool> | default: false
   	 auto_approve_warnings  = <list(string)> | default: []
   	 change_management  = <bool> | default: false
-  	 config_section  = <string> | default: "aps"
-  	 edgerc_path  = <string> | default: "~/.edgerc"
   	 secure_network  = <string> | default: "standard-tls"
   	 signature_algorithm  = <string> | default: ""
   	 sni_only  = <bool> | default: true
@@ -140,8 +138,6 @@ No modules.
 | <a name="input_allow_duplicate_common_name"></a> [allow\_duplicate\_common\_name](#input\_allow\_duplicate\_common\_name) | Whether duplicate common names are allowed | `bool` | `false` | no |
 | <a name="input_auto_approve_warnings"></a> [auto\_approve\_warnings](#input\_auto\_approve\_warnings) | List of warnings to auto-approve | `list(string)` | `[]` | no |
 | <a name="input_change_management"></a> [change\_management](#input\_change\_management) | Enable/disable change management | `bool` | `false` | no |
-| <a name="input_config_section"></a> [config\_section](#input\_config\_section) | n/a | `string` | `"aps"` | no |
-| <a name="input_edgerc_path"></a> [edgerc\_path](#input\_edgerc\_path) | ------------------------ Enrollment Variables ------------------------ | `string` | `"~/.edgerc"` | no |
 | <a name="input_secure_network"></a> [secure\_network](#input\_secure\_network) | TLS network setting | `string` | `"standard-tls"` | no |
 | <a name="input_signature_algorithm"></a> [signature\_algorithm](#input\_signature\_algorithm) | Signature algorithm for CSR | `string` | `""` | no |
 | <a name="input_sni_only"></a> [sni\_only](#input\_sni\_only) | Enable SNI-only certificates | `bool` | `true` | no |
