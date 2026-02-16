@@ -1,13 +1,3 @@
-variable "edgerc_path" {
-  type    = string
-  default = "~/.edgerc"
-}
-
-variable "config_section" {
-  type    = string
-  default = "aps"
-}
-
 variable "common_name" {
   description = "Primary common name for the certificate."
   type        = string
