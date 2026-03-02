@@ -1,3 +1,12 @@
+# [1.2.0](https://github.com/akamai/terraform-templates-modules/compare/v1.1.2...v1.2.0) (2026-03-02)
+
+
+### Features
+
+* **EDNS:** New module for EDNS ([bf45f5f](https://github.com/akamai/terraform-templates-modules/commit/bf45f5f9fc747e0525df7d87e2437eb0f2bccf46))
+
+
+
 ## [1.1.2](https://github.com/akamai/terraform-templates-modules/compare/v1.1.1...v1.1.2) (2026-02-16)
 
 
