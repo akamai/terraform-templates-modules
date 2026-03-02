@@ -362,6 +362,7 @@ module "example" {
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | ~> 9.2 |
 | <a name="requirement_dns"></a> [dns](#requirement\_dns) | ~> 3.4 |
+| <a name="requirement_time"></a> [time](#requirement\_time) | ~> 0.13 |
 
 ## Resources
 
@@ -413,8 +414,8 @@ No modules.
 | <a name="input_akamaicdn_records"></a> [akamaicdn\_records](#input\_akamaicdn\_records) | AKAMAICDN (apex mapping) | <pre>list(object({<br/>    name   = string<br/>    ttl    = number<br/>    target = list(string)<br/>  }))</pre> | `[]` | no |
 | <a name="input_akamaitlc_records"></a> [akamaitlc\_records](#input\_akamaitlc\_records) | AKAMAITLC (proprietary; zwykle read-only w TF) | <pre>list(object({<br/>    name   = string<br/>    ttl    = number<br/>    target = list(string)<br/>  }))</pre> | `[]` | no |
 | <a name="input_caa_records"></a> [caa\_records](#input\_caa\_records) | CAA records | <pre>list(object({<br/>    name   = string<br/>    target = list(string)<br/>    ttl    = number<br/>  }))</pre> | `[]` | no |
-| <a name="input_cdnskey_records"></a> [cdnskey\_records](#input\_cdnskey\_records) | CDNSKEY records (opcjonalne) | <pre>list(object({<br/>    name   = string<br/>    ttl    = number<br/>    target = list(string)<br/>  }))</pre> | `[]` | no |
-| <a name="input_cds_records"></a> [cds\_records](#input\_cds\_records) | CDS records (opcjonalne) | <pre>list(object({<br/>    name   = string<br/>    ttl    = number<br/>    target = list(string)<br/>  }))</pre> | `[]` | no |
+| <a name="input_cdnskey_records"></a> [cdnskey\_records](#input\_cdnskey\_records) | CDNSKEY records | <pre>list(object({<br/>    name   = string<br/>    ttl    = number<br/>    target = list(string)<br/>  }))</pre> | `[]` | no |
+| <a name="input_cds_records"></a> [cds\_records](#input\_cds\_records) | CDS records | <pre>list(object({<br/>    name   = string<br/>    ttl    = number<br/>    target = list(string)<br/>  }))</pre> | `[]` | no |
 | <a name="input_cert_records"></a> [cert\_records](#input\_cert\_records) | CERT records | <pre>list(object({<br/>    name          = string<br/>    ttl           = number<br/>    type_value    = optional(number)<br/>    type_mnemonic = optional(string)<br/>    keytag        = number<br/>    algorithm     = number<br/>    certificate   = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_cname_records"></a> [cname\_records](#input\_cname\_records) | CNAME records | <pre>list(object({<br/>    name   = string<br/>    target = list(string) # zwykle jeden FQDN<br/>    ttl    = number<br/>  }))</pre> | `[]` | no |
 | <a name="input_dnskey_records"></a> [dnskey\_records](#input\_dnskey\_records) | DNSKEY records (DNSSEC) | <pre>list(object({<br/>    name      = string<br/>    ttl       = number<br/>    flags     = number<br/>    protocol  = number<br/>    algorithm = number<br/>    key       = string #base64 public key<br/>  }))</pre> | `[]` | no |
@@ -427,12 +428,12 @@ No modules.
 | <a name="input_mx_records"></a> [mx\_records](#input\_mx\_records) | MX records | <pre>list(object({<br/>    name               = string<br/>    target             = list(string)<br/>    ttl                = number<br/>    priority           = optional(number)<br/>    priority_increment = optional(number)<br/>  }))</pre> | `[]` | no |
 | <a name="input_naptr_records"></a> [naptr\_records](#input\_naptr\_records) | NAPTR records | <pre>list(object({<br/>    name        = string<br/>    ttl         = number<br/>    order       = number<br/>    preference  = number<br/>    flagsnaptr  = string<br/>    service     = string<br/>    regexp      = string<br/>    replacement = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_ns_records"></a> [ns\_records](#input\_ns\_records) | NS records (delegacje subdomen lub override apex) | <pre>list(object({<br/>    name   = string<br/>    target = list(string)<br/>    ttl    = number<br/>  }))</pre> | `[]` | no |
-| <a name="input_nsec3_records"></a> [nsec3\_records](#input\_nsec3\_records) | NSEC3 records (opcjonalne) | <pre>list(object({<br/>    name   = string<br/>    ttl    = number<br/>    target = list(string)<br/>  }))</pre> | `[]` | no |
-| <a name="input_nsec3param_records"></a> [nsec3param\_records](#input\_nsec3param\_records) | NSEC3PARAM records (opcjonalne) | <pre>list(object({<br/>    name   = string<br/>    ttl    = number<br/>    target = list(string)<br/>  }))</pre> | `[]` | no |
-| <a name="input_nsec_records"></a> [nsec\_records](#input\_nsec\_records) | NSEC records (opcjonalne) | <pre>list(object({<br/>    name   = string<br/>    ttl    = number<br/>    target = list(string)<br/>  }))</pre> | `[]` | no |
+| <a name="input_nsec3_records"></a> [nsec3\_records](#input\_nsec3\_records) | NSEC3 records | <pre>list(object({<br/>    name   = string<br/>    ttl    = number<br/>    target = list(string)<br/>  }))</pre> | `[]` | no |
+| <a name="input_nsec3param_records"></a> [nsec3param\_records](#input\_nsec3param\_records) | NSEC3PARAM records | <pre>list(object({<br/>    name   = string<br/>    ttl    = number<br/>    target = list(string)<br/>  }))</pre> | `[]` | no |
+| <a name="input_nsec_records"></a> [nsec\_records](#input\_nsec\_records) | NSEC records | <pre>list(object({<br/>    name   = string<br/>    ttl    = number<br/>    target = list(string)<br/>  }))</pre> | `[]` | no |
 | <a name="input_ptr_records"></a> [ptr\_records](#input\_ptr\_records) | PTR records | <pre>list(object({<br/>    name   = string<br/>    target = list(string)<br/>    ttl    = number<br/>  }))</pre> | `[]` | no |
 | <a name="input_rp_records"></a> [rp\_records](#input\_rp\_records) | RP records (Responsible Person) | <pre>list(object({<br/>    name    = string<br/>    mailbox = string<br/>    txt     = string<br/>    ttl     = number<br/>  }))</pre> | `[]` | no |
-| <a name="input_rrsig_records"></a> [rrsig\_records](#input\_rrsig\_records) | RRSIG records (opcjonalne) | <pre>list(object({<br/>    name   = string<br/>    ttl    = number<br/>    target = list(string)<br/>  }))</pre> | `[]` | no |
+| <a name="input_rrsig_records"></a> [rrsig\_records](#input\_rrsig\_records) | RRSIG records | <pre>list(object({<br/>    name   = string<br/>    ttl    = number<br/>    target = list(string)<br/>  }))</pre> | `[]` | no |
 | <a name="input_soa"></a> [soa](#input\_soa) | If null, SOA is not managed. | <pre>object({<br/>    email        = string<br/>    name_server  = string<br/>    ttl          = number<br/>    refresh      = number<br/>    retry        = number<br/>    expiry       = number<br/>    nxdomain_ttl = number<br/>  })</pre> | `null` | no |
 | <a name="input_spf_records"></a> [spf\_records](#input\_spf\_records) | SPF records (deprecated RFC; użycie jak TXT) | <pre>list(object({<br/>    name   = string<br/>    target = list(string)<br/>    ttl    = number<br/>  }))</pre> | `[]` | no |
 | <a name="input_srv_records"></a> [srv\_records](#input\_srv\_records) | SRV records | <pre>list(object({<br/>    name     = string<br/>    target   = list(string)<br/>    ttl      = number<br/>    priority = optional(number)<br/>    weight   = optional(number)<br/>    port     = optional(number)<br/>  }))</pre> | `[]` | no |
@@ -441,7 +442,7 @@ No modules.
 | <a name="input_tlsa_records"></a> [tlsa\_records](#input\_tlsa\_records) | TLSA records (DANE) | <pre>list(object({<br/>    name        = string<br/>    ttl         = number<br/>    usage       = number<br/>    selector    = number<br/>    match_type  = number<br/>    certificate = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_tsig_key"></a> [tsig\_key](#input\_tsig\_key) | Optional TSIG key for secondary transfers | <pre>object({<br/>    name      = string<br/>    algorithm = string<br/>    secret    = string<br/>  })</pre> | `null` | no |
 | <a name="input_txt_records"></a> [txt\_records](#input\_txt\_records) | TXT records | <pre>list(object({<br/>    name   = string<br/>    target = list(string)<br/>    ttl    = number<br/>  }))</pre> | `[]` | no |
-| <a name="input_zonemd_records"></a> [zonemd\_records](#input\_zonemd\_records) | ZONEMD records (opcjonalne) | <pre>list(object({<br/>    name   = string<br/>    ttl    = number<br/>    target = list(string)<br/>  }))</pre> | `[]` | no |
+| <a name="input_zonemd_records"></a> [zonemd\_records](#input\_zonemd\_records) | ZONEMD records | <pre>list(object({<br/>    name   = string<br/>    ttl    = number<br/>    target = list(string)<br/>  }))</pre> | `[]` | no |
 
 ## Outputs
 

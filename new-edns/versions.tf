@@ -6,7 +6,7 @@ terraform {
     }
 
     time = {
-      source = "hashicorp/time"
+      source  = "hashicorp/time"
       version = "~> 0.13"
     }
     dns = {
