@@ -157,7 +157,7 @@
  * - **Upstream:** `module.api_definition` provides `akamai_operations` (Akamai-assigned operation IDs)
  * - **Downstream:** `module.security_config_activation` receives `config_id` from this module
  * 
- */ 
+ */
 
 
 data "akamai_appsec_configuration" "config" {
@@ -165,7 +165,7 @@ data "akamai_appsec_configuration" "config" {
 }
 
 data "akamai_appsec_security_policy" "policy" {
-  config_id = data.akamai_appsec_configuration.config.config_id
+  config_id            = data.akamai_appsec_configuration.config.config_id
   security_policy_name = var.policy_name
 }
 

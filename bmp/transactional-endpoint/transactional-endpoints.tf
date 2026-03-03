@@ -9,6 +9,7 @@ locals {
     ]
   ])
 
+  # tflint-ignore: terraform_unused_declarations 
   akamai_operations_safe = coalesce(var.akamai_operations, [])
 
   # Build lookup map from Akamai response using same key
@@ -30,18 +31,18 @@ locals {
 
   # SDK schema (adds bypassPreSdkVersion)
   traffic_native_sdk = {
-    aggressiveAction     = "monitor"
-    aggressiveThreshold  = 90
-    bypassPreSdkVersion  = false
-    overrideThresholds   = false
-    strictAction         = "monitor"
-    strictThreshold      = 50
+    aggressiveAction    = "monitor"
+    aggressiveThreshold = 90
+    bypassPreSdkVersion = false
+    overrideThresholds  = false
+    strictAction        = "monitor"
+    strictThreshold     = 50
   }
 
   # Build traffic map with only the required buckets
   endpoint_traffic = merge(
     var.expect_standard_traffic ? { standardTelemetry = local.traffic_standard_inline } : {},
-    var.expect_inline_traffic   ? { inlineTelemetry   = local.traffic_standard_inline } : {},
+    var.expect_inline_traffic ? { inlineTelemetry = local.traffic_standard_inline } : {},
     var.expect_sdk_traffic ? {
       nativeSdkAndroid = local.traffic_native_sdk
       nativeSdkIos     = local.traffic_native_sdk
@@ -64,13 +65,13 @@ resource "akamai_botman_transactional_endpoint" "bmp_endpoint" {
           "enabled" : var.expect_inline_traffic
         },
         "nativeSdk" : merge(
-                    { "enabled" : var.expect_sdk_traffic },var.expect_sdk_traffic == false ? { "disabledAction" : "monitor" } : {}
+          { "enabled" : var.expect_sdk_traffic }, var.expect_sdk_traffic == false ? { "disabledAction" : "monitor" } : {}
         ),
         "standard" : merge(
-          {"enabled" : var.expect_standard_traffic}, var.expect_standard_traffic == false ? {"disabledAction" : "monitor" } : {}
-  )
+          { "enabled" : var.expect_standard_traffic }, var.expect_standard_traffic == false ? { "disabledAction" : "monitor" } : {}
+        )
       },
-        traffic = local.endpoint_traffic
+      traffic = local.endpoint_traffic
 
 
 

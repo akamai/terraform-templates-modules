@@ -137,7 +137,7 @@ resource "akamai_apidefinitions_api" "api" {
 }
 
 resource "akamai_apidefinitions_resource_operations" "my_operations" {
-  api_id = akamai_apidefinitions_api.api.id
+  api_id              = akamai_apidefinitions_api.api.id
   resource_operations = file(var.operation_json)
 }
 

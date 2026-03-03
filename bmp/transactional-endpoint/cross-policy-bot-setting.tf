@@ -1,5 +1,5 @@
 resource "akamai_botman_client_side_security" "client_side_security" {
-  count = var.enable_js_injection ? 1 : 0
+  count     = var.enable_js_injection ? 1 : 0
   config_id = local.config_id
   client_side_security = jsonencode(
     {

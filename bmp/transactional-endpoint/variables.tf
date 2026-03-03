@@ -68,5 +68,5 @@ variable "operation_json" {
 
 variable "akamai_operations" {
   description = "List of operation objects returned by Akamai after API creation (apply-time data)."
-  type        = list(any)  # Can be tightened to object(...) if schema stabilizes
+  type        = list(any) # Can be tightened to object(...) if schema stabilizes
 }
