@@ -119,3 +119,27 @@ jobs:
           output-file: README.md
           output-method: inject
           git-push: true
+
+      - name: Generate terraform-docs for BMP - API Definition
+        uses: terraform-docs/gh-actions@v1.4.1
+        with:
+          working-dir: ./bmp/api-definition
+          output-file: README.md
+          output-method: inject
+          git-push: true
+
+      - name: Generate terraform-docs for BMP - Transactional Endpoint
+        uses: terraform-docs/gh-actions@v1.4.1
+        with:
+          working-dir: ./bmp/transactional-endpoint
+          output-file: README.md
+          output-method: inject
+          git-push: true
+
+      - name: Generate terraform-docs for BMP - Security Configuration Activation
+        uses: terraform-docs/gh-actions@v1.4.1
+        with:
+          working-dir: ./bmp/security-config-activation
+          output-file: README.md
+          output-method: inject
+          git-push: true          
