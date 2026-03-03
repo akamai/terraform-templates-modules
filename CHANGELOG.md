@@ -1,3 +1,18 @@
+# [1.3.0](https://github.com/akamai/terraform-templates-modules/compare/v1.2.0...v1.3.0) (2026-03-03)
+
+
+### Bug Fixes
+
+* **bmp:** Updated workflows, directory names, main.tf ([17510bc](https://github.com/akamai/terraform-templates-modules/commit/17510bc623354f52ede7d9d19e709995b2a2ca18))
+* **bmp:** Updated workflows, docs ([441184b](https://github.com/akamai/terraform-templates-modules/commit/441184b02dbc9520339ea435361837349490574c))
+
+
+### Features
+
+* **bmp:** Integrate BMP ([f3636cd](https://github.com/akamai/terraform-templates-modules/commit/f3636cd527aaca445aa040444a64094059531bc0))
+
+
+
 # [1.2.0](https://github.com/akamai/terraform-templates-modules/compare/v1.1.2...v1.2.0) (2026-03-02)
 
 
