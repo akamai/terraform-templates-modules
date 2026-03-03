@@ -32,13 +32,6 @@ variable "activation_to_production_exists" {
 # API Definition Inputs
 # ============================================================
 
-variable "apis" {
-  description = "Map of logical API identifiers to API definition files (OpenAPI spec)."
-  type        = map(string)
-  default = {
-    api1 = "null"
-  }
-}
 
 variable "api_json" {
   description = "Path to the API definition (OpenAPI JSON/YAML file)."
