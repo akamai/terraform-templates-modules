@@ -107,6 +107,12 @@ jobs:
           terraform init -backend=false
           terraform validate
 
+      - name: Terraform Validate - Edge DNS
+        working-directory: ./edns
+        run: |
+          terraform init -backend=false
+          terraform validate
+
       - name: Terraform Validate - BMP - API definition
         working-directory: ./bmp/api-definition
         run: |
@@ -152,6 +158,10 @@ jobs:
       - name: Run TFLint -  CPS - Third Party 
         working-directory: ./third-party-cert
         run: tflint --recursive
+
+      - name: Run TFLint -  Edge DNS
+        working-directory: ./edns
+        run: tflint --recursive    
 
       - name: Run TFLint -  BMP - Bot Manager Premier
         working-directory: ./bmp
