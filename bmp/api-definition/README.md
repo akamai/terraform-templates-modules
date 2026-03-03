@@ -268,9 +268,6 @@ module "example" {
   	 activation_to_production_exists  = <bool> | default: false
   	 activation_to_staging_exists  = <bool> | default: false
   	 api_json  = <string> | default: "null"
-  	 apis  = <map(string)> | default: {
-  "api1": "null"
-}
   	 operation_json  = <string> | default: "null"
 }
  ```
@@ -309,7 +306,6 @@ No modules.
 | <a name="input_activation_to_production_exists"></a> [activation\_to\_production\_exists](#input\_activation\_to\_production\_exists) | Internal flag indicating whether a production activation already exists. Used by activation logic; do not modify manually. | `bool` | `false` | no |
 | <a name="input_activation_to_staging_exists"></a> [activation\_to\_staging\_exists](#input\_activation\_to\_staging\_exists) | Internal flag indicating whether a staging activation already exists. Used by activation logic; do not modify manually. | `bool` | `false` | no |
 | <a name="input_api_json"></a> [api\_json](#input\_api\_json) | Path to the API definition (OpenAPI JSON/YAML file). | `string` | `"null"` | no |
-| <a name="input_apis"></a> [apis](#input\_apis) | Map of logical API identifiers to API definition files (OpenAPI spec). | `map(string)` | <pre>{<br/>  "api1": "null"<br/>}</pre> | no |
 | <a name="input_operation_json"></a> [operation\_json](#input\_operation\_json) | Path to the API operations definition JSON file. | `string` | `"null"` | no |
 
 ## Outputs
