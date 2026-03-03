@@ -107,6 +107,24 @@ jobs:
           terraform init -backend=false
           terraform validate
 
+      - name: Terraform Validate - BMP - API definition
+        working-directory: ./bmp/api-definition
+        run: |
+          terraform init -backend=false
+          terraform validate
+
+      - name: Terraform Validate - BMP - Security Configuration Activation
+        working-directory: ./bmp/security-config-activation
+        run: |
+          terraform init -backend=false
+          terraform validate
+
+      - name: Terraform Validate - BMP - Transactional Endpoint
+        working-directory: ./bmp/transactional-endpoint
+        run: |
+          terraform init -backend=false
+          terraform validate                    
+
       - name: Setup TFLint
         uses: terraform-linters/setup-tflint@v4
         with:
@@ -134,6 +152,10 @@ jobs:
       - name: Run TFLint -  CPS - Third Party 
         working-directory: ./third-party-cert
         run: tflint --recursive
+
+      - name: Run TFLint -  BMP - Bot Manager Premier
+        working-directory: ./bmp
+        run: tflint --recursive        
 
       - name: Run Trivy Security Scan
         uses: aquasecurity/trivy-action@master
