@@ -23,8 +23,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          # PAT required to bypass branch protection rules (GITHUB_TOKEN cannot bypass them)
-          token: ${{ secrets.TEMPLATES_TOKEN }}
 
       - name: Generate terraform-docs for AAP - Activate Security Module
         uses: terraform-docs/gh-actions@v1.4.1
@@ -122,6 +120,14 @@ jobs:
           output-method: inject
           git-push: true
 
+      - name: Generate terraform-docs for Edge DNS
+        uses: terraform-docs/gh-actions@v1.4.1
+        with:
+          working-dir: ./edns
+          output-file: README.md
+          output-method: inject
+          git-push: true        
+
       - name: Generate terraform-docs for BMP - API Definition
         uses: terraform-docs/gh-actions@v1.4.1
         with:
@@ -144,4 +150,4 @@ jobs:
           working-dir: ./bmp/security-config-activation
           output-file: README.md
           output-method: inject
-          git-push: true          
+          git-push: true
