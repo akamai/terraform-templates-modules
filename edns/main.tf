@@ -1,5 +1,5 @@
 /**
- * # Module: new-edns (Akamai Edge DNS)
+ * # Module: edns (Akamai Edge DNS)
  *
  * This Terraform module provisions and manages Akamai Edge DNS zones.
  * It supports both PRIMARY and SECONDARY zones and provides a unified,
