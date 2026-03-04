@@ -1,3 +1,12 @@
+## [1.3.1](https://github.com/akamai/terraform-templates-modules/compare/v1.3.0...v1.3.1) (2026-03-04)
+
+
+### Bug Fixes
+
+* **ci:** allow actions self-commits and merges ([67db719](https://github.com/akamai/terraform-templates-modules/commit/67db71968eb41075d5b4a16c2d73684b235bc300))
+
+
+
 # [1.3.0](https://github.com/akamai/terraform-templates-modules/compare/v1.2.0...v1.3.0) (2026-03-03)
 
 
