@@ -41,3 +41,8 @@ variable "activation_to_production_exists" {
   type        = bool
   default     = false
 }
+
+variable "dummy_temp_var" {
+  type    = string
+  default = "test"
+}
