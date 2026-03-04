@@ -26,6 +26,7 @@ module "example" {
   	 activate_to_staging  = <bool> | default: false
   	 activation_to_production_exists  = <bool> | default: false
   	 activation_to_staging_exists  = <bool> | default: false
+  	 dummy_temp_var  = <string> | default: "test"
 }
  ```
 
@@ -60,6 +61,7 @@ No modules.
 | <a name="input_activate_to_staging"></a> [activate\_to\_staging](#input\_activate\_to\_staging) | Set to true to directly activate on the staging network. | `bool` | `false` | no |
 | <a name="input_activation_to_production_exists"></a> [activation\_to\_production\_exists](#input\_activation\_to\_production\_exists) | Do not modify. Flag used together with the logic in the activation resources for the initial activation to production. | `bool` | `false` | no |
 | <a name="input_activation_to_staging_exists"></a> [activation\_to\_staging\_exists](#input\_activation\_to\_staging\_exists) | Do not modify. Flag used together with the logic in the activation resources for the initial activation to staging. | `bool` | `false` | no |
+| <a name="input_dummy_temp_var"></a> [dummy\_temp\_var](#input\_dummy\_temp\_var) | n/a | `string` | `"test"` | no |
 
 ## Outputs
 
