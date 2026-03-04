@@ -120,7 +120,15 @@ jobs:
           working-dir: ./third-party-cert
           output-file: README.md
           output-method: inject
-          git-push: true
+          git-push: true     
+
+      - name: Generate terraform-docs for Edge DNS
+        uses: terraform-docs/gh-actions@v1.4.1
+        with:
+          working-dir: ./edns
+          output-file: README.md
+          output-method: inject
+          git-push: true        
 
       - name: Generate terraform-docs for BMP - API Definition
         uses: terraform-docs/gh-actions@v1.4.1
@@ -144,4 +152,4 @@ jobs:
           working-dir: ./bmp/security-config-activation
           output-file: README.md
           output-method: inject
-          git-push: true          
+          git-push: true
