@@ -1,3 +1,12 @@
+## [1.3.2](https://github.com/akamai/terraform-templates-modules/compare/v1.3.1...v1.3.2) (2026-03-04)
+
+
+### Bug Fixes
+
+* **edns:** Update GH workflows and renamed module to edns ([447b28a](https://github.com/akamai/terraform-templates-modules/commit/447b28a87586dd2d7f1da67ea9bdf4edf0236538))
+
+
+
 ## [1.3.1](https://github.com/akamai/terraform-templates-modules/compare/v1.3.0...v1.3.1) (2026-03-04)
 
 
