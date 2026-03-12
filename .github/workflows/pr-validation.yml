@@ -14,6 +14,7 @@ env:
 jobs:
   terraform-checks:
     name: Terraform PR Checks
+    if: github.head_ref != 'main'
     runs-on: ubuntu-latest
     permissions:
       contents: write
