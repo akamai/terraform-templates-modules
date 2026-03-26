@@ -23,7 +23,7 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           # PAT required to bypass branch protection rules (GITHUB_TOKEN cannot bypass them)
@@ -90,7 +90,7 @@ jobs:
     
     steps:
       - name: Checkout templates repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: ${{ env.TEMPLATES_REPO }}
           token: ${{ secrets.TEMPLATES_TOKEN }}
