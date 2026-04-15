@@ -26,7 +26,7 @@ jobs:
           atp=("false")
           MATRIX="[]"
           COUNT=0
-         # MAX=20   # ⚠️ adjust as needed
+          # MAX=20
 
           MATRIX=$(jq -n --argfile cfg "$CONFIG_FILE" '
           [
@@ -42,7 +42,7 @@ jobs:
                 activate_to_production: $pr
               }
           ]
-        ')
+          ')
           echo "Generated matrix:"
           echo "$MATRIX"
 
