@@ -117,6 +117,7 @@ module "example" {
 |------|-------------|
 | <a name="output_cert_status"></a> [cert\_status](#output\_cert\_status) | The status of the certificate, which may include any challenge required to generate it (DNS CNAME or other type) |
 | <a name="output_cpcode_id"></a> [cpcode\_id](#output\_cpcode\_id) | The CP Code's unique identifier. |
+| <a name="output_force_change"></a> [force\_change](#output\_force\_change) | n/a |
 | <a name="output_property_id"></a> [property\_id](#output\_property\_id) | The property's unique identifier. |
 | <a name="output_rules_errors"></a> [rules\_errors](#output\_rules\_errors) | The contents of errors field returned by the API. |
 <!-- END_TF_DOCS -->
