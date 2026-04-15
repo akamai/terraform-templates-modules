@@ -77,7 +77,7 @@ jobs:
   delivery_tests:
     needs: detect_changes
     if: needs.detect_changes.outputs.delivery == 'true'
-    uses: ./.github/workflows/pr-delivery-tests.yml
+    uses: ./.github/workflows/pr-delivery-test.yml
 
   dv_san_cert_tests:
     needs: detect_changes
