@@ -5,8 +5,7 @@ on:
 
 
 jobs:
-
-generate-matrix:
+  generate-matrix:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -48,10 +47,11 @@ generate-matrix:
           echo "$MATRIX"
 
           echo "matrix={\"include\":$MATRIX}" >> $GITHUB_OUTPUT
+
       - name: Print all permutations
-      - run: |
-            echo "===== ALL GENERATED PERMUTATIONS ====="
-            echo "$MATRIX" | jq -c '.[]'
+        run: |
+          echo "===== ALL GENERATED PERMUTATIONS ====="
+          echo '${{ steps.set-matrix.outputs.matrix }}' | jq -c '.include[]'
             
   # delivery-tests:
   #   needs: generate-matrix
