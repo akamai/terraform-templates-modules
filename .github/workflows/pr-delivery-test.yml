@@ -53,98 +53,98 @@ jobs:
           echo "===== ALL GENERATED PERMUTATIONS ====="
           echo '${{ steps.set-matrix.outputs.matrix }}' | jq '.'
             
-  # delivery-tests:
-  #   needs: generate-matrix
-  #   runs-on: ubuntu-latest
+  delivery-tests:
+    needs: generate-matrix
+    runs-on: ubuntu-latest
 
-  #   container:
-  #     image: docker.akamai.com/gssdevops-images-release/terraform-gss-templates-tester:2.4
+    container:
+      image: docker.akamai.com/gssdevops-images-release/terraform-gss-templates-tester:2.4
 
-  #   strategy:
-  #     fail-fast: false
-  #     matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
 
-  #   env:
-  #     AKAMAI_HOST: ${{ secrets.GSS_TERRAFORM_TEST_HOST }}
-  #     AKAMAI_CLIENT_TOKEN: ${{ secrets.GSS_TERRAFORM_TEST_CLIENT }}
-  #     AKAMAI_CLIENT_SECRET: ${{ secrets.GSS_TERRAFORM_TEST_SECRET }}
-  #     AKAMAI_ACCESS_TOKEN: ${{ secrets.GSS_TERRAFORM_TEST_ACCESS }}
-  #     AKAMAI_ACCOUNT_KEY: ${{ secrets.GSS_TERRAFORM_TEST_ACCOUNT }}
+    env:
+      AKAMAI_HOST: ${{ secrets.GSS_TERRAFORM_TEST_HOST }}
+      AKAMAI_CLIENT_TOKEN: ${{ secrets.GSS_TERRAFORM_TEST_CLIENT }}
+      AKAMAI_CLIENT_SECRET: ${{ secrets.GSS_TERRAFORM_TEST_SECRET }}
+      AKAMAI_ACCESS_TOKEN: ${{ secrets.GSS_TERRAFORM_TEST_ACCESS }}
+      AKAMAI_ACCOUNT_KEY: ${{ secrets.GSS_TERRAFORM_TEST_ACCOUNT }}
 
-  #   steps:
-  #     - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-  #     - name: Generate random suffix
-  #       id: rand
-  #       run: |
-  #         echo "diff=$(LC_ALL=C tr -dc 'A-Z0-9' </dev/urandom | head -c 10)" >> $GITHUB_OUTPUT
+      - name: Generate random suffix
+        id: rand
+        run: |
+          echo "diff=$(LC_ALL=C tr -dc 'A-Z0-9' </dev/urandom | head -c 10)" >> $GITHUB_OUTPUT
 
-  #     - name: Prepare Terraform
-  #       run: |
-  #         cd delivery
+      - name: Prepare Terraform
+        run: |
+          cd delivery
 
-  #         cat << EOF > terraform.tfvars
-  #         edgerc_section = "default"
-  #         contract_id = "ctr_1-1NC95D"
-  #         group_id = "grp_290842"
-  #         hostnames = ["of-id-1.terraform.rafa.cr"]
-  #         name = "of-id-1"
-  #         cpcode_name = "of-id-1"
-  #         default_origin = "flexibleorigin.rafa.cr"
-  #         notification_emails = ["test@akamai.com"]
-  #         version_notes = "GitHub Actions test"
-  #         certificate_id = 12345
-  #         peer_reviewed_by = "test@na.com"
-  #         customer_email = "test@akamai.com"
-  #         unit_tested = true
-  #         ticket_id = "some-ticket-id"
-  #         noncompliance_reason = ["NONE"]
-  #         other_noncompliance_reason = "test"
-  #         td_region = "CH2"
-  #         ip_behavior = "IPV6_PERFORMANCE"
-  #         sure_route_test_object = "/terraform/srto.html"
-  #         activation_notes = "GitHub Actions test"
-  #         activation_to_staging_exists = false
-  #         activation_to_production_exists = false
-  #         EOF
+          cat << EOF > terraform.tfvars
+          edgerc_section = "default"
+          contract_id = "ctr_1-1NC95D"
+          group_id = "grp_290842"
+          hostnames = ["of-id-1.terraform.rafa.cr"]
+          name = "of-id-1"
+          cpcode_name = "of-id-1"
+          default_origin = "flexibleorigin.rafa.cr"
+          notification_emails = ["test@akamai.com"]
+          version_notes = "GitHub Actions test"
+          certificate_id = 12345
+          peer_reviewed_by = "test@na.com"
+          customer_email = "test@akamai.com"
+          unit_tested = true
+          ticket_id = "some-ticket-id"
+          noncompliance_reason = ["NONE"]
+          other_noncompliance_reason = "test"
+          td_region = "CH2"
+          ip_behavior = "IPV6_PERFORMANCE"
+          sure_route_test_object = "/terraform/srto.html"
+          activation_notes = "GitHub Actions test"
+          activation_to_staging_exists = false
+          activation_to_production_exists = false
+          EOF
 
-  #         echo 'provider "akamai" {}' >> provider.tf
-  #         terraform init
+          echo 'provider "akamai" {}' >> provider.tf
+          terraform init
 
-  #     - name: Apply test case variables
-  #       run: |
-  #         cd delivery
+      - name: Apply test case variables
+        run: |
+          cd delivery
 
-  #         echo "etls=${{ matrix.etls }}" >> terraform.tfvars
-  #         echo "secure_by_default=${{ matrix.secure_by_default }}" >> terraform.tfvars
-  #         echo "product_id=\"${{ matrix.product_id }}\"" >> terraform.tfvars
-  #         echo "activate_to_staging=${{ matrix.activate_to_staging }}" >> terraform.tfvars
-  #         echo "activate_to_production=${{ matrix.activate_to_production }}" >> terraform.tfvars
+          echo "etls=${{ matrix.etls }}" >> terraform.tfvars
+          echo "secure_by_default=${{ matrix.secure_by_default }}" >> terraform.tfvars
+          echo "product_id=\"${{ matrix.product_id }}\"" >> terraform.tfvars
+          echo "activate_to_staging=${{ matrix.activate_to_staging }}" >> terraform.tfvars
+          echo "activate_to_production=${{ matrix.activate_to_production }}" >> terraform.tfvars
 
-  #     - name: Update name
-  #       run: |
-  #         cd delivery
-  #         sed -i "s/of-id-1/a${{ steps.rand.outputs.diff }}/g" terraform.tfvars
+      - name: Update name
+        run: |
+          cd delivery
+          sed -i "s/of-id-1/a${{ steps.rand.outputs.diff }}/g" terraform.tfvars
 
-  #     - name: Terraform fmt & validate
-  #       run: |
-  #         cd delivery
-  #         terraform fmt
-  #         terraform validate
+      - name: Terraform fmt & validate
+        run: |
+          cd delivery
+          terraform fmt
+          terraform validate
 
-  #     - name: Terraform plan
-  #       run: |
-  #         cd delivery
+      - name: Terraform plan
+        run: |
+          cd delivery
 
-  #         set +e
-  #         terraform plan -out=tfplan -detailed-exitcode > tfplan.txt
-  #         EXIT=$?
-  #         set -e
+          set +e
+          terraform plan -out=tfplan -detailed-exitcode > tfplan.txt
+          EXIT=$?
+          set -e
 
-  #         if [ "$EXIT" = "1" ]; then
-  #           cat tfplan.txt
-  #           exit 1
-  #         fi
+          if [ "$EXIT" = "1" ]; then
+            cat tfplan.txt
+            exit 1
+          fi
 
   #     - name: Terraform apply
   #       run: |
