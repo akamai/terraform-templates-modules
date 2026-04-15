@@ -29,8 +29,7 @@ generate-matrix:
           COUNT=0
          # MAX=20   # ⚠️ adjust as needed
 
-          MATRIX=$(
-        jq -n --argfile cfg "$CONFIG_FILE" '
+          MATRIX=$(jq -n --argfile cfg "$CONFIG_FILE" '
           [
             $cfg.etls[] as $e
             | $cfg.secure_by_default[] as $s
