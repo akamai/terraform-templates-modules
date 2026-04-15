@@ -28,7 +28,7 @@ jobs:
           COUNT=0
           # MAX=20
 
-          MATRIX=$(jq -n --argfile cfg "$CONFIG_FILE" '
+          MATRIX=$(jq -n --argjson cfg "$(cat "$CONFIG_FILE")" '
           [
             $cfg.etls[] as $e
             | $cfg.secure_by_default[] as $s
