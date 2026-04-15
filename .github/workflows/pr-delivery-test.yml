@@ -28,7 +28,7 @@ jobs:
           COUNT=0
           # MAX=20
 
-          MATRIX=$(jq -n --argjson cfg "$(cat "$CONFIG_FILE")" '
+          MATRIX=$(jq -cn --argjson cfg "$(cat "$CONFIG_FILE")" '
           [
             $cfg.etls[] as $e
             | $cfg.secure_by_default[] as $s
@@ -46,12 +46,12 @@ jobs:
           echo "Generated matrix:"
           echo "$MATRIX"
 
-          echo "matrix={\"include\":$MATRIX}" >> $GITHUB_OUTPUT
+          echo "matrix={\"include\":$MATRIX}" >> "$GITHUB_OUTPUT"
 
       - name: Print all permutations
         run: |
           echo "===== ALL GENERATED PERMUTATIONS ====="
-          echo '${{ steps.set-matrix.outputs.matrix }}' | jq -c '.include[]'
+          echo '${{ steps.set-matrix.outputs.matrix }}' | jq '.'
             
   # delivery-tests:
   #   needs: generate-matrix
