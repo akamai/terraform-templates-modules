@@ -1,0 +1,184 @@
+name: Delivery Tests
+
+on:
+  workflow_call:
+
+
+jobs:
+
+generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: set-matrix
+        run: |
+          CONFIG_FILE="test_config_files/delivery.json"
+
+          # Extract arrays using jq
+          etls=($(jq -r '.etls[]' $CONFIG_FILE))
+          secure=($(jq -r '.secure_by_default[]' $CONFIG_FILE))
+          product=($(jq -r '.product_id[]' $CONFIG_FILE))
+          ats=($(jq -r '.activate_to_staging[]' $CONFIG_FILE))
+          #atp=($(jq -r '.activate_to_production[]' $CONFIG_FILE))
+          atp=("false")
+          MATRIX="[]"
+          COUNT=0
+         # MAX=20   # ⚠️ adjust as needed
+
+          for e in "${etls[@]}"; do
+            for s in "${secure[@]}"; do
+              for p in "${product[@]}"; do
+                for st in "${ats[@]}"; do
+                  for pr in "${atp[@]}"; do
+
+                    # 🔥 Example conditional logic (like Jenkins)
+                    # Add your exclusions here
+                    if [[ "$e" == "false" && "$p" == "SPM" ]]; then
+                      continue
+                    fi
+
+                    ENTRY=$(jq -n \
+                      --arg etls "$e" \
+                      --arg secure "$s" \
+                      --arg product "$p" \
+                      --arg ats "$st" \
+                      --arg atp "$pr" \
+                      '{
+                        etls: $etls,
+                        secure_by_default: $secure,
+                        product_id: $product,
+                        activate_to_staging: $ats,
+                        activate_to_production: $atp
+                      }')
+
+                    MATRIX=$(echo "$MATRIX" | jq ". + [ $ENTRY ]")
+
+                    COUNT=$((COUNT+1))
+                    if [ "$COUNT" -ge "$MAX" ]; then
+                      break 5
+                    fi
+
+                  done
+                done
+              done
+            done
+          done
+
+          echo "Generated matrix:"
+          echo "$MATRIX"
+
+          echo "matrix={\"include\":$MATRIX}" >> $GITHUB_OUTPUT
+      - name: Print all permutations
+      - run: |
+            echo "===== ALL GENERATED PERMUTATIONS ====="
+            echo "$MATRIX" | jq -c '.[]'
+            
+  # delivery-tests:
+  #   needs: generate-matrix
+  #   runs-on: ubuntu-latest
+
+  #   container:
+  #     image: docker.akamai.com/gssdevops-images-release/terraform-gss-templates-tester:2.4
+
+  #   strategy:
+  #     fail-fast: false
+  #     matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+
+  #   env:
+  #     AKAMAI_HOST: ${{ secrets.GSS_TERRAFORM_TEST_HOST }}
+  #     AKAMAI_CLIENT_TOKEN: ${{ secrets.GSS_TERRAFORM_TEST_CLIENT }}
+  #     AKAMAI_CLIENT_SECRET: ${{ secrets.GSS_TERRAFORM_TEST_SECRET }}
+  #     AKAMAI_ACCESS_TOKEN: ${{ secrets.GSS_TERRAFORM_TEST_ACCESS }}
+  #     AKAMAI_ACCOUNT_KEY: ${{ secrets.GSS_TERRAFORM_TEST_ACCOUNT }}
+
+  #   steps:
+  #     - uses: actions/checkout@v4
+
+  #     - name: Generate random suffix
+  #       id: rand
+  #       run: |
+  #         echo "diff=$(LC_ALL=C tr -dc 'A-Z0-9' </dev/urandom | head -c 10)" >> $GITHUB_OUTPUT
+
+  #     - name: Prepare Terraform
+  #       run: |
+  #         cd delivery
+
+  #         cat << EOF > terraform.tfvars
+  #         edgerc_section = "default"
+  #         contract_id = "ctr_1-1NC95D"
+  #         group_id = "grp_290842"
+  #         hostnames = ["of-id-1.terraform.rafa.cr"]
+  #         name = "of-id-1"
+  #         cpcode_name = "of-id-1"
+  #         default_origin = "flexibleorigin.rafa.cr"
+  #         notification_emails = ["test@akamai.com"]
+  #         version_notes = "GitHub Actions test"
+  #         certificate_id = 12345
+  #         peer_reviewed_by = "test@na.com"
+  #         customer_email = "test@akamai.com"
+  #         unit_tested = true
+  #         ticket_id = "some-ticket-id"
+  #         noncompliance_reason = ["NONE"]
+  #         other_noncompliance_reason = "test"
+  #         td_region = "CH2"
+  #         ip_behavior = "IPV6_PERFORMANCE"
+  #         sure_route_test_object = "/terraform/srto.html"
+  #         activation_notes = "GitHub Actions test"
+  #         activation_to_staging_exists = false
+  #         activation_to_production_exists = false
+  #         EOF
+
+  #         echo 'provider "akamai" {}' >> provider.tf
+  #         terraform init
+
+  #     - name: Apply test case variables
+  #       run: |
+  #         cd delivery
+
+  #         echo "etls=${{ matrix.etls }}" >> terraform.tfvars
+  #         echo "secure_by_default=${{ matrix.secure_by_default }}" >> terraform.tfvars
+  #         echo "product_id=\"${{ matrix.product_id }}\"" >> terraform.tfvars
+  #         echo "activate_to_staging=${{ matrix.activate_to_staging }}" >> terraform.tfvars
+  #         echo "activate_to_production=${{ matrix.activate_to_production }}" >> terraform.tfvars
+
+  #     - name: Update name
+  #       run: |
+  #         cd delivery
+  #         sed -i "s/of-id-1/a${{ steps.rand.outputs.diff }}/g" terraform.tfvars
+
+  #     - name: Terraform fmt & validate
+  #       run: |
+  #         cd delivery
+  #         terraform fmt
+  #         terraform validate
+
+  #     - name: Terraform plan
+  #       run: |
+  #         cd delivery
+
+  #         set +e
+  #         terraform plan -out=tfplan -detailed-exitcode > tfplan.txt
+  #         EXIT=$?
+  #         set -e
+
+  #         if [ "$EXIT" = "1" ]; then
+  #           cat tfplan.txt
+  #           exit 1
+  #         fi
+
+  #     - name: Terraform apply
+  #       run: |
+  #         cd delivery
+  #         terraform apply -auto-approve tfplan
+
+  #     - name: Wait
+  #       run: sleep 60
+
+  #     - name: Terraform destroy
+  #       run: |
+  #         cd delivery
+  #         terraform destroy -auto-approve

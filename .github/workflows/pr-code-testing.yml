@@ -77,12 +77,7 @@ jobs:
   delivery_tests:
     needs: detect_changes
     if: needs.detect_changes.outputs.delivery == 'true'
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run Delivery tests
-        run: ./delivery/run_tests.sh
+    uses: ./.github/workflows/pr-delivery-tests.yml
 
   dv_san_cert_tests:
     needs: detect_changes
