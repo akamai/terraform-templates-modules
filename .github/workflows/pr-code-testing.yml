@@ -1,0 +1,115 @@
+name: PR Tests
+
+on:
+  pull_request:
+    branches:
+      - testing_branch
+    paths:
+      - '**/*.tf'
+    
+jobs:
+  detect_changes:
+    runs-on: ubuntu-latest
+
+    outputs:
+      aap_asm: ${{ steps.filter.outputs.aap_asm }}
+      aap: ${{ steps.filter.outputs.aap }}
+      bmp: ${{ steps.filter.outputs.bmp }}
+      delivery: ${{ steps.filter.outputs.delivery }}
+      dv_san_cert: ${{ steps.filter.outputs.dv_san_cert }}
+      edns: ${{ steps.filter.outputs.edns }}
+      third_party_cert: ${{ steps.filter.outputs.third_party_cert }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Detect changed folders
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            aap_asm:
+              - 'aap-asm/**'
+            aap:
+              - 'aap/**'
+            bmp:
+              - 'bmp/**'
+            delivery:
+              - 'delivery/**'
+            dv_san_cert:
+              - 'dv-san-cert/**'
+            edns:
+              - 'edns/**'
+            third_party_cert:
+              - 'third-party-cert/**'
+
+  aap_asm_tests:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.aap_asm == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run AAP ASM tests
+        run: ./aap-asm/run_tests.sh
+
+  aap_tests:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.aap == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run AAP tests
+        run: ./aap/run_tests.sh
+
+  bmp_tests:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.bmp == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run BMP tests
+        run: ./bmp/run_tests.sh
+
+  delivery_tests:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.delivery == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Delivery tests
+        run: ./delivery/run_tests.sh
+
+  dv_san_cert_tests:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.dv_san_cert == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run DV SAN CERT tests
+        run: ./dv-san-cert/run_tests.sh
+
+  edns_tests:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.edns == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run EDNS tests
+        run: ./edns/run_tests.sh
+
+  third_party_cert_tests:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.third_party_cert == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Third Party Cert tests
+        run: ./third-party-cert/run_tests.sh
