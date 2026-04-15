@@ -36,8 +36,7 @@ generate-matrix:
             | $cfg.product_id[] as $p
             | $cfg.activate_to_staging[] as $st
             | $cfg.activate_to_production[] as $pr
-            | {
-                etls: $e,
+            | { etls: $e,
                 secure_by_default: $s,
                 product_id: $p,
                 activate_to_staging: $st,
