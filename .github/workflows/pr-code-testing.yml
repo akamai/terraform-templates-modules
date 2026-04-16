@@ -78,6 +78,7 @@ jobs:
     needs: detect_changes
     if: needs.detect_changes.outputs.delivery == 'true'
     uses: ./.github/workflows/pr-delivery-test.yml
+    secrets: inherit
 
   dv_san_cert_tests:
     needs: detect_changes
