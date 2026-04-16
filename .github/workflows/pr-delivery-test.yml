@@ -70,27 +70,9 @@ jobs:
       TF_PLUGIN_CACHE_DIR: /github/home/.terraform.d/plugin-cache
 
     steps:
+      - name: Setup Terraform
       - uses: actions/checkout@v4
-      - name: Configure Terraform plugin cache
-        run: |
-          mkdir -p "$TF_PLUGIN_CACHE_DIR"
-          printf 'plugin_cache_dir = "%s"\n' "$TF_PLUGIN_CACHE_DIR" > "$HOME/.terraformrc"
-
-      - name: Cache Terraform providers
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.TF_PLUGIN_CACHE_DIR }}
-          key: ${{ runner.os }}-terraform-providers-${{ hashFiles('delivery/**/*.tf') }}
-          restore-keys: |
-            ${{ runner.os }}-terraform-providers-
-
-      - name: Cache Terraform modules
-        uses: actions/cache@v4
-        with:
-          path: delivery/.terraform/modules
-          key: ${{ runner.os }}-terraform-modules-${{ hashFiles('delivery/**/*.tf') }}
-          restore-keys: |
-            ${{ runner.os }}-terraform-modules-
+      - uses: hashicorp/setup-terraform@v4
 
       - name: Generate random suffix
         id: rand
