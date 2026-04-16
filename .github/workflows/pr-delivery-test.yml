@@ -26,7 +26,7 @@ jobs:
           atp=("false")
           MATRIX="[]"
           COUNT=0
-          MAX=3
+          MAX=50
 
           MATRIX=$(jq -cn --argjson cfg "$(cat "$CONFIG_FILE")" --argjson max "$MAX" '
           [
@@ -136,7 +136,7 @@ jobs:
       - name: Update name
         run: |
           cd delivery
-          sed -i "s/of-id-1/a${{ steps.rand.outputs.host }}/g" terraform.tfvars
+          sed -i "s/of-id-1/${{ steps.rand.outputs.host }}/g" terraform.tfvars
 
       - name: Terraform fmt & validate
         run: |
@@ -163,15 +163,15 @@ jobs:
           #   exit 1
           # fi
 
-  #     - name: Terraform apply
-  #       run: |
-  #         cd delivery
-  #         terraform apply -auto-approve tfplan
+      - name: Terraform apply
+        run: |
+          cd delivery
+          terraform apply -auto-approve tfplan
 
-  #     - name: Wait
-  #       run: sleep 60
+      - name: Wait
+        run: sleep 60
 
-  #     - name: Terraform destroy
-  #       run: |
-  #         cd delivery
-  #         terraform destroy -auto-approve
+      - name: Terraform destroy
+        run: |
+          cd delivery
+          terraform destroy -auto-approve
