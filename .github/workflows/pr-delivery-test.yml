@@ -71,8 +71,11 @@ jobs:
       TF_CLI_CONFIG_FILE: /tmp/terraformrc
 
     steps:
-      - name: Setup Terraform
+      - name: Checkout
       - uses: actions/checkout@v4
+      
+       
+      - name: Setup Terrafrorm
       - uses: hashicorp/setup-terraform@v4
 
       - name: Generate random suffix
