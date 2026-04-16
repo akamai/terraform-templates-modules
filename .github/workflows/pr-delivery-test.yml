@@ -26,7 +26,7 @@ jobs:
           atp=("false")
           MATRIX="[]"
           COUNT=0
-          MAX=2
+          MAX=50
 
           MATRIX=$(jq -cn --argjson cfg "$(cat "$CONFIG_FILE")" --argjson max "$MAX" '
           [
@@ -165,20 +165,20 @@ jobs:
 
       - name: Terraform apply
         run: |
+          # cd delivery
+          # for key in AKAMAI_HOST AKAMAI_CLIENT_TOKEN AKAMAI_CLIENT_SECRET AKAMAI_ACCESS_TOKEN AKAMAI_ACCOUNT_KEY; do
+          #   if [ -n "${!key}" ]; then
+          #     echo "$key=SET"
+          #   else
+          #     echo "$key=MISSING"
+          #   fi
+          # done
+          terraform apply -auto-approve tfplan
+
+      - name: Wait
+        run: sleep 60
+
+      - name: Terraform destroy
+        run: |
           cd delivery
-          for key in AKAMAI_HOST AKAMAI_CLIENT_TOKEN AKAMAI_CLIENT_SECRET AKAMAI_ACCESS_TOKEN AKAMAI_ACCOUNT_KEY; do
-            if [ -n "${!key}" ]; then
-              echo "$key=SET"
-            else
-              echo "$key=MISSING"
-            fi
-          done
-      #     terraform apply -auto-approve tfplan
-
-      # - name: Wait
-      #   run: sleep 60
-
-      # - name: Terraform destroy
-      #   run: |
-      #     cd delivery
-      #     terraform destroy -auto-approve
+          terraform destroy -auto-approve
