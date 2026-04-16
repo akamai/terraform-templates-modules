@@ -26,7 +26,7 @@ jobs:
           atp=("false")
           MATRIX="[]"
           COUNT=0
-          # MAX=20
+          MAX=3
 
           MATRIX=$(jq -cn --argjson cfg "$(cat "$CONFIG_FILE")" '
           [
