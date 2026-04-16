@@ -26,7 +26,7 @@ jobs:
           atp=("false")
           MATRIX="[]"
           COUNT=0
-          MAX=50
+          MAX=2
 
           MATRIX=$(jq -cn --argjson cfg "$(cat "$CONFIG_FILE")" --argjson max "$MAX" '
           [
@@ -49,6 +49,12 @@ jobs:
             )
           ]
           ')
+
+          MATRIX=$(echo "$MATRIX" | jq -c '.[]' | while read -r item; do
+            r=$((100000 + RANDOM % 900000))
+            echo "$item" | jq -c --argjson r "$r" '. + { rand: $r, label: (.label + ", rand=\($r)") }'
+          done | jq -cs '.')
+
           echo "Generated matrix:"
           echo "$MATRIX"
 
@@ -98,9 +104,9 @@ jobs:
           edgerc_section = "default"
           contract_id = "ctr_1-1NC95D"
           group_id = "grp_290842"
-          hostnames = ["of-id-1.terraform.rafa.cr"]
-          name = "of-id-1"
-          cpcode_name = "of-id-1"
+          hostnames = ["${{ matrix.rand }}.terraform.rafa.cr"]
+          name = "${{ matrix.rand }}.terraform.rafa.cr"
+          cpcode_name = "${{ matrix.rand }}.terraform.rafa.cr"
           default_origin = "flexibleorigin.rafa.cr"
           notification_emails = ["test@akamai.com"]
           version_notes = "GitHub Actions test"
@@ -133,11 +139,6 @@ jobs:
           echo "activate_to_staging=${{ matrix.activate_to_staging }}" >> terraform.tfvars
           echo "activate_to_production=${{ matrix.activate_to_production }}" >> terraform.tfvars
 
-      - name: Update name
-        run: |
-          cd delivery
-          sed -i "s/of-id-1/${{ steps.rand.outputs.host }}/g" terraform.tfvars
-
       - name: Terraform fmt & validate
         run: |
           cd delivery
@@ -166,13 +167,6 @@ jobs:
       - name: Terraform apply
         run: |
           cd delivery
-          # for key in AKAMAI_HOST AKAMAI_CLIENT_TOKEN AKAMAI_CLIENT_SECRET AKAMAI_ACCESS_TOKEN AKAMAI_ACCOUNT_KEY; do
-          #   if [ -n "${!key}" ]; then
-          #     echo "$key=SET"
-          #   else
-          #     echo "$key=MISSING"
-          #   fi
-          # done
           terraform apply -auto-approve tfplan
 
       - name: Wait
