@@ -16,43 +16,42 @@ jobs:
       - id: set-matrix
         run: |
           CONFIG_FILE="test_config_files/delivery.json"
+          MAX=2
 
-          # Extract arrays using jq
-          etls=($(jq -r '.etls[]' $CONFIG_FILE))
-          secure=($(jq -r '.secure_by_default[]' $CONFIG_FILE))
-          product=($(jq -r '.product_id[]' $CONFIG_FILE))
-          ats=($(jq -r '.activate_to_staging[]' $CONFIG_FILE))
-          #atp=($(jq -r '.activate_to_production[]' $CONFIG_FILE))
-          atp=("false")
-          MATRIX="[]"
-          COUNT=0
-          MAX=50
+          MATRIX=$(jq -cn \
+            --argjson cfg "$(cat "$CONFIG_FILE")" \
+            --argjson max "$MAX" '
+            
+            ($cfg | keys_unsorted) as $keys
 
-          MATRIX=$(jq -cn --argjson cfg "$(cat "$CONFIG_FILE")" --argjson max "$MAX" '
-          [
-            limit($max;
-              $cfg.etls[] as $e
-              | $cfg.secure_by_default[] as $s
-              | $cfg.product_id[] as $p
-              | $cfg.activate_to_staging[] as $st
-              | $cfg.activate_to_production[] as $pr
-              | { 
+            def build(idx; current):
+              if idx == ($keys | length) then
+                current
+              else
+                $keys[idx] as $k
+                | $cfg[$k][] as $val
+                | build(idx + 1; current + { ($k): $val })
+              end;
+
+            [
+              limit($max; build(0; {}))
+              | . + {
                   label: (
-                    "etls=\($e), secure_by_default=\($s), product=\($p), staging=\($st), production=\($pr)"
-                  ),
-                  etls: $e,
-                  secure_by_default: $s,
-                  product_id: $p,
-                  activate_to_staging: $st,
-                  activate_to_production: $pr
+                    to_entries
+                    | map("\(.key)=\(.value)")
+                    | join(", ")
+                  )
                 }
-            )
-          ]
+            ]
           ')
 
           MATRIX=$(echo "$MATRIX" | jq -c '.[]' | while read -r item; do
-            r="a$(LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c 10)"
-            echo "$item" | jq -c --arg r "$r" '. + { name: $r, label: (.label + ", name=\($r)") }'
+          r="a$(LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c 10)"
+          echo "$item" | jq -c --arg r "$r" '
+            . + { 
+              name: $r, 
+              label: (.label + ", name=\($r)") 
+            }'
           done | jq -cs '.')
 
           echo "Generated matrix:"
