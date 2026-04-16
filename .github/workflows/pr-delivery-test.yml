@@ -42,7 +42,7 @@ jobs:
                   ),
                   etls: $e,
                   secure_by_default: $s,
-                  product_id: $p,
+                  product_id: ("prd_" + $p),
                   activate_to_staging: $st,
                   activate_to_production: $pr
                 }
