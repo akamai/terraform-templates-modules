@@ -100,7 +100,7 @@ jobs:
           name = "of-id-1"
           cpcode_name = "of-id-1"
           default_origin = "flexibleorigin.rafa.cr"
-          notification_emails = ["test@akamai.com"]
+          emails = ["test@akamai.com"]
           version_notes = "GitHub Actions test"
           certificate_id = 12345
           peer_reviewed_by = "test@na.com"
@@ -115,6 +115,7 @@ jobs:
           activation_notes = "GitHub Actions test"
           activation_to_staging_exists = false
           activation_to_production_exists = false
+          additional_origins=null
           EOF
 
           echo 'provider "akamai" {}' >> provider.tf
