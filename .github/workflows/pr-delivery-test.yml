@@ -67,15 +67,14 @@ jobs:
       AKAMAI_CLIENT_SECRET: ${{ secrets.GSS_TERRAFORM_TEST_SECRET }}
       AKAMAI_ACCESS_TOKEN: ${{ secrets.GSS_TERRAFORM_TEST_ACCESS }}
       AKAMAI_ACCOUNT_KEY: ${{ secrets.GSS_TERRAFORM_TEST_ACCOUNT }}
-      TF_PLUGIN_CACHE_DIR: /tmp/terraform-plugin-cache
-      TF_CLI_CONFIG_FILE: /tmp/terraformrc
+      TF_PLUGIN_CACHE_DIR: /github/home/.terraform.d/plugin-cache
 
     steps:
       - uses: actions/checkout@v4
       - name: Configure Terraform plugin cache
         run: |
           mkdir -p "$TF_PLUGIN_CACHE_DIR"
-          printf 'plugin_cache_dir = "%s"\n' "$TF_PLUGIN_CACHE_DIR" > "$TF_CLI_CONFIG_FILE"
+          printf 'plugin_cache_dir = "%s"\n' "$TF_PLUGIN_CACHE_DIR" > "$HOME/.terraformrc"
 
       - name: Cache Terraform providers
         uses: actions/cache@v4
