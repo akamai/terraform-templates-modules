@@ -87,6 +87,8 @@ jobs:
         id: rand
         run: |
           echo "diff=$(LC_ALL=C tr -dc 'A-Z0-9' </dev/urandom | head -c 10)" >> $GITHUB_OUTPUT
+          random="a$(LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c 10)"
+          echo "host=$random" >> $GITHUB_OUTPUT
 
       - name: Prepare Terraform
         run: |
@@ -134,7 +136,7 @@ jobs:
       - name: Update name
         run: |
           cd delivery
-          sed -i "s/of-id-1/a${{ steps.rand.outputs.diff }}/g" terraform.tfvars
+          sed -i "s/of-id-1/a${{ steps.rand.outputs.host }}/g" terraform.tfvars
 
       - name: Terraform fmt & validate
         run: |
@@ -146,7 +148,8 @@ jobs:
         run: |
           pwd
           cd delivery
-          terraform plan
+          set -x
+          terraform plan -out=tfplan -detailed-exitcode 
 
           #set -e
           #set -x
