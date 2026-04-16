@@ -35,7 +35,11 @@ jobs:
             | $cfg.product_id[] as $p
             | $cfg.activate_to_staging[] as $st
             | $cfg.activate_to_production[] as $pr
-            | { etls: $e,
+            | { 
+                label: (
+                  "etls=\($e), secure_by_default=\($s), product=\($p), staging=\($st), production=\($pr)"
+                ),
+                etls: $e,
                 secure_by_default: $s,
                 product_id: $p,
                 activate_to_staging: $st,
@@ -54,6 +58,7 @@ jobs:
           echo '${{ steps.set-matrix.outputs.matrix }}' | jq '.'
             
   delivery-tests:
+    name: (${{ matrix.label }})
     needs: generate-matrix
     runs-on: ubuntu-latest
 
@@ -75,7 +80,7 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v4
-        
+
       - name: Generate random suffix
         id: rand
         run: |
