@@ -143,11 +143,13 @@ jobs:
 
       - name: Terraform plan
         run: |
+          pwd
           cd delivery
+          terraform plan
 
-          set -e
-          set -x
-          terraform plan -out=tfplan -detailed-exitcode 
+          #set -e
+          #set -x
+          #terraform plan -out=tfplan -detailed-exitcode 
           # > tfplan.txt
           # EXIT=$?
           # set -e
