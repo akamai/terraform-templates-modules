@@ -22,19 +22,17 @@ jobs:
             --argjson cfg "$(cat "$CONFIG_FILE")" \
             --argjson max "$MAX" '
             
-            ($cfg | keys_unsorted) as $keys
-
-            def build(idx; current):
-              if idx == ($keys | length) then
+            def build(idx; current; keys):
+              if idx == (keys | length) then
                 current
               else
-                $keys[idx] as $k
+                keys[idx] as $k
                 | $cfg[$k][] as $val
-                | build(idx + 1; current + { ($k): $val })
+                | build(idx + 1; current + { ($k): $val }; keys)
               end;
 
             [
-              limit($max; build(0; {}))
+              limit($max; build(0; {}; $cfg | keys_unsorted))
               | . + {
                   label: (
                     to_entries
