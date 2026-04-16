@@ -166,19 +166,19 @@ jobs:
       - name: Terraform apply
         run: |
           cd delivery
-          for key in AKAMAI_HOST AKAMAI_CLIENT_TOKEN AKAMAI_CLIENT_SECRET AKAMAI_ACCESS_TOKEN AKAMAI_ACCOUNT_KEY; do
-            if [ -n "${!key}" ]; then
-              echo "$key=SET"
-            else
-              echo "$key=MISSING"
-            fi
-          done
-      #     terraform apply -auto-approve tfplan
+          # for key in AKAMAI_HOST AKAMAI_CLIENT_TOKEN AKAMAI_CLIENT_SECRET AKAMAI_ACCESS_TOKEN AKAMAI_ACCOUNT_KEY; do
+          #   if [ -n "${!key}" ]; then
+          #     echo "$key=SET"
+          #   else
+          #     echo "$key=MISSING"
+          #   fi
+          # done
+          terraform apply -auto-approve tfplan
 
-      # - name: Wait
-      #   run: sleep 60
+      - name: Wait
+        run: sleep 60
 
-      # - name: Terraform destroy
-      #   run: |
-      #     cd delivery
-      #     terraform destroy -auto-approve
+      - name: Terraform destroy
+        run: |
+          cd delivery
+          terraform destroy -auto-approve
