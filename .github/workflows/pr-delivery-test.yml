@@ -100,7 +100,7 @@ jobs:
           name = "of-id-1"
           cpcode_name = "of-id-1"
           default_origin = "flexibleorigin.rafa.cr"
-          emails = ["test@akamai.com"]
+          notification_emails = ["test@akamai.com"]
           version_notes = "GitHub Actions test"
           certificate_id = 12345
           peer_reviewed_by = "test@na.com"
