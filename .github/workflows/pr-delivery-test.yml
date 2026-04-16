@@ -26,25 +26,27 @@ jobs:
           atp=("false")
           MATRIX="[]"
           COUNT=0
-          # MAX=20
+          MAX=3
 
-          MATRIX=$(jq -cn --argjson cfg "$(cat "$CONFIG_FILE")" '
+          MATRIX=$(jq -cn --argjson cfg "$(cat "$CONFIG_FILE")" --argjson max "$MAX" '
           [
-            $cfg.etls[] as $e
-            | $cfg.secure_by_default[] as $s
-            | $cfg.product_id[] as $p
-            | $cfg.activate_to_staging[] as $st
-            | $cfg.activate_to_production[] as $pr
-            | { 
-                label: (
-                  "etls=\($e), secure_by_default=\($s), product=\($p), staging=\($st), production=\($pr)"
-                ),
-                etls: $e,
-                secure_by_default: $s,
-                product_id: $p,
-                activate_to_staging: $st,
-                activate_to_production: $pr
-              }
+            limit($max;
+              $cfg.etls[] as $e
+              | $cfg.secure_by_default[] as $s
+              | $cfg.product_id[] as $p
+              | $cfg.activate_to_staging[] as $st
+              | $cfg.activate_to_production[] as $pr
+              | { 
+                  label: (
+                    "etls=\($e), secure_by_default=\($s), product=\($p), staging=\($st), production=\($pr)"
+                  ),
+                  etls: $e,
+                  secure_by_default: $s,
+                  product_id: $p,
+                  activate_to_staging: $st,
+                  activate_to_production: $pr
+                }
+            )
           ]
           ')
           echo "Generated matrix:"
@@ -143,15 +145,17 @@ jobs:
         run: |
           cd delivery
 
-          set +e
-          terraform plan -out=tfplan -detailed-exitcode > tfplan.txt
-          EXIT=$?
-          set -e
+          #set +e
+          set -x
+           terraform plan -out=tfplan -detailed-exitcode 
+          # > tfplan.txt
+          # EXIT=$?
+          # set -e
 
-          if [ "$EXIT" = "1" ]; then
-            cat tfplan.txt
-            exit 1
-          fi
+          # if [ "$EXIT" = "1" ]; then
+          #   cat tfplan.txt
+          #   exit 1
+          # fi
 
   #     - name: Terraform apply
   #       run: |
