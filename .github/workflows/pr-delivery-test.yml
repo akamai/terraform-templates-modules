@@ -144,14 +144,15 @@ jobs:
           cd delivery
 
           set +e
-          terraform plan -out=tfplan -detailed-exitcode > tfplan.txt
-          EXIT=$?
-          set -e
+           terraform plan -out=tfplan -detailed-exitcode 
+          # > tfplan.txt
+          # EXIT=$?
+          # set -e
 
-          if [ "$EXIT" = "1" ]; then
-            cat tfplan.txt
-            exit 1
-          fi
+          # if [ "$EXIT" = "1" ]; then
+          #   cat tfplan.txt
+          #   exit 1
+          # fi
 
   #     - name: Terraform apply
   #       run: |
