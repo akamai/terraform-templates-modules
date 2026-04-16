@@ -165,7 +165,7 @@ jobs:
 
       - name: Terraform apply
         run: |
-          # cd delivery
+          cd delivery
           # for key in AKAMAI_HOST AKAMAI_CLIENT_TOKEN AKAMAI_CLIENT_SECRET AKAMAI_ACCESS_TOKEN AKAMAI_ACCOUNT_KEY; do
           #   if [ -n "${!key}" ]; then
           #     echo "$key=SET"
