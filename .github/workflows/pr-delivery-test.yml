@@ -26,7 +26,7 @@ jobs:
           atp=("false")
           MATRIX="[]"
           COUNT=0
-          MAX=2
+          MAX=50
 
           MATRIX=$(jq -cn --argjson cfg "$(cat "$CONFIG_FILE")" --argjson max "$MAX" '
           [
@@ -51,8 +51,8 @@ jobs:
           ')
 
           MATRIX=$(echo "$MATRIX" | jq -c '.[]' | while read -r item; do
-            r=$((100000 + RANDOM % 900000))
-            echo "$item" | jq -c --argjson r "$r" '. + { rand: $r, label: (.label + ", rand=\($r)") }'
+            r="a$(LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c 10)"
+            echo "$item" | jq -c --arg r "$r" '. + { name: $r, label: (.label + ", name=\($r)") }'
           done | jq -cs '.')
 
           echo "Generated matrix:"
@@ -89,13 +89,6 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v4
 
-      - name: Generate random suffix
-        id: rand
-        run: |
-          echo "diff=$(LC_ALL=C tr -dc 'A-Z0-9' </dev/urandom | head -c 10)" >> $GITHUB_OUTPUT
-          random="a$(LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c 10)"
-          echo "host=$random" >> $GITHUB_OUTPUT
-
       - name: Prepare Terraform
         run: |
           cd delivery
@@ -104,9 +97,9 @@ jobs:
           edgerc_section = "default"
           contract_id = "ctr_1-1NC95D"
           group_id = "grp_290842"
-          hostnames = ["${{ matrix.rand }}.terraform.rafa.cr"]
-          name = "${{ matrix.rand }}.terraform.rafa.cr"
-          cpcode_name = "${{ matrix.rand }}.terraform.rafa.cr"
+          hostnames = ["${{ matrix.name }}.terraform.rafa.cr"]
+          name = "${{ matrix.name }}.terraform.rafa.cr"
+          cpcode_name = "${{ matrix.name }}.terraform.rafa.cr"
           default_origin = "flexibleorigin.rafa.cr"
           notification_emails = ["test@akamai.com"]
           version_notes = "GitHub Actions test"
