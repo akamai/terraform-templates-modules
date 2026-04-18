@@ -1,3 +1,3 @@
 output "force_change" {
-  value = "25"
+  value = "26"
 }
