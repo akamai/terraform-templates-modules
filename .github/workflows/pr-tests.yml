@@ -96,30 +96,18 @@ jobs:
           TEMPLATE="test_config_files/${{ inputs.test_type }}.tfvars.template"
 
           export MATRIX_NAME="${{ matrix.name }}"
+          export ETLS="${{ matrix.etls }}"
+          export SECURE_BY_DEFAULT="${{ matrix.secure_by_default }}"
+          export PRODUCT_ID="${{ matrix.product_id }}"
+          export ACTIVATE_TO_STAGING="${{ matrix.activate_to_staging }}"
+          export ACTIVATE_TO_PRODUCTION="${{ matrix.activate_to_production }}"
 
-          envsubst < "$TEMPLATE" > "${{ inputs.test_type }}/terraform.tfvars"
-
-          echo "" >> "${{ inputs.test_type }}/terraform.tfvars"
+          cd "${{ inputs.test_type }}"
           
-
-          echo 'provider "akamai" {}' >> "${{ inputs.test_type }}/provider.tf
+          envsubst < "$TEMPLATE" > "terraform.tfvars"
+          echo "" >> "terraform.tfvars"
+          echo 'provider "akamai" {}' >> "provider.tf"
           terraform init
-
-      - name: Apply test case variables
-        run: |
-          cd delivery
-
-          echo "etls=${{ matrix.etls }}" >> terraform.tfvars
-          echo "secure_by_default=${{ matrix.secure_by_default }}" >> terraform.tfvars
-          echo "product_id=\"${{ matrix.product_id }}\"" >> terraform.tfvars
-          echo "activate_to_staging=${{ matrix.activate_to_staging }}" >> terraform.tfvars
-          echo "activate_to_production=${{ matrix.activate_to_production }}" >> terraform.tfvars
-
-      - name: Terraform fmt & validate
-        run: |
-          cd delivery
-          terraform fmt
-          terraform validate
 
       - name: Terraform plan
         run: |
