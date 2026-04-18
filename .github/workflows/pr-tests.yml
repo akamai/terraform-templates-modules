@@ -111,7 +111,6 @@ jobs:
 
       - name: Terraform plan
         run: |
-          pwd
           cd "${{ inputs.test_type }}"
           set -x
           terraform plan -out=tfplan -detailed-exitcode 
