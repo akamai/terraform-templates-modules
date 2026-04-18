@@ -44,68 +44,60 @@ jobs:
             third_party_cert:
               - 'third-party-cert/**'
 
-  aap_asm_tests:
+  aap_asm:
     needs: detect_changes
     if: needs.detect_changes.outputs.aap_asm == 'true'
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run AAP ASM tests
-        run: ./aap-asm/run_tests.sh
-
-  aap_tests:
-    needs: detect_changes
-    if: needs.detect_changes.outputs.aap == 'true'
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run AAP tests
-        run: ./aap/run_tests.sh
-
-  bmp_tests:
-    needs: detect_changes
-    if: needs.detect_changes.outputs.bmp == 'true'
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run BMP tests
-        run: ./bmp/run_tests.sh
-
-  delivery_tests:
-    needs: detect_changes
-    if: needs.detect_changes.outputs.delivery == 'true'
-    uses: ./.github/workflows/pr-delivery-test.yml
+    uses: ./.github/workflows/pr-tests.yml
+    with:
+        test_type: aap_asm
     secrets: inherit
 
-  dv_san_cert_tests:
+
+    
+  aap:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.aap == 'true'
+    uses: ./.github/workflows/pr-tests.yml
+    with:
+        test_type: aap
+    secrets: inherit
+
+  bmp:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.bmp == 'true'
+    uses: ./.github/workflows/pr-tests.yml
+    with:
+        test_type: bmp
+    secrets: inherit
+
+  delivery:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.delivery == 'true'
+    uses: ./.github/workflows/pr-tests.yml
+    with:
+        test_type: delivery
+    secrets: inherit
+
+  dv_san_cert:
     needs: detect_changes
     if: needs.detect_changes.outputs.dv_san_cert == 'true'
-    runs-on: ubuntu-latest
+    uses: ./.github/workflows/pr-tests.yml
+    with:
+        test_type: dv_san_cert
+    secrets: inherit
 
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run DV SAN CERT tests
-        run: ./dv-san-cert/run_tests.sh
-
-  edns_tests:
+  edns:
     needs: detect_changes
     if: needs.detect_changes.outputs.edns == 'true'
-    runs-on: ubuntu-latest
+    uses: ./.github/workflows/pr-tests.yml
+    with:
+        test_type: edns
+    secrets: inherit
 
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run EDNS tests
-        run: ./edns/run_tests.sh
-
-  third_party_cert_tests:
+  third_party_cert:
     needs: detect_changes
     if: needs.detect_changes.outputs.third_party_cert == 'true'
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run Third Party Cert tests
-        run: ./third-party-cert/run_tests.sh
+    uses: ./.github/workflows/pr-tests.yml
+    with:
+        test_type: third_party_cert
+    secrets: inherit
