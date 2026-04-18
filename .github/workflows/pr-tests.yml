@@ -67,7 +67,7 @@ jobs:
           echo '${{ steps.set-matrix.outputs.matrix }}' | jq '.'
             
   delivery-tests:
-    name: ${{ inputs.test_type }}- tests (${{ matrix.label }})
+    name: ${{ matrix.label }}
     needs: generate-matrix
     runs-on: ubuntu-latest
 
