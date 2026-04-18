@@ -19,7 +19,7 @@ jobs:
 
       - id: set-matrix
         run: |
-          CONFIG_FILE="${{ inputs.test_type }}.json"
+          CONFIG_FILE="test_config_files/${{ inputs.test_type }}.json"
           MAX=50
 
           MATRIX=$(jq -cn \
