@@ -112,7 +112,7 @@ jobs:
       - name: Terraform plan
         run: |
           pwd
-          cd delivery
+          cd "${{ inputs.test_type }}"
           set -x
           terraform plan -out=tfplan -detailed-exitcode 
 
@@ -130,7 +130,7 @@ jobs:
 
       - name: Terraform apply
         run: |
-          cd delivery
+          cd "${{ inputs.test_type }}"
           terraform apply -auto-approve tfplan
 
       - name: Wait
@@ -138,5 +138,5 @@ jobs:
 
       - name: Terraform destroy
         run: |
-          cd delivery
+          cd "${{ inputs.test_type }}"
           terraform destroy -auto-approve
