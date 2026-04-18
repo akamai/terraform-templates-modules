@@ -104,7 +104,7 @@ jobs:
 
           cd "${{ inputs.test_type }}"
           
-          envsubst < "$TEMPLATE" > "terraform.tfvars"
+          envsubst < "../$TEMPLATE" > "terraform.tfvars"
           echo "" >> "terraform.tfvars"
           echo 'provider "akamai" {}' >> "provider.tf"
           terraform init
