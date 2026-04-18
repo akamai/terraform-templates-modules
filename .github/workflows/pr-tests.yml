@@ -2,6 +2,10 @@ name: Delivery Tests
 
 on:
   workflow_call:
+    inputs:
+      test_type:
+        required: true
+        type: string
 
 
 jobs:
@@ -15,7 +19,7 @@ jobs:
 
       - id: set-matrix
         run: |
-          CONFIG_FILE="test_config_files/delivery.json"
+          CONFIG_FILE="${{ inputs.test_type }}.json"
           MAX=50
 
           MATRIX=$(jq -cn \
@@ -63,7 +67,7 @@ jobs:
           echo '${{ steps.set-matrix.outputs.matrix }}' | jq '.'
             
   delivery-tests:
-    name: (${{ matrix.label }})
+    name: ${{ inputs.test_type }}- tests (${{ matrix.label }})
     needs: generate-matrix
     runs-on: ubuntu-latest
 
@@ -86,37 +90,19 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v4
 
-      - name: Prepare Terraform
+      - name: Prepare Terraform files
         run: |
-          cd delivery
 
-          cat << EOF > terraform.tfvars
-          edgerc_section = "default"
-          contract_id = "ctr_1-5C13O2"
-          group_id = "grp_315874"
-          hostnames = ["${{ matrix.name }}.terra.rafa.cr"]
-          name = "${{ matrix.name }}.terra.rafa.cr"
-          cpcode_name = "${{ matrix.name }}.terra.rafa.cr"
-          default_origin = "flexibleorigin.rafa.cr"
-          notification_emails = ["test@akamai.com"]
-          version_notes = "GitHub Actions test"
-          certificate_id = 30192
-          peer_reviewed_by = "test@na.com"
-          customer_email = "test@akamai.com"
-          unit_tested = true
-          ticket_id = "some-ticket-id"
-          noncompliance_reason = ["NONE"]
-          other_noncompliance_reason = "test"
-          td_region = "CH2"
-          ip_behavior = "IPV6_PERFORMANCE"
-          sure_route_test_object = "/terraform/srto.html"
-          activation_notes = "GitHub Actions test"
-          activation_to_staging_exists = false
-          activation_to_production_exists = false
-          additional_origins=null
-          EOF
+          TEMPLATE="test_config_files/${{ inputs.test_type }}.tfvars.template"
 
-          echo 'provider "akamai" {}' >> provider.tf
+          export MATRIX_NAME="${{ matrix.name }}"
+
+          envsubst < "$TEMPLATE" > "${{ inputs.test_type }}/terraform.tfvars"
+
+          echo "" >> "${{ inputs.test_type }}/terraform.tfvars"
+          
+
+          echo 'provider "akamai" {}' >> "${{ inputs.test_type }}/provider.tf
           terraform init
 
       - name: Apply test case variables
