@@ -16,7 +16,7 @@ jobs:
       - id: set-matrix
         run: |
           CONFIG_FILE="test_config_files/delivery.json"
-          MAX=2
+          MAX=50
 
           MATRIX=$(jq -cn \
             --argjson cfg "$(cat "$CONFIG_FILE")" \
