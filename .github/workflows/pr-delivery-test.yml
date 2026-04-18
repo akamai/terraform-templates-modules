@@ -72,11 +72,11 @@ jobs:
       matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
 
     env:
-      AKAMAI_HOST: ${{ secrets.GSS_TERRAFORM_TEST_HOST }}
-      AKAMAI_CLIENT_TOKEN: ${{ secrets.GSS_TERRAFORM_TEST_CLIENT }}
-      AKAMAI_CLIENT_SECRET: ${{ secrets.GSS_TERRAFORM_TEST_SECRET }}
-      AKAMAI_ACCESS_TOKEN: ${{ secrets.GSS_TERRAFORM_TEST_ACCESS }}
-      AKAMAI_ACCOUNT_KEY: ${{ secrets.GSS_TERRAFORM_TEST_ACCOUNT }}
+      AKAMAI_HOST: ${{ secrets.HOST }}
+      AKAMAI_CLIENT_TOKEN: ${{ secrets.CLIENT_TOKEN }}
+      AKAMAI_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+      AKAMAI_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      AKAMAI_ACCOUNT_KEY: "1-5BYUG1:1-8BYUX"
 
 
     steps:
@@ -92,15 +92,15 @@ jobs:
 
           cat << EOF > terraform.tfvars
           edgerc_section = "default"
-          contract_id = "ctr_1-1NC95D"
-          group_id = "grp_290842"
-          hostnames = ["${{ matrix.name }}.terraform.rafa.cr"]
-          name = "${{ matrix.name }}.terraform.rafa.cr"
-          cpcode_name = "${{ matrix.name }}.terraform.rafa.cr"
+          contract_id = "ctr_1-5C13O2"
+          group_id = "grp_315874"
+          hostnames = ["${{ matrix.name }}.terra.rafa.cr"]
+          name = "${{ matrix.name }}.terra.rafa.cr"
+          cpcode_name = "${{ matrix.name }}.terra.rafa.cr"
           default_origin = "flexibleorigin.rafa.cr"
           notification_emails = ["test@akamai.com"]
           version_notes = "GitHub Actions test"
-          certificate_id = 299003
+          certificate_id = 30192
           peer_reviewed_by = "test@na.com"
           customer_email = "test@akamai.com"
           unit_tested = true
