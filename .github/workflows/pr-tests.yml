@@ -92,7 +92,7 @@ jobs:
 
       - name: Prepare Terraform files
         run: |
-
+          pwd
           TEMPLATE="test_config_files/${{ inputs.test_type }}.tfvars.template"
 
           export MATRIX_NAME="${{ matrix.name }}"
