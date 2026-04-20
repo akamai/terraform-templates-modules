@@ -136,7 +136,7 @@ jobs:
             echo "**Module:**  ${{ inputs.test_type }} " >> $GITHUB_STEP_SUMMARY
             echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
             echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
-
+ 
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
@@ -206,4 +206,3 @@ jobs:
 
             exit 1
           fi
-          #terraform destroy -auto-approve
