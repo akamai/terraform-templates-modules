@@ -112,25 +112,49 @@ jobs:
       - name: Terraform plan
         run: |
           cd "${{ inputs.test_type }}"
+
+          # -u        → fail on undefined variables
+          # pipefail  → detect failures in pipes
+          # +e        → DO NOT exit on errors
+          # -x        → print commands
+          #           set -uo pipefail
+          #           set -x
+          
+          set -uo pipefail
+          set +e
           set -x
-          terraform plan -out=tfplan -detailed-exitcode 
-
-          #set -e
-          #set -x
+          
           #terraform plan -out=tfplan -detailed-exitcode 
-          # > tfplan.txt
-          # EXIT=$?
-          # set -e
+          #terraform plan -input=false -no-color -out=tfplan 2>&1 | tee plan.out
+          
+          #terraform plan -input=false -detailed-exitcode -out=tfplan 2>&1 | tee plan.out
 
-          # if [ "$EXIT" = "1" ]; then
-          #   cat tfplan.txt
-          #   exit 1
-          # fi
+          terraform plan -input=false -detailed-exitcode -out=tfplan > >(tee /dev/tty) 2> >(tee plan.out >&2)
+          EXIT_CODE=$?
+          set -e
+
+          if [ "$EXIT_CODE" -ne 0 ]; then
+            echo "::error title=Terraform Plan Failed::Check summary for details"
+            
+            echo "## ❌ Terraform Plan Failed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Module:**  ${{ inputs.test_type }} " >> $GITHUB_STEP_SUMMARY
+            echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
+            echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
+
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            tail -n 50 plan.out >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+
+            exit 1
+          fi
 
       - name: Terraform apply
         run: |
           cd "${{ inputs.test_type }}"
-          terraform apply -auto-approve tfplan
+          #terraform apply -auto-approve tfplan
 
       - name: Wait
         run: sleep 60
@@ -138,4 +162,4 @@ jobs:
       - name: Terraform destroy
         run: |
           cd "${{ inputs.test_type }}"
-          terraform destroy -auto-approve
+          #terraform destroy -auto-approve

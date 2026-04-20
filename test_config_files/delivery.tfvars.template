@@ -20,7 +20,6 @@ sure_route_test_object = "/terraform/srto.html"
 activation_notes = "GitHub Actions test"
 activation_to_staging_exists = false
 activation_to_production_exists = false
-additional_origins=null
 etls=${ETLS}
 secure_by_default=${SECURE_BY_DEFAULT}
 product_id="${PRODUCT_ID}"
