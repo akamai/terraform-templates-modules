@@ -12,13 +12,13 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      aap_asm: ${{ steps.filter.outputs.aap_asm }}
+      aap-asm: ${{ steps.filter.outputs.aap-asm }}
       aap: ${{ steps.filter.outputs.aap }}
       bmp: ${{ steps.filter.outputs.bmp }}
       delivery: ${{ steps.filter.outputs.delivery }}
-      dv_san_cert: ${{ steps.filter.outputs.dv_san_cert }}
+      dv-san-cert: ${{ steps.filter.outputs.dv-san-cert }}
       edns: ${{ steps.filter.outputs.edns }}
-      third_party_cert: ${{ steps.filter.outputs.third_party_cert }}
+      third-party-cert: ${{ steps.filter.outputs.third-party-cert }}
 
     steps:
       - name: Checkout repository
@@ -29,7 +29,7 @@ jobs:
         id: filter
         with:
           filters: |
-            aap_asm:
+            aap-asm:
               - 'aap-asm/**'
             aap:
               - 'aap/**'
@@ -37,19 +37,20 @@ jobs:
               - 'bmp/**'
             delivery:
               - 'delivery/**'
-            dv_san_cert:
+            dv-san-cert:
               - 'dv-san-cert/**'
             edns:
               - 'edns/**'
-            third_party_cert:
+            third-party-cert:
               - 'third-party-cert/**'
 
-  aap_asm:
+  aap-asm:
     needs: detect_changes
-    if: needs.detect_changes.outputs.aap_asm == 'true'
+    if: needs.detect_changes.outputs.aap-asm == 'true'
     uses: ./.github/workflows/pr-tests.yml
     with:
-        test_type: aap_asm
+        module_source: aap-asm
+        module_mode: full
     secrets: inherit
 
 
@@ -59,7 +60,8 @@ jobs:
     if: needs.detect_changes.outputs.aap == 'true'
     uses: ./.github/workflows/pr-tests.yml
     with:
-        test_type: aap
+        module_source: aap
+        module_mode: full
     secrets: inherit
 
   bmp:
@@ -67,7 +69,8 @@ jobs:
     if: needs.detect_changes.outputs.bmp == 'true'
     uses: ./.github/workflows/pr-tests.yml
     with:
-        test_type: bmp
+        module_source: bmp
+        module_mode: full
     secrets: inherit
 
   delivery:
@@ -75,15 +78,15 @@ jobs:
     if: needs.detect_changes.outputs.delivery == 'true'
     uses: ./.github/workflows/pr-tests.yml
     with:
-        test_type: delivery
+        module_source: delivery
     secrets: inherit
 
-  dv_san_cert:
+  dv-san-cert:
     needs: detect_changes
-    if: needs.detect_changes.outputs.dv_san_cert == 'true'
+    if: needs.detect_changes.outputs.dv-san-cert == 'true'
     uses: ./.github/workflows/pr-tests.yml
     with:
-        test_type: dv_san_cert
+        module_source: dv-san-cert
     secrets: inherit
 
   edns:
@@ -91,13 +94,13 @@ jobs:
     if: needs.detect_changes.outputs.edns == 'true'
     uses: ./.github/workflows/pr-tests.yml
     with:
-        test_type: edns
+        module_source: edns
     secrets: inherit
 
-  third_party_cert:
+  third-party-cert:
     needs: detect_changes
-    if: needs.detect_changes.outputs.third_party_cert == 'true'
+    if: needs.detect_changes.outputs.third-party-cert == 'true'
     uses: ./.github/workflows/pr-tests.yml
     with:
-        test_type: third_party_cert
+        module_source: third-party-cert
     secrets: inherit
