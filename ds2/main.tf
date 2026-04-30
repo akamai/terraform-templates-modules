@@ -4,16 +4,24 @@
  * This module provisions a DataStream 2 (DS2) configuration using the decoupled 
  * workflow introduced in Milestone-1. It allows log collection without requiring 
  * any DataStream behavior in the Property Manager.
+ *
+ * ## CP Code Modes
+ *
+ * **Create mode** (default): Omit `cpcode_id`. The module creates a new CP Code
+ * named after `cpcode_name` (or `name` if not set) under the given `product_id`.
+ *
+ * **Bring-your-own mode**: Set `cpcode_id` to an existing CP Code ID. The module
+ * skips CP Code creation entirely. `cpcode_name` and `product_id` are ignored.
  */
 
 locals {
-  final_dataset_fields = distinct(concat(
-    var.dataset_fields_ids,
-    var.enable_midgress ? [2051] : []
-  ))
+  # When cpcode_id is provided, use it directly.
+  # When creating a new CP Code, strip the optional "cpc_" prefix the API may return.
+  effective_cpcode_id = var.cpcode_id != null ? var.cpcode_id : tonumber(trimprefix(akamai_cp_code.this[0].id, "cpc_"))
 }
 
 resource "akamai_cp_code" "this" {
+  count       = var.cpcode_id == null ? 1 : 0
   name        = replace(coalesce(var.cpcode_name, var.name), "/[^a-zA-Z0-9-.]/", "-")
   contract_id = var.contract_id
   group_id    = var.group_id
@@ -26,8 +34,9 @@ resource "akamai_datastream" "this" {
   group_id    = var.group_id
   active      = var.activate_stream
 
-  properties     = var.property_ids
-  dataset_fields = local.final_dataset_fields
+  properties       = var.property_ids
+  dataset_fields   = var.dataset_fields_ids
+  collect_midgress = var.enable_midgress
 
   delivery_configuration {
     format = var.log_format
@@ -80,5 +89,15 @@ resource "akamai_datastream" "this" {
     }
   }
 
-  depends_on = [akamai_cp_code.this]
+  lifecycle {
+    precondition {
+      condition = (
+        var.s3_connector != null ||
+        var.datadog_connector != null ||
+        var.splunk_connector != null ||
+        var.azure_connector != null
+      )
+      error_message = "At least one connector must be specified: s3_connector, datadog_connector, splunk_connector, or azure_connector."
+    }
+  }
 }
