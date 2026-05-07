@@ -96,7 +96,7 @@ jobs:
 
       - name: Prepare Terraform tfvars
         run: |
-          TFVARS_TEMPLATE="${{ inputs.module_source }}/tests/tfvars.template"
+          TFVARS_TEMPLATE="${{ inputs.module_source }}/tests/tfvars.tpl"
 
           # Dynamically export all matrix variables as uppercase env vars
           while IFS= read -r line; do
