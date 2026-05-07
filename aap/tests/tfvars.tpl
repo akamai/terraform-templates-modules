@@ -71,7 +71,7 @@ penalty_box_action  = "alert"
 # Check whether the account is entitled to BVM (Bot Visibility
 # and Management) or BMS (Bot Management Standard) and set 
 # botman_type to "bvm" or "bms"
-botman_type = ${BOTMAN_TYPE}
+botman_type = "${BOTMAN_TYPE}"
 add_akamai_bot_header     = ${ADD_AKAMAI_BOT_HEADER}
 enable_active_detections  = ${ENABLE_ACTIVE_DETECTIONS}
 enable_browser_validation = ${ENABLE_BROWSER_VALIDATION}
