@@ -119,10 +119,10 @@ jobs:
           cd "${{ inputs.module_source }}"
           
           if [ "${{ inputs.module_mode }}" == "full" ]; then
-            cp "${{ inputs.module_source }}/tests/main.tpl" "main.tf"
-            cp "${{ inputs.module_source }}/tests/variables.tpl" "variables.tf"
-            cp "${{ inputs.module_source }}/tests/outputs.tpl" "outputs.tf"
-            cp "${{ inputs.module_source }}/tests/versions.tpl" "versions.tf"
+            cp "${{ inputs.module_source }}/tests/main.tf.tpl" "main.tf"
+            cp "${{ inputs.module_source }}/tests/variables.tf.tpl" "variables.tf"
+            cp "${{ inputs.module_source }}/tests/outputs.tf.tpl" "outputs.tf"
+            cp "${{ inputs.module_source }}/tests/versions.tf.tpl" "versions.tf"
           fi
 
           echo 'provider "akamai" {}' >> "provider.tf"
@@ -213,7 +213,7 @@ jobs:
           set -e
 
           if [ "$EXIT_CODE" -ne 0 ]; then
-            echo "::error title=Terraform Plan Failed::Check summary for details"
+            echo "::error title=Terraform Destroy Failed::Check summary for details"
             
             echo "## ❌ Terraform Apply Failed" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
