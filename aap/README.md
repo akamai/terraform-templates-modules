@@ -1,8 +1,35 @@
-# Modules to create an AAP configuration
+<!-- BEGIN_TF_DOCS -->
 
-The Terraform Modules contained in this repository help you manage different resources that is required to create an AAP Configuration:
-* Activate-Security : Used to manage resources required to activate secuirty configuration on staging and production
-* Bot-manager : Used to manage BVM and BMS resources
-* Client-lists : Used to manage resources required to create client lists
-* Security : Used to manage resources related to the following protection - IP/GEO firewall, DoS Protection and WAF 
 
+
+# Usage
+Basic usage of this module is as follows:
+
+```hcl
+module "example" {
+  	 source  = "<module-location>"
+}
+ ```
+
+## Requirements
+
+No requirements.
+
+## Resources
+
+No resources.
+
+## Modules
+
+No modules.
+
+## Inputs
+
+No inputs.
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_force_change_aap"></a> [force\_change\_aap](#output\_force\_change\_aap) | n/a |
+<!-- END_TF_DOCS -->
