@@ -150,6 +150,7 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_config_id"></a> [config\_id](#output\_config\_id) | Security Configuration ID |
+| <a name="output_force_change_aap"></a> [force\_change\_aap](#output\_force\_change\_aap) | n/a |
 | <a name="output_rate"></a> [rate](#output\_rate) | Rate Policy IDs |
 | <a name="output_security_policy_id"></a> [security\_policy\_id](#output\_security\_policy\_id) | Security Policy ID |
 <!-- END_TF_DOCS -->
