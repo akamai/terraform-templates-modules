@@ -5,9 +5,8 @@ edgerc_path    = "~/.edgerc"
 edgerc_section = "default"
 environment    = "dev"
 group_name     = "My Group"
-config_name    = "dev-example-appsec"
+group_id = "grp_315874"
 description    = "Application security configuration"
-hostnames      = ["dev.example.com"]
 
 # -------------------------------------------------
 # Advanced settings
@@ -17,12 +16,12 @@ inspection_size = 32
 # -------------------------------------------------
 # Protections
 # -------------------------------------------------
-enable_waf       = true
-enable_ip_geo    = true
-enable_malware   = false
-enable_rate      = true
-enable_slow_post = true
-enable_botman    = true
+enable_waf       = ${ENABLE_WAF}
+enable_ip_geo    = ${ENABLE_IP_GEO}
+enable_malware   = ${ENABLE_MALWARE}
+enable_rate      = ${ENABLE_RATE}
+enable_slow_post = ${ENABLE_SLOW_POST}
+enable_botman    = ${ENABLE_BOTMAN}
 
 # -------------------------------------------------
 # Client Lists
@@ -72,12 +71,14 @@ penalty_box_action  = "alert"
 # Check whether the account is entitled to BVM (Bot Visibility
 # and Management) or BMS (Bot Management Standard) and set 
 # botman_type to "bvm" or "bms"
-botman_type = "bvm"
-add_akamai_bot_header     = false
-enable_active_detections  = true
-enable_browser_validation = false
-remove_botman_cookies     = true
-third_party_proxy         = false
+botman_type = ${BOTMAN_TYPE}
+add_akamai_bot_header     = ${ADD_AKAMAI_BOT_HEADER}
+enable_active_detections  = ${ENABLE_ACTIVE_DETECTIONS}
+enable_browser_validation = ${ENABLE_BROWSER_VALIDATION}
+remove_botman_cookies     = ${REMOVE_BOTMAN_COOKIES}
+third_party_proxy         = ${THIRD_PARTY_PROXY}
+
+
 
 # Bot Category Actions
 bot_site_monitoring_and_web_development = "monitor"

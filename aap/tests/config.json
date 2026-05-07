@@ -1,7 +1,16 @@
 {
-  "etls": ["true", "false"],
-  "secure_by_default": ["true", "false"],
-  "product_id": ["Site_Accel", "SPM", "Fresca"],
-  "activate_to_staging": ["true", "false"],
-  "activate_to_production": ["false"]
+"botman_type" : [ "bvm" , "bms" ],
+"add_akamai_bot_header" : [" true", "false" ],
+"enable_active_detections" : [" true", "false" ],
+"enable_browser_validation" : [" true", "false" ],
+"remove_botman_cookies" : [" true", "false" ],
+"third_party_proxy" : [" true", "false" ],
+"enable_waf" : [" true", "false" ],
+"enable_ip_geo" : [" true", "false" ],
+"enable_malware" : [" true", "false" ],
+"enable_rate" : [" true", "false" ],
+"enable_slow_post" : [" true", "false" ],
+"enable_botman" : [" true", "false" ]
 }
+
+

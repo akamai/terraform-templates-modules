@@ -98,12 +98,16 @@ jobs:
         run: |
           TFVARS_TEMPLATE="${{ inputs.module_source }}/tests/tfvars.template"
 
-          export MATRIX_NAME="${{ matrix.name }}"
-          export ETLS="${{ matrix.etls }}"
-          export SECURE_BY_DEFAULT="${{ matrix.secure_by_default }}"
-          export PRODUCT_ID="${{ matrix.product_id }}"
-          export ACTIVATE_TO_STAGING="${{ matrix.activate_to_staging }}"
-          export ACTIVATE_TO_PRODUCTION="${{ matrix.activate_to_production }}"
+          # Dynamically export all matrix variables as uppercase env vars
+          while IFS= read -r line; do
+            export "$line"
+          done < <(echo '${{ toJson(matrix) }}' | jq -r '
+            to_entries[] |
+            if .key == "name" then "MATRIX_NAME=\(.value)"
+            elif .key == "label" then empty
+            else "\(.key | ascii_upcase)=\(.value)"
+            end
+          ')
 
           cd "${{ inputs.module_source }}"
           

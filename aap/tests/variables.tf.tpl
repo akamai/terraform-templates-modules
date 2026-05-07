@@ -58,8 +58,9 @@ variable "group_name" {
   type        = string
 }
 
-variable "config_name" {
-  description = "Security configuration name"
+
+variable "group_id" {
+  description = "Akamai Group ID"
   type        = string
 }
 
@@ -74,17 +75,6 @@ variable "version_notes" {
   default     = "Initial Config"
 }
 
-variable "hostnames" {
-  description = "Hostnames to protect by the security config"
-  type        = list(string)
-
-  validation {
-    condition = alltrue([
-      for h in var.hostnames : h == lower(h)
-    ])
-    error_message = "All hostnames must be lowercase."
-  }
-}
 
 variable "emails" {
   description = "List of emails for notifications"
