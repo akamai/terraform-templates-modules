@@ -3,12 +3,15 @@ name: Delivery Tests
 on:
   workflow_call:
     inputs:
-      test_type:
+      module_source:
         required: true
         type: string
-
-
+      module_mode:
+        required: false
+        type: string
+        default: "none" 
 jobs:
+  
   generate-matrix:
     runs-on: ubuntu-latest
     outputs:
@@ -17,9 +20,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - id: set-matrix
+      - name: Generate test permutations matrix
+        id: set-matrix
         run: |
-          CONFIG_FILE="test_config_files/${{ inputs.test_type }}.json"
+          CONFIG_FILE="${{ inputs.module_source }}/tests/config.json"
           MAX=50
 
           MATRIX=$(jq -cn \
@@ -90,28 +94,47 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v4
 
-      - name: Prepare Terraform files
+      - name: Prepare Terraform tfvars
         run: |
-          pwd
-          TEMPLATE="test_config_files/${{ inputs.test_type }}.tfvars.template"
+          TFVARS_TEMPLATE="${{ inputs.module_source }}/tests/tfvars.template"
 
-          export MATRIX_NAME="${{ matrix.name }}"
-          export ETLS="${{ matrix.etls }}"
-          export SECURE_BY_DEFAULT="${{ matrix.secure_by_default }}"
-          export PRODUCT_ID="${{ matrix.product_id }}"
-          export ACTIVATE_TO_STAGING="${{ matrix.activate_to_staging }}"
-          export ACTIVATE_TO_PRODUCTION="${{ matrix.activate_to_production }}"
+          # Dynamically export all matrix variables as uppercase env vars
+          while IFS= read -r line; do
+            export "$line"
+          done < <(echo '${{ toJson(matrix) }}' | jq -r '
+            to_entries[] |
+            if .key == "name" then "MATRIX_NAME=\(.value)"
+            elif .key == "label" then empty
+            else "\(.key | ascii_upcase)=\(.value)"
+            end
+          ')
 
-          cd "${{ inputs.test_type }}"
+          cd "${{ inputs.module_source }}"
           
-          envsubst < "../$TEMPLATE" > "terraform.tfvars"
+          envsubst < "../$TFVARS_TEMPLATE" > "terraform.tfvars"
           echo "" >> "terraform.tfvars"
+          
+      - name: Prepare Terraform tf files
+        run: |
+          cd "${{ inputs.module_source }}"
+          
+          if [ "${{ inputs.module_mode }}" == "full" ]; then
+            cp "${{ inputs.module_source }}/tests/main.tf.tpl" "main.tf"
+            cp "${{ inputs.module_source }}/tests/variables.tf.tpl" "variables.tf"
+            cp "${{ inputs.module_source }}/tests/outputs.tf.tpl" "outputs.tf"
+            cp "${{ inputs.module_source }}/tests/versions.tf.tpl" "versions.tf"
+          fi
+
           echo 'provider "akamai" {}' >> "provider.tf"
+    
+      - name: Terraform init
+        run: |
+          cd "${{ inputs.module_source }}"
           terraform init
 
       - name: Terraform plan
         run: |
-          cd "${{ inputs.test_type }}"
+          cd "${{ inputs.module_source }}"
 
           # -u        → fail on undefined variables
           # pipefail  → detect failures in pipes
@@ -133,7 +156,7 @@ jobs:
             
             echo "## ❌ Terraform Plan Failed" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Module:**  ${{ inputs.test_type }} " >> $GITHUB_STEP_SUMMARY
+            echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
             echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
             echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
  
@@ -148,7 +171,7 @@ jobs:
 
       - name: Terraform apply
         run: |
-          cd "${{ inputs.test_type }}"
+          cd "${{ inputs.module_source }}"
           
           set -uo pipefail
           set +e
@@ -163,7 +186,7 @@ jobs:
             
             echo "## ❌ Terraform Apply Failed" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Module:**  ${{ inputs.test_type }} " >> $GITHUB_STEP_SUMMARY
+            echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
             echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
             echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
 
@@ -181,7 +204,7 @@ jobs:
 
       - name: Terraform destroy
         run: |
-          cd "${{ inputs.test_type }}"
+          cd "${{ inputs.module_source }}"
           set -uo pipefail
           set +e
           set -x
@@ -190,11 +213,11 @@ jobs:
           set -e
 
           if [ "$EXIT_CODE" -ne 0 ]; then
-            echo "::error title=Terraform Plan Failed::Check summary for details"
+            echo "::error title=Terraform Destroy Failed::Check summary for details"
             
             echo "## ❌ Terraform Apply Failed" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Module:**  ${{ inputs.test_type }} " >> $GITHUB_STEP_SUMMARY
+            echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
             echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
             echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
 
