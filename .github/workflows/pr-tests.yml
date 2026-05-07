@@ -119,10 +119,10 @@ jobs:
           cd "${{ inputs.module_source }}"
           
           if [ "${{ inputs.module_mode }}" == "full" ]; then
-            cp "${{ inputs.module_source }}/tests/main.tf.tpl" "main.tf"
-            cp "${{ inputs.module_source }}/tests/variables.tf.tpl" "variables.tf"
-            cp "${{ inputs.module_source }}/tests/outputs.tf.tpl" "outputs.tf"
-            cp "${{ inputs.module_source }}/tests/versions.tf.tpl" "versions.tf"
+            cp "tests/main.tf.tpl" "main.tf"
+            cp "tests/variables.tf.tpl" "variables.tf"
+            cp "tests/outputs.tf.tpl" "outputs.tf"
+            cp "tests/versions.tf.tpl" "versions.tf"
           fi
 
           echo 'provider "akamai" {}' >> "provider.tf"
