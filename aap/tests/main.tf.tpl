@@ -209,7 +209,7 @@ module "delivery" {
   name = "${MATRIX_NAME}.terra.rafa.cr"
   cpcode_name = "${MATRIX_NAME}.terra.rafa.cr"
   default_origin = "flexibleorigin.rafa.cr"
-  additional_origins = []
+  additional_origins = null
   notification_emails = ["test@akamai.com"]
   version_notes = "GitHub Actions test"
   certificate_id = null
