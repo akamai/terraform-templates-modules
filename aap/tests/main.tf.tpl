@@ -63,7 +63,7 @@ data "akamai_contract" "contract" {
 
 module "client-lists" {
   count               = var.create_client_lists ? 1 : 0
-  source              = "client-lists"
+  source              = "./client-lists"
   client_lists_prefix = substr(var.config_name, 0, 20)
   config_name         = var.config_name
   contract_id         = trimprefix(data.akamai_contract.contract.id, "ctr_")
@@ -82,7 +82,7 @@ locals {
 }
 
 module "security" {
-  source        = "security"
+  source        = "./security"
   hostnames     = ["${MATRIX_NAME}.terra.rafa.cr"]
   config_name   = "${MATRIX_NAME}.terra.rafa.cr"
   description   = var.description
@@ -133,7 +133,7 @@ module "security" {
 
 module "botman" {
   count              = var.enable_botman ? 1 : 0
-  source             = "bot-manager"
+  source             = "./bot-manager"
   botman_type        = var.botman_type
   config_id          = module.security.config_id
   security_policy_id = module.security.security_policy_id
@@ -186,7 +186,7 @@ module "botman" {
 }
 
 module "activate-security" {
-  source                          = "activate-security"
+  source                          = "./activate-security"
   config_name                     = var.config_name
   config_id                       = module.security.config_id
   activate_to_staging             = var.activate_to_staging
@@ -202,7 +202,7 @@ module "activate-security" {
 }
 
 module "delivery" {
-  source = "../../delivery"
+  source = "../delivery"
   contract_id = trimprefix(data.akamai_contract.contract.id, "ctr_")
   group_id = trimprefix(data.akamai_contract.contract.group_id, "grp_")
   hostnames = ["${MATRIX_NAME}.terra.rafa.cr"]
