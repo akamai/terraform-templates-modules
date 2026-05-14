@@ -64,8 +64,8 @@ data "akamai_contract" "contract" {
 module "client-lists" {
   count               = var.create_client_lists ? 1 : 0
   source              = "./client-lists"
-  client_lists_prefix = substr(var.config_name, 0, 20)
-  config_name         = var.config_name
+  client_lists_prefix = substr("${MATRIX_NAME}.terra.rafa.cr", 0, 20)
+  config_name         = "${MATRIX_NAME}.terra.rafa.cr"
   contract_id         = trimprefix(data.akamai_contract.contract.id, "ctr_")
   group_id            = trimprefix(data.akamai_contract.contract.group_id, "grp_")
   notification_emails = var.emails
