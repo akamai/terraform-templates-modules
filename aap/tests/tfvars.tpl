@@ -4,7 +4,7 @@
 edgerc_path    = "~/.edgerc"
 edgerc_section = "default"
 environment    = "dev"
-group_name     = "My Group"
+group_name     = "GSSDEVOPS Terraform templates"
 group_id = "grp_315874"
 description    = "Application security configuration"
 
