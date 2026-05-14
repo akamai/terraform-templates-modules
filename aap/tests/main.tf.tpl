@@ -187,7 +187,7 @@ module "botman" {
 
 module "activate-security" {
   source                          = "./activate-security"
-  config_name                     = var.config_name
+  config_name                     = "${MATRIX_NAME}.terra.rafa.cr"
   config_id                       = module.security.config_id
   activate_to_staging             = var.activate_to_staging
   activation_to_staging_exists    = var.activation_to_staging_exists
