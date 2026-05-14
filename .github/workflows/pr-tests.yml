@@ -178,7 +178,7 @@ jobs:
           set +e
           set -x
 
-          #terraform apply -input=false -auto-approve -no-color tfplan > >(tee /dev/tty) 2> >(tee apply.out >&2)
+          terraform apply -input=false -auto-approve -no-color tfplan > >(tee /dev/tty) 2> >(tee apply.out >&2)
           EXIT_CODE=$?
           set -e
 
