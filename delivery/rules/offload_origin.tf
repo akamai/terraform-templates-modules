@@ -12,20 +12,9 @@ data "akamai_property_rules_builder" "rule_offload_origin" {
     behavior {
       tiered_distribution {
         enabled = true
-      }
-    }
-
-
-    dynamic "behavior" {
-      for_each = [1] # always create exactly one behavior block
-      content {
-        tiered_distribution {
-          enabled = true
-
           # Only include this attribute when var.etls is false
           # If var.etls == true → this line is omitted
           tiered_distribution_map = var.etls ? null : var.td_region
-        }
       }
     }
 

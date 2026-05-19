@@ -28,6 +28,12 @@ data "akamai_property_rules_builder" "rule_default" {
         verification_mode                = "CUSTOM"
       }
     }
+    behavior {
+      global_request_number {
+        header_name   = "Akamai-GRN"
+        output_option = "RESPONSE_HEADER"
+      }
+    }
     children = compact([
       var.additional_origins != null ? data.akamai_property_rules_builder.rule_additional_origins.json : null,
       data.akamai_property_rules_builder.rule_augment_insights.json,

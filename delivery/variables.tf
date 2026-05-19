@@ -304,7 +304,7 @@ variable "ip_behavior" {
   default     = "IPV6_COMPLIANCE"
 
   validation {
-    condition     = length(regexall("^(IPV4|IPV6_COMPLIANCE|IPV6_PERFORMANCE)$", var.ip_behavior)) > 0
-    error_message = "ERROR: Valid types are IPV4, IPV6_COMPLIANCE or IPV6_PERFORMANCE."
+    condition     = length(regexall("^(IPV4|IPV6_COMPLIANCE)$", var.ip_behavior)) > 0
+    error_message = "ERROR: Valid types are IPV4 or IPV6_COMPLIANCE."
   }
 }
