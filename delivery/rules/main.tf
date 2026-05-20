@@ -1,6 +1,6 @@
 
 data "akamai_property_rules_builder" "rule_default" {
-  rules_v2025_10_16 {
+  rules_v2026_02_16 {
     name      = "default"
     is_secure = var.etls
     comments  = "The Default Rule template contains all the necessary and recommended behaviors. Rules are evaluated from top to bottom and the last matching rule wins."
@@ -9,9 +9,12 @@ data "akamai_property_rules_builder" "rule_default" {
         cache_key_hostname               = "REQUEST_HOST_HEADER"
         compress                         = true
         custom_valid_cn_values           = ["{{Origin Hostname}}", "{{Forward Host Header}}", ]
+        custom_forward_host_header       = contains(["REQUEST_HOST_HEADER", "ORIGIN_HOSTNAME"], var.forward_host_header) ? null : var.forward_host_header
         enable_true_client_ip            = true
-        forward_host_header              = "REQUEST_HOST_HEADER"
+        forward_host_header              = contains(["REQUEST_HOST_HEADER", "ORIGIN_HOSTNAME"], var.forward_host_header) ? var.forward_host_header : "CUSTOM"
         hostname                         = var.default_origin
+        http2_enabled                    = false
+        http2_title                      = ""
         http_port                        = 80
         https_port                       = 443
         ip_version                       = "IPV4"

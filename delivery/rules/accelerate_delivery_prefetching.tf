@@ -1,6 +1,6 @@
 
 data "akamai_property_rules_builder" "rule_prefetching" {
-  rules_v2025_10_16 {
+  rules_v2026_02_16 {
     name                  = "Prefetching"
     comments              = "Instruct edge servers to retrieve embedded resources before the browser requests them."
     criteria_must_satisfy = "all"
@@ -12,7 +12,7 @@ data "akamai_property_rules_builder" "rule_prefetching" {
 }
 
 data "akamai_property_rules_builder" "rule_prefetching_objects" {
-  rules_v2025_10_16 {
+  rules_v2026_02_16 {
     name                  = "Prefetching objects"
     comments              = "Define for which HTML pages prefetching should be enabled."
     criteria_must_satisfy = "all"
@@ -28,7 +28,7 @@ data "akamai_property_rules_builder" "rule_prefetching_objects" {
 }
 
 data "akamai_property_rules_builder" "rule_prefetchable_objects" {
-  rules_v2025_10_16 {
+  rules_v2026_02_16 {
     name                  = "Prefetchable objects"
     comments              = "Define which resources should be prefetched."
     criteria_must_satisfy = "all"
@@ -48,7 +48,7 @@ data "akamai_property_rules_builder" "rule_prefetchable_objects" {
 }
 
 data "akamai_property_rules_builder" "rule_bots" {
-  rules_v2025_10_16 {
+  rules_v2026_02_16 {
     name                  = "Bots"
     comments              = "Disable prefetching for specific clients identifying themselves as bots and crawlers. This avoids requesting unnecessary resources from the origin."
     criteria_must_satisfy = "all"

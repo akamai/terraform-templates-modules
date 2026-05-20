@@ -31,9 +31,11 @@ module "rules" {
   td_region              = var.td_region
   enable_mPulse          = var.enable_mPulse
   additional_origins     = var.additional_origins
+  default_cpcode = var.default_cpcode
 }
 
 resource "akamai_cp_code" "this" {
+  count = var.default_cpcode ? 0 : 1
   name        = replace(coalesce(var.cpcode_name, var.name), "/[^a-zA-Z0-9-.]/", "-")
   contract_id = var.contract_id
   group_id    = var.group_id
