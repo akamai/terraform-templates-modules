@@ -25,15 +25,18 @@ module "rules" {
   product_id             = var.product_id
   etls                   = var.etls
   default_origin         = var.default_origin
-  cpcode_id              = tonumber(trimprefix(akamai_cp_code.this.id, "cpc_"))
+  cpcode_id              = tonumber(trimprefix(akamai_cp_code.this[0].id, "cpc_"))
   cpcode_name            = var.cpcode_name
   sure_route_test_object = var.sure_route_test_object
   td_region              = var.td_region
   enable_mPulse          = var.enable_mPulse
   additional_origins     = var.additional_origins
+  forward_host_header    = var.forward_host_header
+  default_cpcode         = var.default_cpcode
 }
 
 resource "akamai_cp_code" "this" {
+  count       = var.default_cpcode ? 0 : 1
   name        = replace(coalesce(var.cpcode_name, var.name), "/[^a-zA-Z0-9-.]/", "-")
   contract_id = var.contract_id
   group_id    = var.group_id
