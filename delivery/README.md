@@ -16,12 +16,6 @@ module "example" {
   	 source  = "<module-location>"
   
 	 # Required variables
-  	 additional_origins  = <map(object({
-    origin_name         = string
-    forward_host_header = string
-    hostname_match      = list(string)
-    path_match          = list(string)
-  }))>
   	 contract_id  = <string>
   	 default_origin  = <string>
   	 etls  = <bool>
@@ -36,6 +30,12 @@ module "example" {
   	 activation_notes  = <string> | default: "activated with terraform"
   	 activation_to_production_exists  = <bool> | default: false
   	 activation_to_staging_exists  = <bool> | default: false
+  	 additional_origins  = <map(object({
+    origin_name         = string
+    forward_host_header = string
+    hostname_match      = list(string)
+    path_match          = list(string)
+  }))> | default: {}
   	 certificate_id  = <number> | default: null
   	 cpcode_name  = <string> | default: null
   	 customer_email  = <string> | default: null
@@ -84,7 +84,6 @@ module "example" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_additional_origins"></a> [additional\_origins](#input\_additional\_origins) | Additional origins for the property. For now the match is only by hostname. The field forward\_host\_header allows specifying a custom host header for each additional origin.Possible fixed values are ORIGIN\_HOSTNAME or REQUEST\_HOST\_HEADER. But the user can also select any host header they would like to use as a custom value. | <pre>map(object({<br/>    origin_name         = string<br/>    forward_host_header = string<br/>    hostname_match      = list(string)<br/>    path_match          = list(string)<br/>  }))</pre> | n/a | yes |
 | <a name="input_contract_id"></a> [contract\_id](#input\_contract\_id) | Contract ID for property/config creation | `string` | n/a | yes |
 | <a name="input_default_origin"></a> [default\_origin](#input\_default\_origin) | Default origin server for all properties | `string` | n/a | yes |
 | <a name="input_etls"></a> [etls](#input\_etls) | Boolean to switch between Enhanced and Standard TLS modes | `bool` | n/a | yes |
@@ -97,6 +96,7 @@ module "example" {
 | <a name="input_activation_notes"></a> [activation\_notes](#input\_activation\_notes) | Activation notes. Leave default value until DXE-2373 is resolved, unless you know what you are doing. | `string` | `"activated with terraform"` | no |
 | <a name="input_activation_to_production_exists"></a> [activation\_to\_production\_exists](#input\_activation\_to\_production\_exists) | Do not modify. Flag used together with the logic in the activation resources for the initial activation to production. | `bool` | `false` | no |
 | <a name="input_activation_to_staging_exists"></a> [activation\_to\_staging\_exists](#input\_activation\_to\_staging\_exists) | Do not modify. Flag used together with the logic in the activation resources for the initial activation to staging. | `bool` | `false` | no |
+| <a name="input_additional_origins"></a> [additional\_origins](#input\_additional\_origins) | Additional origins for the property. For now the match is only by hostname. The field forward\_host\_header allows specifying a custom host header for each additional origin.Possible fixed values are ORIGIN\_HOSTNAME or REQUEST\_HOST\_HEADER. But the user can also select any host header they would like to use as a custom value. | <pre>map(object({<br/>    origin_name         = string<br/>    forward_host_header = string<br/>    hostname_match      = list(string)<br/>    path_match          = list(string)<br/>  }))</pre> | `{}` | no |
 | <a name="input_certificate_id"></a> [certificate\_id](#input\_certificate\_id) | Certificate enrollment id. Only applicable if enhanced\_tls is true, and secure\_by\_default<br/>is false.<br/><br/>Can be retrieved using AkamaiPowershell or the Akamai CPS CLI. | `number` | `null` | no |
 | <a name="input_cpcode_name"></a> [cpcode\_name](#input\_cpcode\_name) | Default CP Code name. Will be the property name (var.name) if null. | `string` | `null` | no |
 | <a name="input_customer_email"></a> [customer\_email](#input\_customer\_email) | Email address of the customer that acknowledged, tested and accepted the change | `string` | `null` | no |

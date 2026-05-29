@@ -5,6 +5,7 @@ hostnames = ["${MATRIX_NAME}.terra.rafa.cr"]
 name = "${MATRIX_NAME}.terra.rafa.cr"
 cpcode_name = "${MATRIX_NAME}.terra.rafa.cr"
 default_origin = "flexibleorigin.rafa.cr"
+forward_host_header = "flexibleorigin.rafa.cr"
 notification_emails = ["test@akamai.com"]
 version_notes = "GitHub Actions test"
 certificate_id = 30192
@@ -25,3 +26,23 @@ secure_by_default=${SECURE_BY_DEFAULT}
 product_id="${PRODUCT_ID}"
 activate_to_staging=${ACTIVATE_TO_STAGING}
 activate_to_production=${ACTIVATE_TO_PRODUCTION}
+additional_origins = {
+  "api_origin" = {
+    origin_name         = "api-origin.rafa.cr"
+    forward_host_header = "REQUEST_HOST_HEADER"
+    hostname_match      = ["api.rafa.cr"]
+    path_match          = ["/api/*"]
+  },
+  "images_origin" = {
+    origin_name         = "images-origin.rafa.cr"
+    forward_host_header = "ORIGIN_HOSTNAME"
+    hostname_match      = ["images.rafa.cr"]
+    path_match          = ["/images/*"]
+  }
+    "custom" = {
+    origin_name         = "custom-origin.rafa.cr"
+    forward_host_header = "flexibleorigin.rafa.cr"
+    hostname_match      = ["custom.rafa.cr"]
+    path_match          = ["/custom/*"]
+  }
+}
