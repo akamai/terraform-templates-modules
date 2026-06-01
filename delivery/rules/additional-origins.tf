@@ -49,7 +49,7 @@ data "akamai_property_rules_builder" "rule_additional_origin" {
         enable_true_client_ip            = true
         forward_host_header              = contains(["REQUEST_HOST_HEADER", "ORIGIN_HOSTNAME"], var.additional_origins[keys(var.additional_origins)[count.index]].forward_host_header) ? var.additional_origins[keys(var.additional_origins)[count.index]].forward_host_header : "CUSTOM"
         hostname                         = var.additional_origins[keys(var.additional_origins)[count.index]].origin_name
-        http2_enabled                     = false
+        http2_enabled                    = false
         http_port                        = 80
         https_port                       = 443
         ip_version                       = "IPV4"

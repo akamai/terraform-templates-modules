@@ -12,9 +12,9 @@ data "akamai_property_rules_builder" "rule_offload_origin" {
     behavior {
       tiered_distribution {
         enabled = true
-          # Only include this attribute when var.etls is false
-          # If var.etls == true → this line is omitted
-          tiered_distribution_map = var.etls ? null : var.td_region
+        # Only include this attribute when var.etls is false
+        # If var.etls == true → this line is omitted
+        tiered_distribution_map = var.etls ? null : var.td_region
       }
     }
 
