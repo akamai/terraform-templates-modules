@@ -204,19 +204,21 @@ jobs:
         run: sleep 60
 
       - name: Terraform destroy
+        if: always()
         run: |
           cd "${{ inputs.module_source }}"
           set -uo pipefail
           set +e
           set -x
 
-          terraform destroy -input=false -auto-approve -no-color > >(tee /dev/tty) 2> >(tee destroy.out >&2)          EXIT_CODE=$?
+          terraform destroy -input=false -auto-approve -no-color > >(tee /dev/tty) 2> >(tee destroy.out >&2)
+          EXIT_CODE=$?
           set -e
 
           if [ "$EXIT_CODE" -ne 0 ]; then
             echo "::error title=Terraform Destroy Failed::Check summary for details"
             
-            echo "## ❌ Terraform Apply Failed" >> $GITHUB_STEP_SUMMARY
+            echo "## ❌ Terraform Destroy Failed" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
             echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
@@ -225,7 +227,7 @@ jobs:
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
-            tail -n 50 apply.out >> $GITHUB_STEP_SUMMARY
+            tail -n 50 destroy.out >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
 
             exit 1
