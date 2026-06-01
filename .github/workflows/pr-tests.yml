@@ -210,7 +210,7 @@ jobs:
           set +e
           set -x
 
-          #terraform destroy -input=false -auto-approve -no-color > >(tee /dev/tty) 2> >(tee destroy.out >&2)          EXIT_CODE=$?
+          terraform destroy -input=false -auto-approve -no-color > >(tee /dev/tty) 2> >(tee destroy.out >&2)          EXIT_CODE=$?
           set -e
 
           if [ "$EXIT_CODE" -ne 0 ]; then
