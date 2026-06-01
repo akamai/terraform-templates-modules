@@ -16,12 +16,20 @@ inspection_size = 32
 # -------------------------------------------------
 # Protections
 # -------------------------------------------------
-enable_waf       = ${ENABLE_WAF}
-enable_ip_geo    = ${ENABLE_IP_GEO}
-enable_malware   = ${ENABLE_MALWARE}
-enable_rate      = ${ENABLE_RATE}
-enable_slow_post = ${ENABLE_SLOW_POST}
-enable_botman    = ${ENABLE_BOTMAN}
+# enable_waf       = ${ENABLE_WAF}
+# enable_ip_geo    = ${ENABLE_IP_GEO}
+# enable_malware   = ${ENABLE_MALWARE}
+# enable_rate      = ${ENABLE_RATE}
+# enable_slow_post = ${ENABLE_SLOW_POST}
+# enable_botman    = ${ENABLE_BOTMAN}
+
+enable_waf       = true
+enable_ip_geo    = true
+enable_malware   = true
+enable_rate      = true
+enable_slow_post = true
+enable_botman    = true
+
 
 # -------------------------------------------------
 # Client Lists
@@ -72,12 +80,18 @@ penalty_box_action  = "alert"
 # and Management) or BMS (Bot Management Standard) and set 
 # botman_type to "bvm" or "bms"
 botman_type = "${BOTMAN_TYPE}"
-add_akamai_bot_header     = ${ADD_AKAMAI_BOT_HEADER}
-enable_active_detections  = ${ENABLE_ACTIVE_DETECTIONS}
-enable_browser_validation = ${ENABLE_BROWSER_VALIDATION}
-remove_botman_cookies     = ${REMOVE_BOTMAN_COOKIES}
-third_party_proxy         = ${THIRD_PARTY_PROXY}
+# add_akamai_bot_header     = ${ADD_AKAMAI_BOT_HEADER}
+# enable_active_detections  = ${ENABLE_ACTIVE_DETECTIONS}
+# enable_browser_validation = ${ENABLE_BROWSER_VALIDATION}
+# remove_botman_cookies     = ${REMOVE_BOTMAN_COOKIES}
+# third_party_proxy         = ${THIRD_PARTY_PROXY}
 
+
+add_akamai_bot_header     = true
+enable_active_detections  = true
+enable_browser_validation = true
+remove_botman_cookies     = true
+third_party_proxy         = true
 
 
 # Bot Category Actions
