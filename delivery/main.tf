@@ -15,8 +15,6 @@ locals {
   )
 
 
-
-
   edge_hostnames = (var.etls && var.secure_by_default) ? [] : var.hostnames
 
   ehn_certificate = (var.etls == true && var.secure_by_default == false) ? var.certificate_id : null
