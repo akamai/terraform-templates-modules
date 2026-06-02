@@ -75,7 +75,7 @@ resource "akamai_property" "this" {
     ignore_changes = [version_notes]
   }
 
-  }
+}
 # akamai_property_domainownership_late_validation resource is used to verify the validation state of your hostnames and activate your property on a network.
 resource "akamai_property_domainownership_late_validation" "this" {
 
@@ -98,7 +98,7 @@ resource "akamai_property_activation" "staging" {
   note                           = var.activation_notes
   contact                        = var.notification_emails
   auto_acknowledge_rule_warnings = true
-  depends_on = [akamai_property_domainownership_late_validation.this]
+  depends_on                     = [akamai_property_domainownership_late_validation.this]
 
   lifecycle {
     ignore_changes = [note]
@@ -113,7 +113,7 @@ resource "akamai_property_activation" "production" {
   note                           = var.activation_notes
   contact                        = var.notification_emails
   auto_acknowledge_rule_warnings = true
-  depends_on = [akamai_property_domainownership_late_validation.this]
+  depends_on                     = [akamai_property_domainownership_late_validation.this]
 
   lifecycle {
     ignore_changes = [note]

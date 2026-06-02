@@ -1,11 +1,11 @@
- 
- /**
+
+/**
  * # Akamai Domain Ownership Management (DOM)
  *
  *  This directory contains the resource for Domain entry creation and Validation
  *
  */
- 
+
 
 resource "akamai_property_domainownership_domains" "domains" {
   for_each = { for entry in var.domain_validation_entries : entry.domain_name => entry }

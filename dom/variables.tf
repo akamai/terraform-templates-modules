@@ -1,8 +1,8 @@
 variable "domain_validation_entries" {
   description = "A list of objects with hostnames, domains, or wildcards to DOM validate"
   type = list(object({
-    domain_name      = string
-    validation_scope = string
+    domain_name       = string
+    validation_scope  = string
     validation_method = string
   }))
 }
