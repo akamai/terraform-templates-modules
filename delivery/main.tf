@@ -20,6 +20,8 @@ locals {
   ehn_certificate = (var.etls == true && var.secure_by_default == false) ? var.certificate_id : null
 }
 
+
+
 module "rules" {
   source                 = "./rules"
   product_id             = var.product_id
