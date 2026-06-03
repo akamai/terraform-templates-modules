@@ -420,6 +420,7 @@ Use scopes to indicate which template is affected:
 - `(aap)` - App & API Protector template
 - `(aapasm)` - AAP+ASM template  
 - `(pm)` - Property Manager template
+- `(ds2)` - DataStream 2 module
 - `(deploy)` - deploy.ps1 script
 - `(ci)` - CI/CD workflows
 - `(docs)`: Documentation

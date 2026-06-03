@@ -23,7 +23,6 @@ module "example" {
   
 	 # Required variables
   	 contract_id  = <string>
-  	 edgerc_section  = <string>
   	 group_id  = <string>
   	 name  = <string>
   	 property_ids  = <list(string)>
@@ -54,7 +53,6 @@ module "example" {
   1037,
   1100
 ]
-  	 edgerc_path  = <string> | default: "~/.edgerc"
   	 enable_midgress  = <bool> | default: false
   	 log_format  = <string> | default: "JSON"
   	 product_id  = <string> | default: "SPM"
@@ -79,7 +77,7 @@ module "example" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
-| <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | ~> 9.0 |
+| <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | ~> 10.0 |
 
 ## Resources
 
@@ -97,7 +95,6 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_contract_id"></a> [contract\_id](#input\_contract\_id) | Contract ID for property/config creation. | `string` | n/a | yes |
-| <a name="input_edgerc_section"></a> [edgerc\_section](#input\_edgerc\_section) | Section in the .edgerc file.<br/><br/>    For professional services, it is recommended to create a new section for<br/>    each account managed. | `string` | n/a | yes |
 | <a name="input_group_id"></a> [group\_id](#input\_group\_id) | Group ID for property/config creation. | `string` | n/a | yes |
 | <a name="input_name"></a> [name](#input\_name) | Name of the DataStream 2 configuration and CP Code. | `string` | n/a | yes |
 | <a name="input_property_ids"></a> [property\_ids](#input\_property\_ids) | List of Akamai Property IDs to monitor (Decoupled architecture). | `list(string)` | n/a | yes |
@@ -107,7 +104,6 @@ No modules.
 | <a name="input_cpcode_name"></a> [cpcode\_name](#input\_cpcode\_name) | Optional custom name for the CP Code. If null, 'name' is used. | `string` | `null` | no |
 | <a name="input_datadog_connector"></a> [datadog\_connector](#input\_datadog\_connector) | Configuration for Datadog destination.<br/><br/>    NOTE: Akamai DataStream only supports Datadog v1 endpoints, not v2.<br/>    Akamai validates the API key with a live POST before creating the stream.<br/>    Correct endpoint format (include https:// scheme):<br/>      EU: https://http-intake.logs.datadoghq.eu/v1/input<br/>      US: https://http-intake.logs.datadoghq.com/v1/input | <pre>object({<br/>    display_name = string<br/>    endpoint     = string<br/>    auth_token   = string<br/>    service      = optional(string)<br/>    source       = optional(string)<br/>    tags         = optional(string)<br/>  })</pre> | `null` | no |
 | <a name="input_dataset_fields_ids"></a> [dataset\_fields\_ids](#input\_dataset\_fields\_ids) | List of dataset fields IDs to log. | `list(number)` | <pre>[<br/>  1000,<br/>  1002,<br/>  1015,<br/>  1037,<br/>  1100<br/>]</pre> | no |
-| <a name="input_edgerc_path"></a> [edgerc\_path](#input\_edgerc\_path) | Path to the .edgerc file. | `string` | `"~/.edgerc"` | no |
 | <a name="input_enable_midgress"></a> [enable\_midgress](#input\_enable\_midgress) | Enable midgress traffic collection (sets collect\_midgress on the stream). Requires dataset field 2084 to log midgress hits. | `bool` | `false` | no |
 | <a name="input_log_format"></a> [log\_format](#input\_log\_format) | Format of the logs. Must be JSON or STRUCTURED. When STRUCTURED, a field\_delimiter is used. | `string` | `"JSON"` | no |
 | <a name="input_product_id"></a> [product\_id](#input\_product\_id) | Product ID (e.g., SPM for Ion). Only used when cpcode\_id is null and a new CP Code is created. | `string` | `"SPM"` | no |

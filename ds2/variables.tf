@@ -1,25 +1,3 @@
-## ----------------------------------------------------------------------------
-## EdgeGrid
-## ----------------------------------------------------------------------------
-
-variable "edgerc_path" {
-  description = <<EOD
-    Path to the .edgerc file.
-  EOD
-  type        = string
-  default     = "~/.edgerc"
-}
-
-variable "edgerc_section" {
-  description = <<EOD
-    Section in the .edgerc file.
-
-    For professional services, it is recommended to create a new section for
-    each account managed.
-  EOD
-  type        = string
-}
-
 #### ----------------------------------------------------------------------------
 ## Configuration
 #### ----------------------------------------------------------------------------
