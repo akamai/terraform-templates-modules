@@ -1,3 +1,12 @@
+## [1.3.3](https://github.com/akamai/terraform-templates-modules/compare/v1.3.2...v1.3.3) (2026-06-05)
+
+
+### Bug Fixes
+
+* Improve Branch Detection for main protection ([d5f2e39](https://github.com/akamai/terraform-templates-modules/commit/d5f2e391601dc41dc9ecbf2a61faa3ae1015f6a4))
+
+
+
 ## [1.3.2](https://github.com/akamai/terraform-templates-modules/compare/v1.3.1...v1.3.2) (2026-03-04)
 
 
