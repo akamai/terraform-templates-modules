@@ -100,14 +100,14 @@ module "example" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | ~> 9.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [akamai_cps_third_party_enrollment.this](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/cps_third_party_enrollment) | resource |
 | [akamai_cps_upload_certificate.upload_cert](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/cps_upload_certificate) | resource |
 | [akamai_cps_csr.this](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/cps_csr) | data source |
@@ -119,7 +119,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_admin_contact"></a> [admin\_contact](#input\_admin\_contact) | Admin contact details | <pre>object({<br/>    first_name       = string<br/>    last_name        = string<br/>    organization     = string<br/>    email            = string<br/>    phone            = string<br/>    address_line_one = string<br/>    address_line_two = string<br/>    city             = string<br/>    region           = string<br/>    postal_code      = string<br/>    country_code     = string<br/>  })</pre> | n/a | yes |
 | <a name="input_certificate_ecdsa_pem"></a> [certificate\_ecdsa\_pem](#input\_certificate\_ecdsa\_pem) | ECDSA certificate PEM string | `string` | n/a | yes |
 | <a name="input_certificate_rsa_pem"></a> [certificate\_rsa\_pem](#input\_certificate\_rsa\_pem) | RSA certificate PEM string | `string` | n/a | yes |
@@ -146,7 +146,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_csr_ecdsa"></a> [csr\_ecdsa](#output\_csr\_ecdsa) | n/a |
 | <a name="output_csr_rsa"></a> [csr\_rsa](#output\_csr\_rsa) | n/a |
 <!-- END_TF_DOCS -->

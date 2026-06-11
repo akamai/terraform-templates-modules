@@ -96,6 +96,12 @@ jobs:
           terraform init -backend=false
           terraform validate
 
+      - name: Terraform Validate - DOM
+        working-directory: ./dom
+        run: |
+          terraform init -backend=false
+          terraform validate
+
       - name: Terraform Validate - CPS - DV SAN 
         working-directory: ./dv-san-cert
         run: |

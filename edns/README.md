@@ -358,7 +358,7 @@ module "example" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | ~> 9.2 |
 | <a name="requirement_dns"></a> [dns](#requirement\_dns) | ~> 3.4 |
@@ -367,7 +367,7 @@ module "example" {
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [akamai_dns_record.a_records](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/dns_record) | resource |
 | [akamai_dns_record.aaaa_records](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/dns_record) | resource |
 | [akamai_dns_record.akamaicdn_records](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/dns_record) | resource |
@@ -403,7 +403,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_contract_id"></a> [contract\_id](#input\_contract\_id) | Contract ID for property/config creation | `string` | n/a | yes |
 | <a name="input_edgerc_section"></a> [edgerc\_section](#input\_edgerc\_section) | Section in the .edgerc file.<br/><br/>    For professional services, it is recommended to create a new section for<br/>    each account managed. | `string` | n/a | yes |
 | <a name="input_group_id"></a> [group\_id](#input\_group\_id) | Group ID for property/config creation. | `string` | n/a | yes |
@@ -447,7 +447,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_akamai_authorities_only"></a> [akamai\_authorities\_only](#output\_akamai\_authorities\_only) | Authoritative nameservers assigned by Akamai (FQDNs) |
 | <a name="output_authorities_plus_custom_ns"></a> [authorities\_plus\_custom\_ns](#output\_authorities\_plus\_custom\_ns) | Union of Akamai authoritative NS and custom NS targets (FQDNs) |
 | <a name="output_authorities_plus_custom_ns_ips"></a> [authorities\_plus\_custom\_ns\_ips](#output\_authorities\_plus\_custom\_ns\_ips) | Map: NS hostname => IPv4 list or NO\_IP |

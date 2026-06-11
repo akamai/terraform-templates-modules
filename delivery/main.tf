@@ -78,7 +78,7 @@ resource "akamai_property" "this" {
 }
 # akamai_property_domainownership_late_validation resource is used to verify the validation state of your hostnames and activate your property on a network.
 resource "akamai_property_domainownership_late_validation" "this" {
-  count = var.enable_domain_validation ? 1 : 0
+  count             = var.enable_domain_validation ? 1 : 0
   contract_id       = var.contract_id
   group_id          = var.group_id
   property_id       = akamai_property.this.id

@@ -56,7 +56,7 @@ module "example" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | ~> 9.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.7 |
@@ -65,7 +65,7 @@ module "example" {
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [akamai_appsec_advanced_settings_attack_payload_logging.attack_payload_logging](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/appsec_advanced_settings_attack_payload_logging) | resource |
 | [akamai_appsec_advanced_settings_logging.logging](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/appsec_advanced_settings_logging) | resource |
 | [akamai_appsec_advanced_settings_pragma_header.pragma_header](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/appsec_advanced_settings_pragma_header) | resource |
@@ -111,7 +111,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_config_name"></a> [config\_name](#input\_config\_name) | Security configuration name | `string` | n/a | yes |
 | <a name="input_contract_id"></a> [contract\_id](#input\_contract\_id) | Akamai Contract ID | `string` | n/a | yes |
 | <a name="input_description"></a> [description](#input\_description) | Security configuration description | `string` | n/a | yes |
@@ -148,7 +148,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_config_id"></a> [config\_id](#output\_config\_id) | Security Configuration ID |
 | <a name="output_rate"></a> [rate](#output\_rate) | Rate Policy IDs |
 | <a name="output_security_policy_id"></a> [security\_policy\_id](#output\_security\_policy\_id) | Security Policy ID |

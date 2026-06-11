@@ -43,7 +43,7 @@ module "example" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | ~> 9.0 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | ~> 0.13 |
@@ -51,7 +51,7 @@ module "example" {
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [akamai_appsec_reputation_profile.dos_attackers_high_threat](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/appsec_reputation_profile) | resource |
 | [akamai_appsec_reputation_profile.dos_attackers_high_threat_shared](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/appsec_reputation_profile) | resource |
 | [akamai_appsec_reputation_profile.dos_attackers_low_threat](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/appsec_reputation_profile) | resource |
@@ -94,7 +94,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_client_lists_reputationbypass"></a> [client\_lists\_reputationbypass](#input\_client\_lists\_reputationbypass) | ID(s) for the Reputation Bypass Client List | `list(string)` | n/a | yes |
 | <a name="input_config_id"></a> [config\_id](#input\_config\_id) | Akamai security configuration ID | `string` | n/a | yes |
 | <a name="input_security_policy_id"></a> [security\_policy\_id](#input\_security\_policy\_id) | Security policy ID | `string` | n/a | yes |
