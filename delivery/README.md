@@ -39,6 +39,7 @@ module "example" {
   	 cpcode_name  = <string> | default: null
   	 customer_email  = <string> | default: null
   	 ehn_domain  = <string> | default: null
+  	 enable_domain_validation  = <bool> | default: false
   	 enable_mPulse  = <bool> | default: true
   	 ip_behavior  = <string> | default: "IPV6_COMPLIANCE"
   	 noncompliance_reason  = <list(string)> | default: []
@@ -57,30 +58,31 @@ module "example" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | ~> 9.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [akamai_cp_code.this](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/cp_code) | resource |
 | [akamai_edge_hostname.edge_hostname](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/edge_hostname) | resource |
 | [akamai_property.this](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/property) | resource |
 | [akamai_property_activation.production](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/property_activation) | resource |
 | [akamai_property_activation.staging](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/property_activation) | resource |
+| [akamai_property_domainownership_late_validation.this](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/property_domainownership_late_validation) | resource |
 
 ## Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_rules"></a> [rules](#module\_rules) | ./rules | n/a |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_additional_origins"></a> [additional\_origins](#input\_additional\_origins) | Additional origins for the property. For now the match is only by hostname. | <pre>map(object({<br/>    origin_name    = string<br/>    hostname_match = list(string)<br/>    path_match     = list(string)<br/>  }))</pre> | n/a | yes |
 | <a name="input_contract_id"></a> [contract\_id](#input\_contract\_id) | Contract ID for property/config creation | `string` | n/a | yes |
 | <a name="input_default_origin"></a> [default\_origin](#input\_default\_origin) | Default origin server for all properties | `string` | n/a | yes |
@@ -98,6 +100,7 @@ module "example" {
 | <a name="input_cpcode_name"></a> [cpcode\_name](#input\_cpcode\_name) | Default CP Code name. Will be the property name (var.name) if null. | `string` | `null` | no |
 | <a name="input_customer_email"></a> [customer\_email](#input\_customer\_email) | Email address of the customer that acknowledged, tested and accepted the change | `string` | `null` | no |
 | <a name="input_ehn_domain"></a> [ehn\_domain](#input\_ehn\_domain) | EdgeHostname domain, e.g. edgesuite.net or edgekey.net. Will default to one or<br/>the other, based on the value of etls variable. | `string` | `null` | no |
+| <a name="input_enable_domain_validation"></a> [enable\_domain\_validation](#input\_enable\_domain\_validation) | Enable domain ownership late validation before property activation | `bool` | `false` | no |
 | <a name="input_enable_mPulse"></a> [enable\_mPulse](#input\_enable\_mPulse) | Boolean tod ecide whether to inject the mpulse behavior | `bool` | `true` | no |
 | <a name="input_ip_behavior"></a> [ip\_behavior](#input\_ip\_behavior) | EdgeHostname IP behaviour. | `string` | `"IPV6_COMPLIANCE"` | no |
 | <a name="input_noncompliance_reason"></a> [noncompliance\_reason](#input\_noncompliance\_reason) | Allowed values for noncompliance\_reason are "NO\_PRODUCTION\_TRAFFIC", "EMERGENCY", "NONE". (OR null for the customer, as None will require the complaince block) | `list(string)` | `[]` | no |
@@ -114,7 +117,7 @@ module "example" {
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_cert_status"></a> [cert\_status](#output\_cert\_status) | The status of the certificate, which may include any challenge required to generate it (DNS CNAME or other type) |
 | <a name="output_cpcode_id"></a> [cpcode\_id](#output\_cpcode\_id) | The CP Code's unique identifier. |
 | <a name="output_property_id"></a> [property\_id](#output\_property\_id) | The property's unique identifier. |

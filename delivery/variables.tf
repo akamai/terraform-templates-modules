@@ -98,6 +98,12 @@ variable "notification_emails" {
   }
 }
 
+variable "enable_domain_validation" {
+  description = "Enable domain ownership late validation before property activation"
+  type        = bool
+  default     = false
+}
+
 variable "activate_to_staging" {
   description = "Set to true to directly activate on the staging network."
   type        = bool

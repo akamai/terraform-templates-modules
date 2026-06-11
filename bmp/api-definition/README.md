@@ -149,14 +149,14 @@ module "example" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
 | <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | >= 9.2.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [akamai_apidefinitions_activation.production](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/apidefinitions_activation) | resource |
 | [akamai_apidefinitions_activation.staging](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/apidefinitions_activation) | resource |
 | [akamai_apidefinitions_api.api](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/apidefinitions_api) | resource |
@@ -171,7 +171,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_contract_id"></a> [contract\_id](#input\_contract\_id) | Akamai Contract ID (without 'ctr\_' prefix if trimmed externally). | `string` | n/a | yes |
 | <a name="input_group_id"></a> [group\_id](#input\_group\_id) | Akamai Group ID (without 'grp\_' prefix if trimmed externally). | `string` | n/a | yes |
 | <a name="input_notification_emails"></a> [notification\_emails](#input\_notification\_emails) | List of email addresses that will receive activation notifications. | `list(string)` | n/a | yes |
@@ -185,7 +185,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_api_id"></a> [api\_id](#output\_api\_id) | Created API ID |
 | <a name="output_api_operations"></a> [api\_operations](#output\_api\_operations) | Decoded operations returned by Akamai for this API |
 <!-- END_TF_DOCS -->

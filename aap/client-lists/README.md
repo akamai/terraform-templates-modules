@@ -28,14 +28,14 @@ module "example" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | ~> 9.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [akamai_clientlist_activation.client-lists-rcbypass-list_production](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/clientlist_activation) | resource |
 | [akamai_clientlist_activation.client-lists-rcbypass-list_staging](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/clientlist_activation) | resource |
 | [akamai_clientlist_list.client-lists-geoblock-list](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/clientlist_list) | resource |
@@ -52,7 +52,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_client_lists_prefix"></a> [client\_lists\_prefix](#input\_client\_lists\_prefix) | Prefix for the Client Lists | `string` | n/a | yes |
 | <a name="input_config_name"></a> [config\_name](#input\_config\_name) | Security configuration name | `string` | n/a | yes |
 | <a name="input_contract_id"></a> [contract\_id](#input\_contract\_id) | Akamai Contract ID | `string` | n/a | yes |
@@ -63,7 +63,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_client_lists_geoblock_id"></a> [client\_lists\_geoblock\_id](#output\_client\_lists\_geoblock\_id) | ID for the Geo Block Client List |
 | <a name="output_client_lists_ipblock_exception_id"></a> [client\_lists\_ipblock\_exception\_id](#output\_client\_lists\_ipblock\_exception\_id) | ID for the IP Block Exceptions Client List |
 | <a name="output_client_lists_ipblock_id"></a> [client\_lists\_ipblock\_id](#output\_client\_lists\_ipblock\_id) | ID for the IP Block Client List |

@@ -184,14 +184,14 @@ module "example" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0 |
 | <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | >= 9.2.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [akamai_botman_client_side_security.client_side_security](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/botman_client_side_security) | resource |
 | [akamai_botman_javascript_injection.injection](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/botman_javascript_injection) | resource |
 | [akamai_botman_transactional_endpoint.bmp_endpoint](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/botman_transactional_endpoint) | resource |
@@ -206,7 +206,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_akamai_operations"></a> [akamai\_operations](#input\_akamai\_operations) | List of operation objects returned by Akamai after API creation (apply-time data). | `list(any)` | n/a | yes |
 | <a name="input_config_name"></a> [config\_name](#input\_config\_name) | Name of the existing AppSec security configuration. | `string` | n/a | yes |
 | <a name="input_expect_inline_traffic"></a> [expect\_inline\_traffic](#input\_expect\_inline\_traffic) | Indicates whether inline browser-based traffic is expected. Unexpected traffic may be treated as bot traffic. | `bool` | n/a | yes |
@@ -221,6 +221,6 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_config_id"></a> [config\_id](#output\_config\_id) | Akamai AppSec configuration ID resolved by name |
 <!-- END_TF_DOCS -->

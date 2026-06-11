@@ -88,14 +88,14 @@ module "example" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | ~> 9.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [akamai_cps_dv_enrollment.this](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/cps_dv_enrollment) | resource |
 
 ## Modules
@@ -105,7 +105,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_admin_contact"></a> [admin\_contact](#input\_admin\_contact) | Admin contact details. | <pre>object({<br/>    first_name       = string<br/>    last_name        = string<br/>    organization     = string<br/>    email            = string<br/>    phone            = string<br/>    address_line_one = string<br/>    city             = string<br/>    region           = string<br/>    postal_code      = string<br/>    country_code     = string<br/>  })</pre> | n/a | yes |
 | <a name="input_common_name"></a> [common\_name](#input\_common\_name) | Primary common name for the certificate. | `string` | n/a | yes |
 | <a name="input_contract_id"></a> [contract\_id](#input\_contract\_id) | Akamai contract ID. | `string` | n/a | yes |
@@ -124,7 +124,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_dns_challenges_details"></a> [dns\_challenges\_details](#output\_dns\_challenges\_details) | n/a |
 | <a name="output_http_challenges_details"></a> [http\_challenges\_details](#output\_http\_challenges\_details) | n/a |
 <!-- END_TF_DOCS -->

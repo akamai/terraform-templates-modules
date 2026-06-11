@@ -64,14 +64,14 @@ module "example" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | ~> 9.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [akamai_botman_akamai_bot_category_action.tfdemo_academic_or_research_bots_0c508e1d-73a4-4366-9e48-3c4a080f1c5d](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/botman_akamai_bot_category_action) | resource |
 | [akamai_botman_akamai_bot_category_action.tfdemo_artificial_intelligence_ai_bots_352fca87-71ee-4b8d-ae15-d36772556072](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/botman_akamai_bot_category_action) | resource |
 | [akamai_botman_akamai_bot_category_action.tfdemo_business_intelligence_bots_8a70d29c-a491-4583-9768-7deea2f379c1](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/botman_akamai_bot_category_action) | resource |
@@ -114,7 +114,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_botman_type"></a> [botman\_type](#input\_botman\_type) | Chose based on the available entitlement: BVM (Bot Visibility and Management) or BMS (Bot Management Standard) | `string` | n/a | yes |
 | <a name="input_config_id"></a> [config\_id](#input\_config\_id) | Akamai security configuration ID | `string` | n/a | yes |
 | <a name="input_remove_botman_cookies"></a> [remove\_botman\_cookies](#input\_remove\_botman\_cookies) | Remove Bot Manager cookies before sending request to origin | `bool` | n/a | yes |

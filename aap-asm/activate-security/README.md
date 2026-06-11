@@ -32,14 +32,14 @@ module "example" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | ~> 9.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [akamai_appsec_activations.production](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/appsec_activations) | resource |
 | [akamai_appsec_activations.staging](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/appsec_activations) | resource |
 | [akamai_appsec_configuration.config](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/appsec_configuration) | data source |
@@ -51,7 +51,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_activation_notes"></a> [activation\_notes](#input\_activation\_notes) | Notes for the activation | `string` | n/a | yes |
 | <a name="input_config_id"></a> [config\_id](#input\_config\_id) | Security configuration ID | `number` | n/a | yes |
 | <a name="input_config_name"></a> [config\_name](#input\_config\_name) | Security configuration name | `string` | n/a | yes |
