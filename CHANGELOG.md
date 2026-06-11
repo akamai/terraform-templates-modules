@@ -1,3 +1,12 @@
+## [1.3.4](https://github.com/akamai/terraform-templates-modules/compare/v1.3.3...v1.3.4) (2026-06-11)
+
+
+### Bug Fixes
+
+* variable fix by enabling certificate chain type ([bea287e](https://github.com/akamai/terraform-templates-modules/commit/bea287e3651c3890c85a211fdda877ec54761f2d))
+
+
+
 ## [1.3.3](https://github.com/akamai/terraform-templates-modules/compare/v1.3.2...v1.3.3) (2026-06-05)
 
 
