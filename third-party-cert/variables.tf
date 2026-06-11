@@ -45,11 +45,12 @@ variable "auto_approve_warnings" {
 #type        = number
 #}
 
-#variable "certificate_chain_type" {
-#description = "Certificate chain type (default or test)."
-#type        = string
-#default     = "default"
-#}
+# tflint-ignore: terraform_unused_declarations
+variable "certificate_chain_type" {
+  description = "Certificate chain type (default or test)."
+  type        = string
+  default     = "default"
+}
 
 # ------------------------
 # Admin Contact

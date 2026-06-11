@@ -89,6 +89,7 @@ module "example" {
   	 acknowledge_pre_verification_warnings  = <bool> | default: false
   	 allow_duplicate_common_name  = <bool> | default: false
   	 auto_approve_warnings  = <list(string)> | default: []
+  	 certificate_chain_type  = <string> | default: "default"
   	 change_management  = <bool> | default: false
   	 secure_network  = <string> | default: "standard-tls"
   	 signature_algorithm  = <string> | default: ""
@@ -100,14 +101,14 @@ module "example" {
 ## Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | ~> 9.0 |
 
 ## Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [akamai_cps_third_party_enrollment.this](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/cps_third_party_enrollment) | resource |
 | [akamai_cps_upload_certificate.upload_cert](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/cps_upload_certificate) | resource |
 | [akamai_cps_csr.this](https://registry.terraform.io/providers/akamai/akamai/latest/docs/data-sources/cps_csr) | data source |
@@ -119,7 +120,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_admin_contact"></a> [admin\_contact](#input\_admin\_contact) | Admin contact details | <pre>object({<br/>    first_name       = string<br/>    last_name        = string<br/>    organization     = string<br/>    email            = string<br/>    phone            = string<br/>    address_line_one = string<br/>    address_line_two = string<br/>    city             = string<br/>    region           = string<br/>    postal_code      = string<br/>    country_code     = string<br/>  })</pre> | n/a | yes |
 | <a name="input_certificate_ecdsa_pem"></a> [certificate\_ecdsa\_pem](#input\_certificate\_ecdsa\_pem) | ECDSA certificate PEM string | `string` | n/a | yes |
 | <a name="input_certificate_rsa_pem"></a> [certificate\_rsa\_pem](#input\_certificate\_rsa\_pem) | RSA certificate PEM string | `string` | n/a | yes |
@@ -137,6 +138,7 @@ No modules.
 | <a name="input_acknowledge_pre_verification_warnings"></a> [acknowledge\_pre\_verification\_warnings](#input\_acknowledge\_pre\_verification\_warnings) | Acknowledge pre-verification warnings | `bool` | `false` | no |
 | <a name="input_allow_duplicate_common_name"></a> [allow\_duplicate\_common\_name](#input\_allow\_duplicate\_common\_name) | Whether duplicate common names are allowed | `bool` | `false` | no |
 | <a name="input_auto_approve_warnings"></a> [auto\_approve\_warnings](#input\_auto\_approve\_warnings) | List of warnings to auto-approve | `list(string)` | `[]` | no |
+| <a name="input_certificate_chain_type"></a> [certificate\_chain\_type](#input\_certificate\_chain\_type) | Certificate chain type (default or test). | `string` | `"default"` | no |
 | <a name="input_change_management"></a> [change\_management](#input\_change\_management) | Enable/disable change management | `bool` | `false` | no |
 | <a name="input_secure_network"></a> [secure\_network](#input\_secure\_network) | TLS network setting | `string` | `"standard-tls"` | no |
 | <a name="input_signature_algorithm"></a> [signature\_algorithm](#input\_signature\_algorithm) | Signature algorithm for CSR | `string` | `""` | no |
@@ -146,7 +148,7 @@ No modules.
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_csr_ecdsa"></a> [csr\_ecdsa](#output\_csr\_ecdsa) | n/a |
 | <a name="output_csr_rsa"></a> [csr\_rsa](#output\_csr\_rsa) | n/a |
 <!-- END_TF_DOCS -->
