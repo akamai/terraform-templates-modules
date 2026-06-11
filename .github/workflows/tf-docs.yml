@@ -34,6 +34,7 @@ jobs:
         uses: terraform-docs/gh-actions@v1.4.1
         with:
           working-dir: ./aap/activate-security
+          config-file: ../../.terraform-docs.yaml
           output-file: README.md
           output-method: inject
           git-push: true
@@ -42,6 +43,7 @@ jobs:
         uses: terraform-docs/gh-actions@v1.4.1
         with:
           working-dir: ./aap/bot-manager
+          config-file: ../../.terraform-docs.yaml
           output-file: README.md
           output-method: inject
           git-push: true
@@ -50,6 +52,7 @@ jobs:
         uses: terraform-docs/gh-actions@v1.4.1
         with:
           working-dir: ./aap/client-lists
+          config-file: ../../.terraform-docs.yaml
           output-file: README.md
           output-method: inject
           git-push: true
@@ -58,6 +61,7 @@ jobs:
         uses: terraform-docs/gh-actions@v1.4.1
         with:
           working-dir: ./aap/security
+          config-file: ../../.terraform-docs.yaml
           output-file: README.md
           output-method: inject
           git-push: true
@@ -66,6 +70,7 @@ jobs:
         uses: terraform-docs/gh-actions@v1.4.1
         with:
           working-dir: ./aap-asm/activate-security
+          config-file: ../../.terraform-docs.yaml
           output-file: README.md
           output-method: inject
           git-push: true
@@ -74,6 +79,7 @@ jobs:
         uses: terraform-docs/gh-actions@v1.4.1
         with:
           working-dir: ./aap-asm/bot-manager
+          config-file: ../../.terraform-docs.yaml
           output-file: README.md
           output-method: inject
           git-push: true
@@ -82,6 +88,7 @@ jobs:
         uses: terraform-docs/gh-actions@v1.4.1
         with:
           working-dir: ./aap-asm/client-lists
+          config-file: ../../.terraform-docs.yaml
           output-file: README.md
           output-method: inject
           git-push: true
@@ -90,6 +97,7 @@ jobs:
         uses: terraform-docs/gh-actions@v1.4.1
         with:
           working-dir: ./aap-asm/client-reputation
+          config-file: ../../.terraform-docs.yaml
           output-file: README.md
           output-method: inject
           git-push: true
@@ -98,46 +106,16 @@ jobs:
         uses: terraform-docs/gh-actions@v1.4.1
         with:
           working-dir: ./aap-asm/security
+          config-file: ../../.terraform-docs.yaml
           output-file: README.md
           output-method: inject
           git-push: true
-
-      - name: Generate terraform-docs for Delivery
-        uses: terraform-docs/gh-actions@v1.4.1
-        with:
-          working-dir: ./delivery
-          output-file: README.md
-          output-method: inject
-          git-push: true
-
-      - name: Generate terraform-docs for CPS - DV SAN
-        uses: terraform-docs/gh-actions@v1.4.1
-        with:
-          working-dir: ./dv-san-cert
-          output-file: README.md
-          output-method: inject
-          git-push: true
-
-      - name: Generate terraform-docs for CPS - Third Party
-        uses: terraform-docs/gh-actions@v1.4.1
-        with:
-          working-dir: ./third-party-cert
-          output-file: README.md
-          output-method: inject
-          git-push: true     
-
-      - name: Generate terraform-docs for Edge DNS
-        uses: terraform-docs/gh-actions@v1.4.1
-        with:
-          working-dir: ./edns
-          output-file: README.md
-          output-method: inject
-          git-push: true        
 
       - name: Generate terraform-docs for BMP - API Definition
         uses: terraform-docs/gh-actions@v1.4.1
         with:
           working-dir: ./bmp/api-definition
+          config-file: ../../.terraform-docs.yaml
           output-file: README.md
           output-method: inject
           git-push: true
@@ -146,6 +124,7 @@ jobs:
         uses: terraform-docs/gh-actions@v1.4.1
         with:
           working-dir: ./bmp/transactional-endpoint
+          config-file: ../../.terraform-docs.yaml
           output-file: README.md
           output-method: inject
           git-push: true
@@ -154,6 +133,43 @@ jobs:
         uses: terraform-docs/gh-actions@v1.4.1
         with:
           working-dir: ./bmp/security-config-activation
+          config-file: ../../.terraform-docs.yaml
+          output-file: README.md
+          output-method: inject
+          git-push: true
+
+      - name: Generate terraform-docs for Delivery
+        uses: terraform-docs/gh-actions@v1.4.1
+        with:
+          working-dir: ./delivery
+          config-file: ../.terraform-docs.yaml
+          output-file: README.md
+          output-method: inject
+          git-push: true
+
+      - name: Generate terraform-docs for CPS - DV SAN
+        uses: terraform-docs/gh-actions@v1.4.1
+        with:
+          working-dir: ./dv-san-cert
+          config-file: ../.terraform-docs.yaml
+          output-file: README.md
+          output-method: inject
+          git-push: true
+
+      - name: Generate terraform-docs for Edge DNS
+        uses: terraform-docs/gh-actions@v1.4.1
+        with:
+          working-dir: ./edns
+          config-file: ../.terraform-docs.yaml
+          output-file: README.md
+          output-method: inject
+          git-push: true      
+
+      - name: Generate terraform-docs for CPS - Third Party
+        uses: terraform-docs/gh-actions@v1.4.1
+        with:
+          working-dir: ./third-party-cert
+          config-file: ../.terraform-docs.yaml
           output-file: README.md
           output-method: inject
           git-push: true
