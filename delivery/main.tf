@@ -25,7 +25,7 @@ module "rules" {
   product_id             = var.product_id
   etls                   = var.etls
   default_origin         = var.default_origin
-  cpcode_id              = tonumber(trimprefix(akamai_cp_code.this[0].id, "cpc_"))
+  cpcode_id              = var.default_cpcode ? null : tonumber(trimprefix(akamai_cp_code.this[0].id, "cpc_"))
   cpcode_name            = var.cpcode_name
   sure_route_test_object = var.sure_route_test_object
   td_region              = var.td_region
