@@ -69,6 +69,7 @@ variable "additional_origins" {
     hostname_match      = list(string)
     path_match          = list(string)
   }))
+  default = {}
 }
 
 variable "sure_route_test_object" {
