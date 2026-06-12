@@ -9,7 +9,7 @@ output "rules_errors" {
 }
 
 output "cpcode_id" {
-  value       = tonumber(trimprefix(akamai_cp_code.this[0].id, "cpc_"))
+  value       = var.default_cpcode ? 0 : tonumber(trimprefix(akamai_cp_code.this[0].id, "cpc_"))
   description = "The CP Code's unique identifier."
 }
 
