@@ -1,6 +1,6 @@
 
 data "akamai_property_rules_builder" "rule_offload_origin" {
-  rules_v2025_10_16 {
+  rules_v2026_02_16 {
     name                  = "Offload origin"
     comments              = "Control the settings related to caching content at the edge and in the browser. As a result, fewer requests go to your origin, fewer bytes leave your data centers, and your assets are closer to your users."
     criteria_must_satisfy = "all"
@@ -12,20 +12,9 @@ data "akamai_property_rules_builder" "rule_offload_origin" {
     behavior {
       tiered_distribution {
         enabled = true
-      }
-    }
-
-
-    dynamic "behavior" {
-      for_each = [1] # always create exactly one behavior block
-      content {
-        tiered_distribution {
-          enabled = true
-
-          # Only include this attribute when var.etls is false
-          # If var.etls == true → this line is omitted
-          tiered_distribution_map = var.etls ? null : var.td_region
-        }
+        # Only include this attribute when var.etls is false
+        # If var.etls == true → this line is omitted
+        tiered_distribution_map = var.etls ? null : var.td_region
       }
     }
 
