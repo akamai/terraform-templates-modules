@@ -1,3 +1,18 @@
+# [1.4.0](https://github.com/akamai/terraform-templates-modules/compare/v1.3.4...v1.4.0) (2026-06-16)
+
+
+### Bug Fixes
+
+* correct logic for default cp code ([9c48a55](https://github.com/akamai/terraform-templates-modules/commit/9c48a55f6820c6bf6d74bcffda9b57e605247aa5))
+* set akamai provider version to minimum of 10.1 ([f911ea3](https://github.com/akamai/terraform-templates-modules/commit/f911ea3903386b58dfd40171fc94f62735149f90))
+
+
+### Features
+
+* Updated rule format to v2026_02_16 ([0641bc6](https://github.com/akamai/terraform-templates-modules/commit/0641bc614aae7d25e48d562682857f8ce97733b0))
+
+
+
 ## [1.3.4](https://github.com/akamai/terraform-templates-modules/compare/v1.3.3...v1.3.4) (2026-06-11)
 
 
