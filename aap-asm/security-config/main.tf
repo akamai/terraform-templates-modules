@@ -1,11 +1,10 @@
 /**
- * # Onboarding: Application Security Configuration
+ * # Security Configuration (Config-Level)
  *
- * The use case for this module is to quickly create a new Application Security configuration
- * serving a set of hostnames following Akamai Professional Services Best Practices.
- *
- * Read on to find out which resources are provisioned as part of this
- * process, and how to customize!
+ * Creates and manages the Akamai Application Security configuration,
+ * advanced settings, rate policies, and reputation profiles.
+ * This module is called once per deployment. Individual security policies
+ * are created by the companion `security-policy` module using `for_each`.
  *
  */
 

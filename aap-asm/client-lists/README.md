@@ -20,8 +20,6 @@ module "example" {
   	 config_name  = <string>
   	 contract_id  = <string>
   	 group_id  = <string>
-  	 notification_emails  = <list(string)>
-  	 version_notes  = <string>
 }
  ```
 
@@ -36,8 +34,6 @@ module "example" {
 
 | Name | Type |
 |------|------|
-| [akamai_clientlist_activation.client-lists-rcbypass-list_production](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/clientlist_activation) | resource |
-| [akamai_clientlist_activation.client-lists-rcbypass-list_staging](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/clientlist_activation) | resource |
 | [akamai_clientlist_list.client-lists-geoblock-list](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/clientlist_list) | resource |
 | [akamai_clientlist_list.client-lists-ipblock](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/clientlist_list) | resource |
 | [akamai_clientlist_list.client-lists-ipblock-list-exceptions](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/clientlist_list) | resource |
@@ -58,8 +54,6 @@ No modules.
 | <a name="input_config_name"></a> [config\_name](#input\_config\_name) | Security configuration name | `string` | n/a | yes |
 | <a name="input_contract_id"></a> [contract\_id](#input\_contract\_id) | Akamai Contract ID | `string` | n/a | yes |
 | <a name="input_group_id"></a> [group\_id](#input\_group\_id) | Akamai Group ID | `string` | n/a | yes |
-| <a name="input_notification_emails"></a> [notification\_emails](#input\_notification\_emails) | List or emails for notifications | `list(string)` | n/a | yes |
-| <a name="input_version_notes"></a> [version\_notes](#input\_version\_notes) | Notes for the version | `string` | n/a | yes |
 
 ## Outputs
 

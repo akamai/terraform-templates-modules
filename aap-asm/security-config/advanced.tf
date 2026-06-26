@@ -1,4 +1,3 @@
-# Random string for enabling pragma headers
 resource "random_string" "secret_header" {
   length           = 20
   lower            = true
@@ -9,8 +8,6 @@ resource "random_string" "secret_header" {
   min_special      = "1"
 }
 
-
-// Global Advanced
 resource "akamai_appsec_advanced_settings_evasive_path_match" "evasive_path_match" {
   config_id         = akamai_appsec_configuration.config.config_id
   enable_path_match = true
@@ -100,15 +97,3 @@ resource "akamai_appsec_advanced_settings_pragma_header" "pragma_header" {
     }
   )
 }
-
-# // Override advanced settings on the policy level by add the below line,
-# // security_policy_id = akamai_appsec_security_policy.tfdemo.security_policy_id
-# // Where tfdemo is the reference name of the policy created, different policies will have different reference name
-
-# resource "akamai_appsec_advanced_settings_evasive_path_match" "tfdemo" {
-#   config_id          = akamai_appsec_configuration.config.config_id
-#   security_policy_id = akamai_appsec_security_policy.tfdemo.security_policy_id
-#   enable_path_match  = false
-# }
-
-
