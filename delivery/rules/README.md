@@ -11,9 +11,10 @@ module "example" {
   
 	 # Required variables
   	 additional_origins  = <map(object({
-    origin_name    = string
-    hostname_match = list(string)
-    path_match     = list(string)
+    origin_name         = string
+    forward_host_header = string
+    hostname_match      = list(string)
+    path_match          = list(string)
   }))>
   	 default_origin  = <string>
   	 etls  = <bool>
@@ -21,7 +22,9 @@ module "example" {
 	 # Optional variables
   	 cpcode_id  = <number> | default: null
   	 cpcode_name  = <string> | default: null
+  	 default_cpcode  = <bool> | default: false
   	 enable_mPulse  = <bool> | default: true
+  	 forward_host_header  = <string> | default: "REQUEST_HOST_HEADER"
   	 product_id  = <string> | default: "Site_Accel"
   	 sure_route_test_object  = <string> | default: "/akamai/testobject.html"
   	 td_region  = <string> | default: "CH2"
@@ -33,7 +36,7 @@ module "example" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
-| <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | ~> 9.0 |
+| <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | ~> 10.1 |
 
 ## Resources
 
@@ -92,12 +95,14 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_additional_origins"></a> [additional\_origins](#input\_additional\_origins) | Additional origins for the property. For now the match is only by hostname. | <pre>map(object({<br/>    origin_name    = string<br/>    hostname_match = list(string)<br/>    path_match     = list(string)<br/>  }))</pre> | n/a | yes |
+| <a name="input_additional_origins"></a> [additional\_origins](#input\_additional\_origins) | Additional origins for the property. For now the match is only by hostname. The field forward\_host\_header allows specifying a custom host header for each additional origin.Possible fixed values are ORIGIN\_HOSTNAME or REQUEST\_HOST\_HEADER. But the user can also select any host header they would like to use as a custom value. | <pre>map(object({<br/>    origin_name         = string<br/>    forward_host_header = string<br/>    hostname_match      = list(string)<br/>    path_match          = list(string)<br/>  }))</pre> | n/a | yes |
 | <a name="input_default_origin"></a> [default\_origin](#input\_default\_origin) | Default origin server for all properties | `string` | n/a | yes |
 | <a name="input_etls"></a> [etls](#input\_etls) | Boolean to switch between Enhanced and Standard TLS modes | `bool` | n/a | yes |
 | <a name="input_cpcode_id"></a> [cpcode\_id](#input\_cpcode\_id) | Default CP Code id. | `number` | `null` | no |
 | <a name="input_cpcode_name"></a> [cpcode\_name](#input\_cpcode\_name) | Default CP Code name. Will be the property name (var.name) if null. | `string` | `null` | no |
+| <a name="input_default_cpcode"></a> [default\_cpcode](#input\_default\_cpcode) | Boolean to enable the default CP Code for all properties. If false, the CP Code must be specified in the property definition. | `bool` | `false` | no |
 | <a name="input_enable_mPulse"></a> [enable\_mPulse](#input\_enable\_mPulse) | Boolean tod ecide whether to inject the mpulse behavior | `bool` | `true` | no |
+| <a name="input_forward_host_header"></a> [forward\_host\_header](#input\_forward\_host\_header) | Host header to be forwarded to the origin server. Possible fixed values are ORIGIN\_HOSTNAME or REQUEST\_HOST\_HEADER. But the user can also select any host header they would like to use as a custom value. | `string` | `"REQUEST_HOST_HEADER"` | no |
 | <a name="input_product_id"></a> [product\_id](#input\_product\_id) | Property Manager product. [ION => Fresca, ION Premier => SPM, DSA => Site\_Accel] | `string` | `"Site_Accel"` | no |
 | <a name="input_sure_route_test_object"></a> [sure\_route\_test\_object](#input\_sure\_route\_test\_object) | Test object path for SureRoute | `string` | `"/akamai/testobject.html"` | no |
 | <a name="input_td_region"></a> [td\_region](#input\_td\_region) | Region (map) for Tiered Distribution behaviour. Only applies if network is Standard TLS.<br/>Options are: CH2, CHAPAC, CHEU2, CHEUS2, CHWUS2, CHCUS2, CHAUS | `string` | `"CH2"` | no |

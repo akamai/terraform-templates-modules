@@ -10,49 +10,21 @@ repos:
         stages: [commit-msg]
         args: []
 
-  - repo: local
-    hooks:
-      # Copies the default .terraform-docs.yml to all the modules folders to keep consistency in documentation
-      - id: copy-terraform-docs-config
-        name: Copy terraform-docs config to module folders
-        entry: >
-          pwsh -NoProfile -Command "
-          Get-ChildItem -Recurse -Include *.tf |
-            Select-Object -ExpandProperty Directory |
-            Sort-Object -Unique |
-            Where-Object {
-              $_ -notmatch '^\.$' -and
-              $_ -notmatch '/test/'
-            } |
-            ForEach-Object {
-              Copy-Item -Path ./.terraform-docs.yaml -Destination (Join-Path $_ '.terraform-docs.yaml') -Force
-            }
-          "
-        language: system
-        pass_filenames: false
-        stages: [pre-commit]
-
-      - id: terraform-docs
-        name: Generate Terraform docs
-        entry: >
-          pwsh -NoProfile -Command "
-          Get-ChildItem -Recurse -Include *.tf |
-            Select-Object -ExpandProperty Directory |
-            Sort-Object -Unique |
-            Where-Object {
-              $_ -notmatch '/test/'
-            } |
-            ForEach-Object {
-              & terraform-docs $_
-            }
-          "
-        language: system
-        pass_filenames: false
-        stages: [pre-commit]
 
   - repo: https://github.com/antonbabenko/pre-commit-terraform
     rev: "v1.98.1"
     hooks:
+      - id: terraform_docs
+        name: Terraform docs
+        description: >-
+          Inserts documentation from main.tf, module usage, requirements, 
+          resources, modules, inputs and outputs into README.md
+        args:
+          - --hook-config=--terraform-docs-version=v0.20.0
+          - --hook-config=--path-to-file=README.md
+          - --hook-config=--create-file-if-not-exist=true
+          - --args=--config=.terraform-docs.yaml
+        stages: [pre-commit]
       - id: terraform_fmt
         args: [--args=-write=true]
         stages: [pre-commit]

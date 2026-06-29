@@ -1,5 +1,5 @@
 data "akamai_property_rules_builder" "rule_additional_origins" {
-  rules_v2025_10_16 {
+  rules_v2026_02_16 {
     name                  = "Additional Origins"
     comments              = "Parent rule for adding extra origins based on hostname matches."
     criteria_must_satisfy = "all"
@@ -12,7 +12,7 @@ data "akamai_property_rules_builder" "rule_additional_origins" {
 data "akamai_property_rules_builder" "rule_additional_origin" {
   count = var.additional_origins != null ? length(keys(var.additional_origins)) : 0
 
-  rules_v2025_10_16 {
+  rules_v2026_02_16 {
     name                  = var.additional_origins[keys(var.additional_origins)[count.index]].origin_name
     criteria_must_satisfy = "all"
 
@@ -45,9 +45,11 @@ data "akamai_property_rules_builder" "rule_additional_origin" {
         cache_key_hostname               = "REQUEST_HOST_HEADER"
         compress                         = true
         custom_valid_cn_values           = ["{{Origin Hostname}}", "{{Forward Host Header}}", ]
+        custom_forward_host_header       = contains(["REQUEST_HOST_HEADER", "ORIGIN_HOSTNAME"], var.additional_origins[keys(var.additional_origins)[count.index]].forward_host_header) ? null : var.additional_origins[keys(var.additional_origins)[count.index]].forward_host_header
         enable_true_client_ip            = true
-        forward_host_header              = "REQUEST_HOST_HEADER"
+        forward_host_header              = contains(["REQUEST_HOST_HEADER", "ORIGIN_HOSTNAME"], var.additional_origins[keys(var.additional_origins)[count.index]].forward_host_header) ? var.additional_origins[keys(var.additional_origins)[count.index]].forward_host_header : "CUSTOM"
         hostname                         = var.additional_origins[keys(var.additional_origins)[count.index]].origin_name
+        http2_enabled                    = false
         http_port                        = 80
         https_port                       = 443
         ip_version                       = "IPV4"
