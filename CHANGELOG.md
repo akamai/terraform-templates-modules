@@ -1,3 +1,19 @@
+# [1.5.0](https://github.com/akamai/terraform-templates-modules/compare/v1.4.0...v1.5.0) (2026-07-02)
+
+
+### Bug Fixes
+
+* **docs:** revert third-party-cert README formatting ([064ce30](https://github.com/akamai/terraform-templates-modules/commit/064ce30e35e5df14d8de6c75d47bdde55c5033a4))
+* **ds2:** remove module terraform-docs config ([aba0622](https://github.com/akamai/terraform-templates-modules/commit/aba062216f523ab6f912c22c59df506f16a33ddb))
+
+
+### Features
+
+* **ds2:** drop cpcode, complete connector types and stream options ([8217d7c](https://github.com/akamai/terraform-templates-modules/commit/8217d7cbfb657ef3d863bd608a60fc1ecde6d64d))
+* **ds2:** remove unnecessary files ([f7c7332](https://github.com/akamai/terraform-templates-modules/commit/f7c73327c572acef61b4455ffbcd548d115de434))
+
+
+
 # [1.4.0](https://github.com/akamai/terraform-templates-modules/compare/v1.3.4...v1.4.0) (2026-06-16)
 
 
