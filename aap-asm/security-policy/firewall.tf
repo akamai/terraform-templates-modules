@@ -10,6 +10,10 @@ resource "akamai_appsec_ip_geo" "this" {
     geo_network_lists = var.client_lists_geoblock
     action            = "deny"
   }
+  asn_controls {
+    asn_network_lists = var.client_lists_asnblock
+    action            = "deny"
+  }
   exception_ip_network_lists = var.client_lists_exception_ipblock
   ukraine_geo_control_action = "none"
 }

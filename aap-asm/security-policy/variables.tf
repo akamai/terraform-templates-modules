@@ -108,6 +108,12 @@ variable "client_lists_geoblock" {
   default     = []
 }
 
+variable "client_lists_asnblock" {
+  description = "List of ASN network list IDs to block"
+  type        = list(string)
+  default     = []
+}
+
 variable "client_lists_exception_ipblock" {
   description = "List of IP network list IDs to exempt from blocking"
   type        = list(string)

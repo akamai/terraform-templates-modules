@@ -64,9 +64,3 @@ variable "enable_client_reputation" {
   type        = bool
   default     = false
 }
-
-variable "client_lists_reputationbypass" {
-  description = "ID(s) for the Reputation Bypass Client List"
-  type        = list(string)
-  default     = []
-}

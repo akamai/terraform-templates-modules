@@ -3,6 +3,11 @@ output "config_id" {
   description = "Security Configuration ID"
 }
 
+output "config_name" {
+  value       = akamai_appsec_configuration.config.name
+  description = "Security Configuration name (referencing this output defers by-name lookups until the config exists)"
+}
+
 output "rate_policy_origin_error_id" {
   value       = akamai_appsec_rate_policy.origin_error.rate_policy_id
   description = "Rate Policy ID for Origin Error"
