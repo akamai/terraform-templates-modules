@@ -89,6 +89,7 @@ module "example" {
   	 acknowledge_pre_verification_warnings  = <bool> | default: false
   	 allow_duplicate_common_name  = <bool> | default: false
   	 auto_approve_warnings  = <list(string)> | default: []
+  	 certificate_chain_type  = <string> | default: "default"
   	 change_management  = <bool> | default: false
   	 secure_network  = <string> | default: "standard-tls"
   	 signature_algorithm  = <string> | default: ""
@@ -137,6 +138,7 @@ No modules.
 | <a name="input_acknowledge_pre_verification_warnings"></a> [acknowledge\_pre\_verification\_warnings](#input\_acknowledge\_pre\_verification\_warnings) | Acknowledge pre-verification warnings | `bool` | `false` | no |
 | <a name="input_allow_duplicate_common_name"></a> [allow\_duplicate\_common\_name](#input\_allow\_duplicate\_common\_name) | Whether duplicate common names are allowed | `bool` | `false` | no |
 | <a name="input_auto_approve_warnings"></a> [auto\_approve\_warnings](#input\_auto\_approve\_warnings) | List of warnings to auto-approve | `list(string)` | `[]` | no |
+| <a name="input_certificate_chain_type"></a> [certificate\_chain\_type](#input\_certificate\_chain\_type) | Certificate chain type (default or test). | `string` | `"default"` | no |
 | <a name="input_change_management"></a> [change\_management](#input\_change\_management) | Enable/disable change management | `bool` | `false` | no |
 | <a name="input_secure_network"></a> [secure\_network](#input\_secure\_network) | TLS network setting | `string` | `"standard-tls"` | no |
 | <a name="input_signature_algorithm"></a> [signature\_algorithm](#input\_signature\_algorithm) | Signature algorithm for CSR | `string` | `""` | no |
