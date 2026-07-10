@@ -1,6 +1,8 @@
 <!-- BEGIN_TF_DOCS -->
 
+# Akamai Domain Ownership Management (DOM)
 
+ This directory contains the resource for Domain entry creation and Validation
 
 # Usage
 Basic usage of this module is as follows:
@@ -32,7 +34,7 @@ module "example" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
-| <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | >= 9.2.0 |
+| <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | ~> 10.0 |
 
 ## Resources
 
