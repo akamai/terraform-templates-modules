@@ -131,12 +131,11 @@ jobs:
               envsubst < "tests/variables.tf.tpl" > "prerequisites/variables.tf"
               envsubst < "tests/versions-delivery.tf.tpl" > "prerequisites/versions.tf"
               cp "terraform.tfvars" "prerequisites/terraform.tfvars"
+              echo 'provider "akamai" {}' >> "prerequisites/provider.tf"
             fi
-
           fi
 
           echo 'provider "akamai" {}' >> "provider.tf"
-          echo 'provider "akamai" {}' >> "prerequisites/provider.tf"
     
       - name: Test Prerequisites
         run: |

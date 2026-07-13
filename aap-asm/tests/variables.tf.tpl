@@ -35,6 +35,11 @@ variable "akamai_account_key" {
 # -------------------------------------------------
 # Common Variables 
 # -------------------------------------------------
+variable "default_cpcode" {
+  description = "Boolean to enable the default CP Code for all properties. If false, the CP Code must be specified in the property definition."
+  type        = bool
+  default     = true
+}
 variable "edgerc_path" {
   description = "Specify path to the Akamai EdgeGrid authentication file that contains your Akamai API tokens. Typically ~/.edgerc."
   type        = string
