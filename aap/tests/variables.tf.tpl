@@ -41,6 +41,13 @@ variable "edgerc_path" {
   default     = "~/.edgerc"
 }
 
+variable "default_cpcode" {
+  description = "Boolean to enable the default CP Code for all properties. If false, the CP Code must be specified in the property definition."
+  type        = bool
+  default     = true
+}
+
+
 variable "edgerc_section" {
   description = "Specify the section inside the edgerc file which can contain multiple sets of Akamai API tokens. Typically default."
   type        = string
