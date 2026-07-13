@@ -4,10 +4,10 @@
 edgerc_path    = "~/.edgerc"
 edgerc_section = "default"
 environment    = "dev"
-group_name     = "My Group"
-config_name    = "dev-tf-demo-appsec"
+group_name     = "GSSDEVOPS Terraform templates"
+config_name    = "${MATRIX_NAME}.terra.rafa.cr"
 description    = "Application security configuration"
-hostnames      = ["dev.tf-demo.com"]
+hostnames      = ["${MATRIX_NAME}.terra.rafa.cr"]
 
 # -------------------------------------------------
 # Advanced settings
@@ -20,7 +20,7 @@ inspection_size = 32
 enable_waf                 = true
 enable_request_constraints = true
 enable_ip_geo              = true
-enable_malware             = false
+enable_malware             = true
 enable_rate                = true
 enable_client_reputation   = true
 enable_slow_post           = true
@@ -54,7 +54,7 @@ client_lists_reputationbypass = ["214942_MYTFWAFSECURIT"]
 # Specifics for the Security Policy
 # -------------------------------------------------
 # Security Policy Details
-policy_name   = "tf-demo"
+policy_name   = "${MATRIX_NAME}"
 policy_prefix = "TF01"
 
 # Dos Protection
@@ -97,7 +97,7 @@ rep_web_scrapers_low_shared    = "alert"
 # Check whether the account is entitled to BVM (Bot Visibility
 # and Management) or BMS (Bot Management Standard) and set 
 # botman_type to "bvm" or "bms"
-botman_type = "bms"
+botman_type = "${BOTMAN_TYPE}"
 add_akamai_bot_header     = false
 enable_active_detections  = true
 enable_browser_validation = false

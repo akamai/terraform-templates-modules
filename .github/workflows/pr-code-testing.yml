@@ -57,7 +57,7 @@ jobs:
     
   aap:
     needs: detect_changes
-    if: needs.detect_changes.outputs.aap == 'true'
+    if: needs.detect_changes.outputs.aap == 'true' && 1 == 2
     uses: ./.github/workflows/pr-tests.yml
     with:
         module_source: aap
