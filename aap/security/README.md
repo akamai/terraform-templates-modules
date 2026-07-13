@@ -152,4 +152,5 @@ No modules.
 | <a name="output_config_id"></a> [config\_id](#output\_config\_id) | Security Configuration ID |
 | <a name="output_rate"></a> [rate](#output\_rate) | Rate Policy IDs |
 | <a name="output_security_policy_id"></a> [security\_policy\_id](#output\_security\_policy\_id) | Security Policy ID |
+| <a name="output_test"></a> [test](#output\_test) | n/a |
 <!-- END_TF_DOCS -->
