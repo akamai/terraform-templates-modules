@@ -125,7 +125,7 @@ jobs:
             envsubst < "tests/outputs.tf.tpl" > "outputs.tf"
             envsubst < "tests/versions.tf.tpl" > "versions.tf"
             
-            if [ "${{ inputs.module_source }}" == "aap"  || "${{ inputs.module_source }}" == "aap-asm" || "${{ inputs.module_source }}" == "bmp" ]; then
+            if [[ "${{ inputs.module_source }}" == "aap"  || "${{ inputs.module_source }}" == "aap-asm" || "${{ inputs.module_source }}" == "bmp" ]]; then
               mkdir prerequisites
               envsubst < "tests/prerequisites.tf.tpl" > "prerequisites/main.tf"
               envsubst < "tests/variables.tf.tpl" > "prerequisites/variables.tf"
@@ -139,7 +139,7 @@ jobs:
     
       - name: Test Prerequisites
         run: |
-          if [ "${{ inputs.module_source }}" == "aap"  || "${{ inputs.module_source }}" == "aap-asm" || "${{ inputs.module_source }}" == "bmp" ]; then
+          if [[ "${{ inputs.module_source }}" == "aap"  || "${{ inputs.module_source }}" == "aap-asm" || "${{ inputs.module_source }}" == "bmp" ]]; then
             cd "${{ inputs.module_source }}/prerequisites"
             echo "===== Terraform Init ====="
               terraform init
@@ -219,11 +219,6 @@ jobs:
             exit 1
           fi
 
-          if [ "${{ inputs.module_source }}" == "aap"  || "${{ inputs.module_source }}" == "aap-asm" || "${{ inputs.module_source }}" == "bmp" ]; then
-            cd "prerequisites"
-            echo "===== Terraform Destroy ====="
-              terraform destroy -input=false -auto-approve -no-color
-          fi
 
       - name: Wait
         run: sleep 60
@@ -256,4 +251,10 @@ jobs:
             echo '```' >> $GITHUB_STEP_SUMMARY
 
             exit 1
+          fi
+
+          if [[ "${{ inputs.module_source }}" == "aap"  || "${{ inputs.module_source }}" == "aap-asm" || "${{ inputs.module_source }}" == "bmp" ]]; then
+            cd "prerequisites"
+            echo "===== Terraform Destroy ====="
+              terraform destroy -input=false -auto-approve -no-color
           fi
