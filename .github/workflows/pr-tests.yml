@@ -130,6 +130,7 @@ jobs:
               envsubst < "tests/prerequisites.tf.tpl" > "prerequisites/main.tf"
               envsubst < "tests/variables.tf.tpl" > "prerequisites/variables.tf"
               envsubst < "tests/versions-delivery.tf.tpl" > "prerequisites/versions.tf"
+              cp "terraform.tfvars" "prerequisites/terraform.tfvars"
             fi
 
           fi

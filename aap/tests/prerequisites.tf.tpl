@@ -1,5 +1,5 @@
 module "delivery" {
-  source = "../delivery"
+  source = "../../delivery"
   contract_id = trimprefix(data.akamai_contract.contract.id, "ctr_")
   group_id = trimprefix(data.akamai_contract.contract.group_id, "grp_")
   hostnames = ["${MATRIX_NAME}.terra.rafa.cr"]
