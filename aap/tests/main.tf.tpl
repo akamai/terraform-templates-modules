@@ -128,7 +128,7 @@ module "security" {
   waf_platform_action = var.waf_platform_action
   penalty_box_action  = var.penalty_box_action
 
-  depends_on = [module.client-lists, module.delivery]
+  depends_on = [module.client-lists]
 }
 
 module "botman" {
