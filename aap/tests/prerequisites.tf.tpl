@@ -17,7 +17,7 @@ module "delivery" {
   noncompliance_reason = ["NONE"]
   other_noncompliance_reason = "test"
   td_region = "CH2"
-  ip_behavior = "IPV6_PERFORMANCE"
+  ip_behavior = "IPV6_COMPLIANCE"
   sure_route_test_object = "/terraform/srto.html"
   activation_notes = "GitHub Actions test"
   activation_to_staging_exists = false
