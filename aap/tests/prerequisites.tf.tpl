@@ -1,3 +1,7 @@
+data "akamai_contract" "contract" {
+  group_name = var.group_name
+}
+
 module "delivery" {
   source = "../../delivery"
   contract_id = trimprefix(data.akamai_contract.contract.id, "ctr_")
