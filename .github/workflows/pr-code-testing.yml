@@ -1,0 +1,106 @@
+name: PR Tests
+
+on:
+  pull_request:
+    branches:
+      - testing_branch
+    paths:
+      - '**/*.tf'
+    
+jobs:
+  detect_changes:
+    runs-on: ubuntu-latest
+
+    outputs:
+      aap-asm: ${{ steps.filter.outputs.aap-asm }}
+      aap: ${{ steps.filter.outputs.aap }}
+      bmp: ${{ steps.filter.outputs.bmp }}
+      delivery: ${{ steps.filter.outputs.delivery }}
+      dv-san-cert: ${{ steps.filter.outputs.dv-san-cert }}
+      edns: ${{ steps.filter.outputs.edns }}
+      third-party-cert: ${{ steps.filter.outputs.third-party-cert }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Detect changed folders
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            aap-asm:
+              - 'aap-asm/**'
+            aap:
+              - 'aap/**'
+            bmp:
+              - 'bmp/**'
+            delivery:
+              - 'delivery/**'
+            dv-san-cert:
+              - 'dv-san-cert/**'
+            edns:
+              - 'edns/**'
+            third-party-cert:
+              - 'third-party-cert/**'
+
+  aap-asm:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.aap-asm == 'true'
+    uses: ./.github/workflows/pr-tests.yml
+    with:
+        module_source: aap-asm
+        module_mode: full
+    secrets: inherit
+
+
+    
+  aap:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.aap == 'true'
+    uses: ./.github/workflows/pr-tests.yml
+    with:
+        module_source: aap
+        module_mode: full
+    secrets: inherit
+
+  bmp:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.bmp == 'true'
+    uses: ./.github/workflows/pr-tests.yml
+    with:
+        module_source: bmp
+        module_mode: full
+    secrets: inherit
+
+  delivery:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.delivery == 'true'
+    uses: ./.github/workflows/pr-tests.yml
+    with:
+        module_source: delivery
+    secrets: inherit
+
+  dv-san-cert:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.dv-san-cert == 'true'
+    uses: ./.github/workflows/pr-tests.yml
+    with:
+        module_source: dv-san-cert
+    secrets: inherit
+
+  edns:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.edns == 'true'
+    uses: ./.github/workflows/pr-tests.yml
+    with:
+        module_source: edns
+    secrets: inherit
+
+  third-party-cert:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.third-party-cert == 'true'
+    uses: ./.github/workflows/pr-tests.yml
+    with:
+        module_source: third-party-cert
+    secrets: inherit
