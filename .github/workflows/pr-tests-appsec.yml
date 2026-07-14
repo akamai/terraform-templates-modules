@@ -146,7 +146,7 @@ jobs:
           set +e
           set -x
 
-          terraform plan -input=false -detailed-exitcode -no-color -out=tfplan > >(tee /dev/tty) 2> >(tee plan.out >&2)
+          terraform plan -input=false -detailed-exitcode -no-color -out=tfplan > >(tee -a plan.out) 2> >(tee -a plan.out >&2)
           PLAN_EXIT_CODE=$?
 
           if [ "$PLAN_EXIT_CODE" -ne 0 ] && [ "$PLAN_EXIT_CODE" -ne 2 ]; then
@@ -175,7 +175,7 @@ jobs:
           set +e
 
           while [ "$SUCCESS" -eq 0 ] && [ "$RETRY_COUNT" -lt "$MAX_RETRIES" ]; do
-            terraform apply -input=false -auto-approve -no-color tfplan > >(tee /dev/tty) 2> >(tee apply.out >&2)
+            terraform apply -input=false -auto-approve -no-color tfplan > >(tee -a apply.out) 2> >(tee -a apply.out >&2)
             APPLY_EXIT_CODE=$?
 
             if [ "$APPLY_EXIT_CODE" -eq 0 ]; then
@@ -189,7 +189,7 @@ jobs:
             fi
 
             echo "Re-planning before retry..."
-            terraform plan -input=false -detailed-exitcode -no-color -out=tfplan > >(tee /dev/tty) 2> >(tee replan.out >&2)
+            terraform plan -input=false -detailed-exitcode -no-color -out=tfplan > >(tee -a replan.out) 2> >(tee -a replan.out >&2)
             REPLAN_EXIT_CODE=$?
 
             if [ "$REPLAN_EXIT_CODE" -ne 0 ] && [ "$REPLAN_EXIT_CODE" -ne 2 ]; then
@@ -237,7 +237,7 @@ jobs:
           EXIT_CODE=1
 
           while [ "$RETRY_COUNT" -lt "$MAX_RETRIES" ]; do
-            terraform destroy -input=false -auto-approve -no-color > >(tee /dev/tty) 2> >(tee destroy.out >&2)
+            terraform destroy -input=false -auto-approve -no-color > >(tee -a destroy.out) 2> >(tee -a destroy.out >&2)
             EXIT_CODE=$?
 
             if [ "$EXIT_CODE" -eq 0 ]; then
@@ -253,52 +253,61 @@ jobs:
           set -e
 
           if [ "$EXIT_CODE" -ne 0 ]; then
-            echo "::error title=Terraform Destroy Failed::Check summary for details"
-            
-            echo "## ❌ Terraform Destroy Failed" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
-            echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
-            echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
+            DESTROY_TAIL="$(tail -n 50 destroy.out 2>/dev/null || true)"
+            EXPECTED_DESTROY_REGEX="^Error: cannot delete configuration '[^']+' as version [0-9]+ has been active in staging or production$"
+            DESTROY_ERROR_LINES="$(printf '%s\n' "$DESTROY_TAIL" | grep '^Error:' || true)"
 
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            tail -n 50 destroy.out >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-
-            exit 1
-          fi
-
-            cd "prerequisites"
-            echo "===== Terraform Destroy ====="
-            PRE_MAX_RETRIES=2
-            PRE_RETRY_COUNT=0
-            PRE_EXIT_CODE=1
-
-            while [ "$PRE_RETRY_COUNT" -lt "$PRE_MAX_RETRIES" ]; do
-              terraform destroy -input=false -auto-approve -no-color
-              PRE_EXIT_CODE=$?
-
-              if [ "$PRE_EXIT_CODE" -eq 0 ]; then
-                break
-              fi
-
-              PRE_RETRY_COUNT=$((PRE_RETRY_COUNT + 1))
-              if [ "$PRE_RETRY_COUNT" -lt "$PRE_MAX_RETRIES" ]; then
-                echo "Retrying prerequisites terraform destroy..."
-              fi
-            done
-
-            if [ "$PRE_EXIT_CODE" -ne 0 ]; then
-              echo "::error title=Prerequisites Terraform Destroy Failed::Check summary for details"
-
-              echo "## ❌ Prerequisites Terraform Destroy Failed" >> $GITHUB_STEP_SUMMARY
+            if [ -n "$DESTROY_ERROR_LINES" ] && ! printf '%s\n' "$DESTROY_ERROR_LINES" | grep -Ev "$EXPECTED_DESTROY_REGEX" >/dev/null; then
+              echo "::warning title=Terraform Destroy Partial Cleanup::Known active configuration cannot be deleted yet; continuing."
+              exit 0
+            else
+              echo "::error title=Terraform Destroy Failed::Check summary for details"
+              
+              echo "## ❌ Terraform Destroy Failed" >> $GITHUB_STEP_SUMMARY
               echo "" >> $GITHUB_STEP_SUMMARY
               echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
               echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
-              echo "**Exit Code:** $PRE_EXIT_CODE" >> $GITHUB_STEP_SUMMARY
+              echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
+
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+              tail -n 50 destroy.out >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
 
               exit 1
             fi
           fi
+
+          cd "prerequisites"
+          echo "===== Terraform Destroy ====="
+          PRE_MAX_RETRIES=2
+          PRE_RETRY_COUNT=0
+          PRE_EXIT_CODE=1
+
+          while [ "$PRE_RETRY_COUNT" -lt "$PRE_MAX_RETRIES" ]; do
+            terraform destroy -input=false -auto-approve -no-color
+            PRE_EXIT_CODE=$?
+
+            if [ "$PRE_EXIT_CODE" -eq 0 ]; then
+              break
+            fi
+
+            PRE_RETRY_COUNT=$((PRE_RETRY_COUNT + 1))
+            if [ "$PRE_RETRY_COUNT" -lt "$PRE_MAX_RETRIES" ]; then
+              echo "Retrying prerequisites terraform destroy..."
+            fi
+          done
+
+          if [ "$PRE_EXIT_CODE" -ne 0 ]; then
+            echo "::error title=Prerequisites Terraform Destroy Failed::Check summary for details"
+
+            echo "## ❌ Prerequisites Terraform Destroy Failed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
+            echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
+            echo "**Exit Code:** $PRE_EXIT_CODE" >> $GITHUB_STEP_SUMMARY
+
+            exit 1
+          fi
+          
