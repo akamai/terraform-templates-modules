@@ -14,7 +14,7 @@ locals {
 
   # Build lookup map from Akamai response using same key
   akamai_by_key = {
-    for op in var.akamai_operations :
+    for op in local.akamai_operations_safe :
     "${op.resource_path}|${op.name}|${op.purpose}" => op
   }
 }
