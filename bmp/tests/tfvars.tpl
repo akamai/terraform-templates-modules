@@ -7,12 +7,13 @@ edgerc_path = "~/.edgerc"
 
 # Section inside .edgerc to use for authentication
 # Must contain client_token, client_secret, access_token, host
-edgerc_section = "services"
+edgerc_section = "default"
 
 # Akamai group name (must match exactly)
 # Format usually: "<Group Name>-<ContractId>"
-group_name = "Akamai Professional Services-1-1NC95D"
+group_name = "GSSDEVOPS Terraform templates-1-5C13O2"
 
+activate_to_staging = true
 
 
 # =================================================
@@ -22,17 +23,14 @@ group_name = "Akamai Professional Services-1-1NC95D"
 # Map of API identifiers to OpenAPI specification files
 # Key must match between 'apis' and 'operations'
 apis = {
-  api1 = "api1.yml"
-  api2 = "api2.yml"
-  # api3 = "api3.json"
+  api1 = "myapi.yml"
+  
 }
 
 # Map of API identifiers to operations definition files
 # Must correspond 1:1 with 'apis'
 operations = {
-  api1 = "operations-api.json"
-  api2 = "operations-api2.json"
-  # api3 = "operations-api3.json"
+  api1 = "operations-myapi.json"
 }
 
 
@@ -42,10 +40,10 @@ operations = {
 # =================================================
 
 # Existing AppSec configuration name
-config_name = "Sharks1232"
+config_name = "GSS DEVOPS TERRAFORM"
 
 # Security policy name inside the above configuration
-policy_name = "tf-demo"
+policy_name = "Default"
 
 
 
@@ -55,7 +53,7 @@ policy_name = "tf-demo"
 
 # Hostnames where JavaScript injection rule should apply
 javascript_hostnames = [
-  "sharath.gslab-akashop.com"
+  "gss-dev-ops.terra.rafa.cr"
 ]
 
 # Injection behavior:
