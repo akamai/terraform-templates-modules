@@ -47,10 +47,9 @@ jobs:
   aap-asm:
     needs: detect_changes
     if: needs.detect_changes.outputs.aap-asm == 'true'
-    uses: ./.github/workflows/pr-tests.yml
+    uses: ./.github/workflows/pr-tests-appsec.yml
     with:
         module_source: aap-asm
-        module_mode: full
     secrets: inherit
 
 
@@ -61,16 +60,14 @@ jobs:
     uses: ./.github/workflows/pr-tests.yml
     with:
         module_source: aap
-        module_mode: full
     secrets: inherit
 
   bmp:
     needs: detect_changes
     if: needs.detect_changes.outputs.bmp == 'true'
-    uses: ./.github/workflows/pr-tests.yml
+    uses: ./.github/workflows/pr-tests-appsec.yml
     with:
         module_source: bmp
-        module_mode: full
     secrets: inherit
 
   delivery:
