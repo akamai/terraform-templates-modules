@@ -7,7 +7,7 @@
         "parameters": {
           "username": {
             "path": [
-              "username"
+              "application/json"
             ],
             "location": "BODY"
           }
