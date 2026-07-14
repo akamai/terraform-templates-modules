@@ -8,7 +8,7 @@ group_name     = "GSSDEVOPS Terraform templates"
 config_name    = "${MATRIX_NAME}.terra.rafa.cr"
 description    = "Application security configuration"
 hostnames      = ["${MATRIX_NAME}.terra.rafa.cr"]
-
+activate_to_staging = true
 # -------------------------------------------------
 # Advanced settings
 # -------------------------------------------------
