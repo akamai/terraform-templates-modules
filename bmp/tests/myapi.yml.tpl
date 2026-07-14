@@ -1,6 +1,6 @@
 openapi: 3.0.1
 info:
-  title: api/test
+  title: api/test-${MATRIX_NAME}
 servers:
   - url: gss-dev-ops.terra.rafa.cr/api
 x-akamai-api-definitions:
@@ -11,7 +11,7 @@ x-akamai-api-definitions:
     enforceOn:
       request: true
 paths:
-  /api/login:
+  /api/${MATRIX_NAME}/login:
     x-akamai-api-definitions-resource:
       name: user_login
     post:
