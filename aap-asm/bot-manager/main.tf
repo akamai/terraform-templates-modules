@@ -9,21 +9,21 @@
  *
  */
 
-# resource "akamai_botman_bot_management_settings" "bot_manager_bvm" {
-#   count              = var.botman_type == "bvm" ? 1 : 0
-#   config_id          = var.config_id
-#   security_policy_id = var.security_policy_id
-#   bot_management_settings = jsonencode(
-#     {
-#       "enableBotManagement" : true
-#       "removeBotManagementCookies" : var.remove_botman_cookies,
-#       "thirdPartyProxyServiceInUse" : var.third_party_proxy
-#     }
-#   )
-# }
+resource "akamai_botman_bot_management_settings" "bot_manager_bvm" {
+  count              = var.botman_type == "bvm" ? 1 : 0
+  config_id          = var.config_id
+  security_policy_id = var.security_policy_id
+  bot_management_settings = jsonencode(
+    {
+      "enableBotManagement" : true
+      "removeBotManagementCookies" : var.remove_botman_cookies,
+      "thirdPartyProxyServiceInUse" : var.third_party_proxy
+    }
+  )
+}
 
-resource "akamai_botman_bot_management_settings" "bot_manager" {
-  #count              = var.botman_type == "bms" ? 1 : 0
+resource "akamai_botman_bot_management_settings" "bot_manager_bms" {
+  count              = var.botman_type == "bms" ? 1 : 0
   config_id          = var.config_id
   security_policy_id = var.security_policy_id
   bot_management_settings = jsonencode(
