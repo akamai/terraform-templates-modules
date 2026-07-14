@@ -235,12 +235,24 @@ jobs:
           MAX_RETRIES=2
           RETRY_COUNT=0
           EXIT_CODE=1
+          KNOWN_DESTROY_ONLY=0
+          EXPECTED_DESTROY_REGEX="^Error: cannot delete configuration '[^']+' as version [0-9]+ has been active in staging or production$"
 
           while [ "$RETRY_COUNT" -lt "$MAX_RETRIES" ]; do
             terraform destroy -input=false -auto-approve -no-color > >(tee -a destroy.out) 2> >(tee -a destroy.out >&2)
             EXIT_CODE=$?
 
             if [ "$EXIT_CODE" -eq 0 ]; then
+              break
+            fi
+
+            DESTROY_TAIL="$(tail -n 50 destroy.out 2>/dev/null || true)"
+            DESTROY_ERROR_LINES="$(printf '%s\n' "$DESTROY_TAIL" | grep '^Error:' || true)"
+
+            if [ -n "$DESTROY_ERROR_LINES" ] && ! printf '%s\n' "$DESTROY_ERROR_LINES" | grep -Ev "$EXPECTED_DESTROY_REGEX" >/dev/null; then
+              KNOWN_DESTROY_ONLY=1
+              EXIT_CODE=0
+              echo "::warning title=Terraform Destroy Partial Cleanup::Known active configuration cannot be deleted yet; skipping retries."
               break
             fi
 
@@ -253,30 +265,21 @@ jobs:
           set -e
 
           if [ "$EXIT_CODE" -ne 0 ]; then
-            DESTROY_TAIL="$(tail -n 50 destroy.out 2>/dev/null || true)"
-            EXPECTED_DESTROY_REGEX="^Error: cannot delete configuration '[^']+' as version [0-9]+ has been active in staging or production$"
-            DESTROY_ERROR_LINES="$(printf '%s\n' "$DESTROY_TAIL" | grep '^Error:' || true)"
+            echo "::error title=Terraform Destroy Failed::Check summary for details"
+            
+            echo "## ❌ Terraform Destroy Failed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
+            echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
+            echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
 
-            if [ -n "$DESTROY_ERROR_LINES" ] && ! printf '%s\n' "$DESTROY_ERROR_LINES" | grep -Ev "$EXPECTED_DESTROY_REGEX" >/dev/null; then
-              echo "::warning title=Terraform Destroy Partial Cleanup::Known active configuration cannot be deleted yet; continuing."
-              exit 0
-            else
-              echo "::error title=Terraform Destroy Failed::Check summary for details"
-              
-              echo "## ❌ Terraform Destroy Failed" >> $GITHUB_STEP_SUMMARY
-              echo "" >> $GITHUB_STEP_SUMMARY
-              echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
-              echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
-              echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            tail -n 50 destroy.out >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
 
-              echo "" >> $GITHUB_STEP_SUMMARY
-              echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
-              tail -n 50 destroy.out >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
-
-              exit 1
-            fi
+            exit 1
           fi
 
           cd "prerequisites"
