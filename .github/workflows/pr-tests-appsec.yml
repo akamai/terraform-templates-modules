@@ -253,21 +253,30 @@ jobs:
           set -e
 
           if [ "$EXIT_CODE" -ne 0 ]; then
-            echo "::error title=Terraform Destroy Failed::Check summary for details"
-            
-            echo "## ❌ Terraform Destroy Failed" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
-            echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
-            echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
+            DESTROY_TAIL="$(tail -n 50 destroy.out 2>/dev/null || true)"
+            EXPECTED_DESTROY_REGEX="^Error: cannot delete configuration '[^']+' as version [0-9]+ has been active in staging or production$"
+            DESTROY_ERROR_LINES="$(printf '%s\n' "$DESTROY_TAIL" | grep '^Error:' || true)"
 
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            tail -n 50 destroy.out >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
+            if [ -n "$DESTROY_ERROR_LINES" ] && ! printf '%s\n' "$DESTROY_ERROR_LINES" | grep -Ev "$EXPECTED_DESTROY_REGEX" >/dev/null; then
+              echo "::warning title=Terraform Destroy Partial Cleanup::Known active configuration cannot be deleted yet; continuing."
+              exit 0
+            else
+              echo "::error title=Terraform Destroy Failed::Check summary for details"
+              
+              echo "## ❌ Terraform Destroy Failed" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
+              echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
+              echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
 
-            exit 1
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+              tail -n 50 destroy.out >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+
+              exit 1
+            fi
           fi
 
           cd "prerequisites"
