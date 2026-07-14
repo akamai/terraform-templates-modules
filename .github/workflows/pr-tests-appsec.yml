@@ -120,23 +120,31 @@ jobs:
           envsubst < "tests/versions.tf.tpl" > "versions.tf"
           echo 'provider "akamai" {}' >> "provider.tf"
           
+          
+          if [[ "${{ inputs.module_source }}" == "bmp" ]]; then
+            envsubst < "tests/myapi.yml.tpl" > "myapi.yml"
+            envsubst < "tests/operations-myapi.json.tpl" > "operations-myapi.json"
+          fi
+          
           echo "===== Initialize Terraform for the test ====="
           terraform init
           
       - name: Manage Prerequisites
         run: |
-          cd "${{ inputs.module_source }}"
-          mkdir prerequisites
-          envsubst < "tests/prerequisites.tf.tpl" > "prerequisites/main.tf"
-          envsubst < "tests/variables.tf.tpl" > "prerequisites/variables.tf"
-          envsubst < "tests/versions-delivery.tf.tpl" > "prerequisites/versions.tf"
-          cp "terraform.tfvars" "prerequisites/terraform.tfvars"
-          echo 'provider "akamai" {}' >> "prerequisites/provider.tf"
-          cd "prerequisites"
-          echo "===== Terraform Init ====="
-          terraform init
-          echo "===== Terraform Apply ====="
-          terraform apply -input=false -auto-approve -no-color
+          if [[ "${{ inputs.module_source }}" == "aap-asm" ]]; then
+            cd "${{ inputs.module_source }}"
+            mkdir prerequisites
+            envsubst < "tests/prerequisites.tf.tpl" > "prerequisites/main.tf"
+            envsubst < "tests/variables.tf.tpl" > "prerequisites/variables.tf"
+            envsubst < "tests/versions-delivery.tf.tpl" > "prerequisites/versions.tf"
+            cp "terraform.tfvars" "prerequisites/terraform.tfvars"
+            echo 'provider "akamai" {}' >> "prerequisites/provider.tf"
+            cd "prerequisites"
+            echo "===== Terraform Init ====="
+            terraform init
+            echo "===== Terraform Apply ====="
+            terraform apply -input=false -auto-approve -no-color
+          fi
         
       - name: Terraform deploy
         run: |
@@ -282,35 +290,37 @@ jobs:
             exit 1
           fi
 
-          cd "prerequisites"
-          echo "===== Terraform Destroy ====="
-          PRE_MAX_RETRIES=2
-          PRE_RETRY_COUNT=0
-          PRE_EXIT_CODE=1
+          if [[ "${{ inputs.module_source }}" == "aap-asm" ]]; then
+            cd "prerequisites"
+            echo "===== Terraform Destroy ====="
+            PRE_MAX_RETRIES=2
+            PRE_RETRY_COUNT=0
+            PRE_EXIT_CODE=1
 
-          while [ "$PRE_RETRY_COUNT" -lt "$PRE_MAX_RETRIES" ]; do
-            terraform destroy -input=false -auto-approve -no-color
-            PRE_EXIT_CODE=$?
+            while [ "$PRE_RETRY_COUNT" -lt "$PRE_MAX_RETRIES" ]; do
+              terraform destroy -input=false -auto-approve -no-color
+              PRE_EXIT_CODE=$?
 
-            if [ "$PRE_EXIT_CODE" -eq 0 ]; then
-              break
+              if [ "$PRE_EXIT_CODE" -eq 0 ]; then
+                break
+              fi
+
+              PRE_RETRY_COUNT=$((PRE_RETRY_COUNT + 1))
+              if [ "$PRE_RETRY_COUNT" -lt "$PRE_MAX_RETRIES" ]; then
+                echo "Retrying prerequisites terraform destroy..."
+              fi
+            done
+
+            if [ "$PRE_EXIT_CODE" -ne 0 ]; then
+              echo "::error title=Prerequisites Terraform Destroy Failed::Check summary for details"
+
+              echo "## ❌ Prerequisites Terraform Destroy Failed" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
+              echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
+              echo "**Exit Code:** $PRE_EXIT_CODE" >> $GITHUB_STEP_SUMMARY
+
+              exit 1
             fi
-
-            PRE_RETRY_COUNT=$((PRE_RETRY_COUNT + 1))
-            if [ "$PRE_RETRY_COUNT" -lt "$PRE_MAX_RETRIES" ]; then
-              echo "Retrying prerequisites terraform destroy..."
-            fi
-          done
-
-          if [ "$PRE_EXIT_CODE" -ne 0 ]; then
-            echo "::error title=Prerequisites Terraform Destroy Failed::Check summary for details"
-
-            echo "## ❌ Prerequisites Terraform Destroy Failed" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
-            echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
-            echo "**Exit Code:** $PRE_EXIT_CODE" >> $GITHUB_STEP_SUMMARY
-
-            exit 1
           fi
           
