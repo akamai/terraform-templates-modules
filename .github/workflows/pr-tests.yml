@@ -128,7 +128,7 @@ jobs:
           set +e
           set -x
 
-          terraform plan -input=false -detailed-exitcode -no-color -out=tfplan > >(tee /dev/tty) 2> >(tee plan.out >&2)
+          terraform plan -input=false -detailed-exitcode -no-color -out=tfplan > >(tee -a plan.out) 2> >(tee -a plan.out >&2)
           EXIT_CODE=$?
           set -e
 
@@ -158,7 +158,7 @@ jobs:
           set +e
           set -x
 
-          terraform apply -input=false -auto-approve -no-color tfplan > >(tee /dev/tty) 2> >(tee apply.out >&2)
+          terraform apply -input=false -auto-approve -no-color tfplan > >(tee -a apply.out) 2> >(tee -a apply.out >&2)
           EXIT_CODE=$?
           set -e
 
@@ -192,7 +192,7 @@ jobs:
           set +e
           set -x
 
-          terraform destroy -input=false -auto-approve -no-color > >(tee /dev/tty) 2> >(tee destroy.out >&2)
+          terraform destroy -input=false -auto-approve -no-color > >(tee -a destroy.out) 2> >(tee -a destroy.out >&2)
           EXIT_CODE=$?
           set -e
 
