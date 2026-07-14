@@ -22,44 +22,50 @@ jobs:
           CONFIG_FILE="${{ inputs.module_source }}/tests/config.json"
           MAX=50
 
-          MATRIX=$(jq -cn \
-            --argjson cfg "$(cat "$CONFIG_FILE")" \
-            --argjson max "$MAX" '
-            
-            def build(idx; current; keys):
-              if idx == (keys | length) then
-                current
-              else
-                keys[idx] as $k
-                | $cfg[$k][] as $val
-                | build(idx + 1; current + { ($k): $val }; keys)
-              end;
+          if [ ! -s "$CONFIG_FILE" ] || jq -e 'type == "object" and length == 0' "$CONFIG_FILE" >/dev/null 2>&1; then
+            r="a$(LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c 10)"
+            MATRIX=$(jq -cn --arg r "$r" '[{name: $r, label: ("name=" + $r)}]')
+          else
+            MATRIX=$(jq -cn \
+              --argjson cfg "$(cat "$CONFIG_FILE")" \
+              --argjson max "$MAX" '
+              
+              def build(idx; current; keys):
+                if idx == (keys | length) then
+                  current
+                else
+                  keys[idx] as $k
+                  | $cfg[$k][] as $val
+                  | build(idx + 1; current + { ($k): $val }; keys)
+                end;
 
-            [
-              limit($max; build(0; {}; $cfg | keys_unsorted))
-              | . + {
-                  label: (
-                    to_entries
-                    | map("\(.key)=\(.value)")
-                    | join(", ")
-                  )
-                }
-            ]
-          ')
+              [
+                limit($max; build(0; {}; $cfg | keys_unsorted))
+                | . + {
+                    label: (
+                      to_entries
+                      | map("\(.key)=\(.value)")
+                      | join(", ")
+                    )
+                  }
+              ]
+            ')
 
-          MATRIX=$(echo "$MATRIX" | jq -c '.[]' | while read -r item; do
-          r="a$(LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c 10)"
-          echo "$item" | jq -c --arg r "$r" '
-            . + { 
-              name: $r, 
-              label: (.label + ", name=\($r)") 
-            }'
-          done | jq -cs '.')
+            MATRIX=$(echo "$MATRIX" | jq -c '.[]' | while read -r item; do
+            r="a$(LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c 10)"
+            echo "$item" | jq -c --arg r "$r" '
+              . + { 
+                name: $r, 
+                label: (.label + ", name=\($r)") 
+              }'
+            done | jq -cs '.')
+          fi
 
           echo "Generated matrix:"
           echo "$MATRIX"
 
           echo "matrix={\"include\":$MATRIX}" >> "$GITHUB_OUTPUT"
+
 
       - name: Print all permutations
         run: |
