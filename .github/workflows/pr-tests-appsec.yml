@@ -120,7 +120,12 @@ jobs:
           envsubst < "tests/versions.tf.tpl" > "versions.tf"
           echo 'provider "akamai" {}' >> "provider.tf"
           
-          #Create delivery config as prerequisites
+          echo "===== Initialize Terraform for the test ====="
+          terraform init
+          
+      - name: Manage Prerequisites
+        run: |
+          cd "${{ inputs.module_source }}"
           mkdir prerequisites
           envsubst < "tests/prerequisites.tf.tpl" > "prerequisites/main.tf"
           envsubst < "tests/variables.tf.tpl" > "prerequisites/variables.tf"
@@ -132,13 +137,7 @@ jobs:
           terraform init
           echo "===== Terraform Apply ====="
           terraform apply -input=false -auto-approve -no-color
-
-
-          cd ..
-          echo "===== Initialize Terraform for the test ====="
-          terraform init
-          
-
+        
       - name: Terraform deploy
         run: |
           cd "${{ inputs.module_source }}"
@@ -221,7 +220,6 @@ jobs:
 
             exit 1
           fi
-
 
       - name: Wait
         run: sleep 60
