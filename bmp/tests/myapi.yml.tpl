@@ -5,7 +5,7 @@ servers:
   - url: gss-dev-ops.terra.rafa.cr/api
 x-akamai-api-definitions:
   contractId: 1-5C13O2
-  groupId: GSSDEVOPS Terraform templates
+  groupId: 315874
   matchCaseSensitive: false
   constraints:
     enforceOn:

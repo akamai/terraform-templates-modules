@@ -11,7 +11,7 @@ edgerc_section = "default"
 
 # Akamai group name (must match exactly)
 # Format usually: "<Group Name>-<ContractId>"
-group_name = "GSSDEVOPS Terraform templates-1-5C13O2"
+group_name = "GSSDEVOPS Terraform templates"
 
 activate_to_staging = true
 
