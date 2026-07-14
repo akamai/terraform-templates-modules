@@ -1,6 +1,6 @@
 {
   "operations": {
-    "/api/login": {
+    "/api/${MATRIX_NAME}/login": {
       "user_login": {
         "method": "POST",
         "purpose": "LOGIN",
