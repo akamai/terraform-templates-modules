@@ -7,3 +7,5 @@
    private_key          = "${GCS_KEY}"
    path                 = "/akamai/logs"   # optional
  }
+
+ property_ids = ["prp_1381184"]
