@@ -2,9 +2,13 @@
 # endpoint is the scheme-qualified host only; Akamai builds {endpoint}/{bucket}/{path}/{file}.
  s3_compatible_connector = {
    display_name      = "linode"
-   endpoint          = "https://rafa.us-mia-1.linodeobjects.com"
+   endpoint          = "us-mia-1.linodeobjects.com"
    bucket            = "rafa"
    region            = "us-mia-1"
    access_key        = "${LINODE_ACCESS}"
    secret_access_key = "${LINODE_SECRET}"
+   path              = "/akamai/logs"
  }
+
+
+ property_ids = ["prp_1381196"]

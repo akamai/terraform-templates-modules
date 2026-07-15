@@ -8,3 +8,5 @@
    secret_access_key = "${OSS_SECRET}"
    path              = "/akamai/logs"
  }
+
+  property_ids = ["prp_1381195"]

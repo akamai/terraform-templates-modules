@@ -6,3 +6,5 @@
    auth_token   = "${LOGGLY_TOKEN}"
    tags         = "akamai"
  }
+
+ property_ids = ["prp_1381193"]

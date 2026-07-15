@@ -8,3 +8,5 @@ datadog_connector = {
    source        = "akamai"
    tags          = "env:test,team:platform"
 }
+
+property_ids = ["prp_1381186"]
