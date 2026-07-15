@@ -124,7 +124,12 @@ jobs:
           ')
 
           if [[ "${{ inputs.module_source }}" == "ds2" ]]; then
+            echo "module_source=${{ inputs.module_source }}"
+            echo "CONNECTOR=${CONNECTOR}"
             cat "${{ inputs.module_source }}/tests/${CONNECTOR}.tpl" >> "$TFVARS_TEMPLATE"
+            cat "$TFVARS_TEMPLATE"
+            cat "----"
+            cat "${{ inputs.module_source }}/tests/${CONNECTOR}.tpl"  
           fi
 
           cd "${{ inputs.module_source }}"
