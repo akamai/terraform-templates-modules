@@ -7,7 +7,7 @@
    region            = "us-mia-1"
    access_key        = "${LINODE_ACCESS}"
    secret_access_key = "${LINODE_SECRET}"
-   path              = "/akamai/logs"
+   path              = "akamai/logs"
  }
 
 
