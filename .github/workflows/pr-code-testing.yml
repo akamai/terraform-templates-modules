@@ -16,10 +16,10 @@ jobs:
       aap: ${{ steps.filter.outputs.aap }}
       bmp: ${{ steps.filter.outputs.bmp }}
       delivery: ${{ steps.filter.outputs.delivery }}
+      ds2: ${{ steps.filter.outputs.ds2 }}
       dv-san-cert: ${{ steps.filter.outputs.dv-san-cert }}
       edns: ${{ steps.filter.outputs.edns }}
       third-party-cert: ${{ steps.filter.outputs.third-party-cert }}
-      ds2: ${{ steps.filter.outputs.ds2 }}
 
     steps:
       - name: Checkout repository
@@ -38,14 +38,15 @@ jobs:
               - 'bmp/**'
             delivery:
               - 'delivery/**'
+            ds2:
+              - 'ds2/**'
             dv-san-cert:
               - 'dv-san-cert/**'
             edns:
               - 'edns/**'
             third-party-cert:
               - 'third-party-cert/**'
-            ds2:
-              - 'ds2/**'
+
 
   aap-asm:
     needs: detect_changes
@@ -55,8 +56,6 @@ jobs:
         module_source: aap-asm
     secrets: inherit
 
-
-    
   aap:
     needs: detect_changes
     if: needs.detect_changes.outputs.aap == 'true' && 1 == 2
@@ -79,6 +78,14 @@ jobs:
     uses: ./.github/workflows/pr-tests.yml
     with:
         module_source: delivery
+    secrets: inherit
+
+  ds2:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.ds2 == 'true'
+    uses: ./.github/workflows/pr-tests.yml
+    with:
+        module_source: ds2
     secrets: inherit
 
   dv-san-cert:
@@ -104,11 +111,3 @@ jobs:
     with:
         module_source: third-party-cert
     secrets: inherit  
-    
-  ds2:
-    needs: detect_changes
-    if: needs.detect_changes.outputs.ds2 == 'true'
-    uses: ./.github/workflows/pr-tests.yml
-    with:
-        module_source: ds2
-    secrets: inherit
