@@ -1,5 +1,5 @@
 # ---------- Google Cloud Storage ----------
-# gcs_connector = {
+ gcs_connector = {
    display_name         = "GCS"
    bucket               = "ds2-gss-devops"
    project_id           = "ascendant-nova-260306"
