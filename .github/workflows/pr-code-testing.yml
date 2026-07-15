@@ -19,6 +19,7 @@ jobs:
       dv-san-cert: ${{ steps.filter.outputs.dv-san-cert }}
       edns: ${{ steps.filter.outputs.edns }}
       third-party-cert: ${{ steps.filter.outputs.third-party-cert }}
+      ds2: ${{ steps.filter.outputs.ds2 }}
 
     steps:
       - name: Checkout repository
@@ -43,6 +44,8 @@ jobs:
               - 'edns/**'
             third-party-cert:
               - 'third-party-cert/**'
+            ds2:
+              - 'ds2/**'
 
   aap-asm:
     needs: detect_changes
@@ -100,4 +103,12 @@ jobs:
     uses: ./.github/workflows/pr-tests.yml
     with:
         module_source: third-party-cert
+    secrets: inherit  
+    
+  ds2:
+    needs: detect_changes
+    if: needs.detect_changes.outputs.ds2 == 'true'
+    uses: ./.github/workflows/pr-tests.yml
+    with:
+        module_source: ds2
     secrets: inherit

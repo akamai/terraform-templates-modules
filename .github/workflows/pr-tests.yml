@@ -87,6 +87,17 @@ jobs:
       AKAMAI_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
       AKAMAI_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
       AKAMAI_ACCOUNT_KEY: "1-5BYUG1:1-8BYUX"
+      DATADOG_TOKEN: ${{ secrets.DATADOG_TOKEN }}
+      GCS_KEY: ${{ secrets.GCS_KEY }}
+      LOGGLY_TOKEN: ${{ secrets.LOGGLY_TOKEN }}
+      NEWRELIC_TOKEN: ${{ secrets.NEWRELIC_TOKEN }}
+      OSS_ACCESS: ${{ secrets.OSS_ACCESS }}
+      OSS_SECRET: ${{ secrets.OSS_SECRET }}
+      LINODE_ACCESS: ${{ secrets.LINODE_ACCESS }}
+      LINODE_SECRET: ${{ secrets.LINODE_SECRET }}
+      SUMOLOGIC_TOKEN: ${{ secrets.SUMOLOGIC_TOKEN }}
+
+
 
 
     steps:
@@ -111,6 +122,10 @@ jobs:
             else "\(.key | ascii_upcase)=\(.value)"
             end
           ')
+
+          if [[ "${{ inputs.module_source }}" == "ds2" ]]; then
+            cat "${{ inputs.module_source }}/tests/${CONNECTOR}.tpl" >> "$TFVARS_TEMPLATE"
+          fi
 
           cd "${{ inputs.module_source }}"
           
