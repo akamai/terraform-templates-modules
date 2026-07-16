@@ -65,6 +65,7 @@ module "example" {
     id   = string
     name = string
   }))> | default: []
+  	 client_lists_asnblock  = <list(string)> | default: []
   	 client_lists_exception_ipblock  = <list(string)> | default: []
   	 client_lists_geoblock  = <list(string)> | default: []
   	 client_lists_ipblock  = <list(string)> | default: []
@@ -119,7 +120,7 @@ module "example" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
-| <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | ~> 9.0 |
+| <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | ~> 10.1 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | ~> 0.13 |
 
 ## Resources
@@ -253,6 +254,7 @@ No modules.
 | <a name="input_bot_web_services_libraries"></a> [bot\_web\_services\_libraries](#input\_bot\_web\_services\_libraries) | Action for bot transparent detection: Web Services Libraries | `string` | `"alert"` | no |
 | <a name="input_botman_type"></a> [botman\_type](#input\_botman\_type) | Bot manager entitlement type: bvm (Bot Visibility and Management) or bms (Bot Management Standard) | `string` | `"bvm"` | no |
 | <a name="input_bypass_network_lists"></a> [bypass\_network\_lists](#input\_bypass\_network\_lists) | List of bypass network list objects for the match target | <pre>list(object({<br/>    id   = string<br/>    name = string<br/>  }))</pre> | `[]` | no |
+| <a name="input_client_lists_asnblock"></a> [client\_lists\_asnblock](#input\_client\_lists\_asnblock) | List of ASN network list IDs to block | `list(string)` | `[]` | no |
 | <a name="input_client_lists_exception_ipblock"></a> [client\_lists\_exception\_ipblock](#input\_client\_lists\_exception\_ipblock) | List of IP network list IDs to exempt from blocking | `list(string)` | `[]` | no |
 | <a name="input_client_lists_geoblock"></a> [client\_lists\_geoblock](#input\_client\_lists\_geoblock) | List of geo network list IDs to block | `list(string)` | `[]` | no |
 | <a name="input_client_lists_ipblock"></a> [client\_lists\_ipblock](#input\_client\_lists\_ipblock) | List of IP network list IDs to block | `list(string)` | `[]` | no |
