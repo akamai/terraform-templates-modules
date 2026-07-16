@@ -43,7 +43,7 @@ network_configuration = {
   must_have_ciphers       = "ak-akamai-2020q1"
   ocsp_stapling           = "on"
   preferred_ciphers       = "ak-akamai-2020q1"
-  quic_enabled            = true
+  quic_enabled            = false
 }
 
 signature_algorithm = ""
