@@ -240,7 +240,7 @@ jobs:
             exit 1
           fi
 
-      - name: Phase 2 CUpload cert
+      - name: Phase 2 Certificate Upload cert
         run: |
           cd "${{ inputs.module_source }}"
 
