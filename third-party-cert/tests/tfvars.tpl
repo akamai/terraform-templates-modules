@@ -83,6 +83,16 @@ change_management = true
 
 # Upload Certificate
 
+# ECDSA Certificate files (If there is no certificate to upload, leave the fields blank while maintaining the same format shown below)
+certificate_ecdsa_pem = ""
+
+trust_chain_ecdsa_pem = ""
+
+# RSA Certificate files, Provide the signed RSA certificate file name here. You may rename the files as shown below or use the same names as downloaded
+
+certificate_rsa_pem = "" 
+
+trust_chain_rsa_pem = ""
 
 # Whether to acknowledge post-verification warnings defined in auto_approve_warnings. Provide true to acknowledge them.
 
