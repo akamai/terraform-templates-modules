@@ -116,7 +116,7 @@ jobs:
           ')
 
           if [[ "${{ inputs.module_source }}" == "third-party-cert" ]]; then
-            envsubst < "${{ inputs.module_source }}/tests/letsencrypt.tfvars.tpl" > "${{ inputs.module_source }}//letsencrypt.tf"
+            envsubst < "${{ inputs.module_source }}/tests/letsencrypt.tf.tpl" > "${{ inputs.module_source }}//letsencrypt.tf"
           fi
 
           cd "${{ inputs.module_source }}"
