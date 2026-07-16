@@ -1,4 +1,4 @@
-edgerc_section = "default"
+
 
 contract_id = "ctr_1-1NC95D"
 
