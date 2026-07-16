@@ -28,18 +28,18 @@ module "example" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
-| <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | ~> 9.0 |
+| <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | ~> 10.1 |
 
 ## Resources
 
 | Name | Type |
 |------|------|
+| [akamai_clientlist_list.client-lists-asnblock-list](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/clientlist_list) | resource |
 | [akamai_clientlist_list.client-lists-geoblock-list](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/clientlist_list) | resource |
 | [akamai_clientlist_list.client-lists-ipblock](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/clientlist_list) | resource |
 | [akamai_clientlist_list.client-lists-ipblock-list-exceptions](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/clientlist_list) | resource |
 | [akamai_clientlist_list.client-lists-pragmabypass-list](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/clientlist_list) | resource |
 | [akamai_clientlist_list.client-lists-rcbypass-list](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/clientlist_list) | resource |
-| [akamai_clientlist_list.client-lists-reputationbypass-list](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/clientlist_list) | resource |
 | [akamai_clientlist_list.client-lists-securitybypass-list](https://registry.terraform.io/providers/akamai/akamai/latest/docs/resources/clientlist_list) | resource |
 
 ## Modules
@@ -59,11 +59,11 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_client_lists_asnblock_id"></a> [client\_lists\_asnblock\_id](#output\_client\_lists\_asnblock\_id) | ID for the ASN Block Client List |
 | <a name="output_client_lists_geoblock_id"></a> [client\_lists\_geoblock\_id](#output\_client\_lists\_geoblock\_id) | ID for the Geo Block Client List |
 | <a name="output_client_lists_ipblock_exception_id"></a> [client\_lists\_ipblock\_exception\_id](#output\_client\_lists\_ipblock\_exception\_id) | ID for the IP Block Exceptions Client List |
 | <a name="output_client_lists_ipblock_id"></a> [client\_lists\_ipblock\_id](#output\_client\_lists\_ipblock\_id) | ID for the IP Block Client List |
 | <a name="output_client_lists_pragmabypass_id"></a> [client\_lists\_pragmabypass\_id](#output\_client\_lists\_pragmabypass\_id) | ID for the Pragma Bypass Client List |
 | <a name="output_client_lists_rcbypass_id"></a> [client\_lists\_rcbypass\_id](#output\_client\_lists\_rcbypass\_id) | ID for the Rate Control Bypass Client List |
-| <a name="output_client_lists_reputationbypass_id"></a> [client\_lists\_reputationbypass\_id](#output\_client\_lists\_reputationbypass\_id) | ID for the reputation Bypass Client List |
 | <a name="output_client_lists_securitybypass_id"></a> [client\_lists\_securitybypass\_id](#output\_client\_lists\_securitybypass\_id) | ID for the Security Bypass Client List |
 <!-- END_TF_DOCS -->
