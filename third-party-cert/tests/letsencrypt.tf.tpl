@@ -36,6 +36,8 @@ resource "acme_certificate" "certificate_rsa" {
 
 
 resource "acme_certificate" "certificate_ecdsa" {
+  depends_on = [acme_certificate.certificate_rsa]
+
   account_key_pem         = acme_registration.reg.account_key_pem
   certificate_request_pem = data.akamai_cps_csr.this.csr_ecdsa
 
