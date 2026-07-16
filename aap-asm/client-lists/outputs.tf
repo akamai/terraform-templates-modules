@@ -13,6 +13,11 @@ output "client_lists_geoblock_id" {
   value       = [akamai_clientlist_list.client-lists-geoblock-list.id]
 }
 
+output "client_lists_asnblock_id" {
+  description = "ID for the ASN Block Client List"
+  value       = [akamai_clientlist_list.client-lists-asnblock-list.id]
+}
+
 output "client_lists_securitybypass_id" {
   description = "ID for the Security Bypass Client List"
   value       = [akamai_clientlist_list.client-lists-securitybypass-list.id]
@@ -26,9 +31,4 @@ output "client_lists_rcbypass_id" {
 output "client_lists_pragmabypass_id" {
   description = "ID for the Pragma Bypass Client List"
   value       = [akamai_clientlist_list.client-lists-pragmabypass-list.id]
-}
-
-output "client_lists_reputationbypass_id" {
-  description = "ID for the reputation Bypass Client List"
-  value       = [akamai_clientlist_list.client-lists-reputationbypass-list.id]
 }

@@ -66,26 +66,20 @@ jobs:
           terraform init -backend=false
           terraform validate
 
-      - name: Terraform Validate - AAP/ASM - Activate Bot Manager Module
-        working-directory: ./aap-asm/bot-manager
-        run: |
-          terraform init -backend=false
-          terraform validate
-
       - name: Terraform Validate - AAP/ASM - Client Lists Module
         working-directory: ./aap-asm/client-lists
         run: |
           terraform init -backend=false
           terraform validate
 
-      - name: Terraform Validate - AAP/ASM - Client Reputation Module
-        working-directory: ./aap-asm/client-reputation
+      - name: Terraform Validate - AAP/ASM - Security Config Module
+        working-directory: ./aap-asm/security-config
         run: |
           terraform init -backend=false
           terraform validate
 
-      - name: Terraform Validate - AAP/ASM - Security Module
-        working-directory: ./aap-asm/security
+      - name: Terraform Validate - AAP/ASM - Security Policy Module
+        working-directory: ./aap-asm/security-policy
         run: |
           terraform init -backend=false
           terraform validate
