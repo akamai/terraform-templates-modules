@@ -85,10 +85,10 @@ jobs:
       matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
 
     env:
-      AKAMAI_HOST: ${{ secrets.HOST }}
-      AKAMAI_CLIENT_TOKEN: ${{ secrets.CLIENT_TOKEN }}
-      AKAMAI_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-      AKAMAI_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      AKAMAI_HOST: ${{ secrets.AKAMAI_HOST }}
+      AKAMAI_CLIENT_TOKEN: ${{ secrets.AKAMAI_CLIENT_TOKEN }}
+      AKAMAI_CLIENT_SECRET: ${{ secrets.AKAMAI_CLIENT_SECRET }}
+      AKAMAI_ACCESS_TOKEN: ${{ secrets.AKAMAI_ACCESS_TOKEN }}
       AKAMAI_ACCOUNT_KEY: "1-5BYUG1:1-8BYUX"
 
 

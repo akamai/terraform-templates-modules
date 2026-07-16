@@ -86,19 +86,11 @@ jobs:
       AKAMAI_CLIENT_TOKEN: ${{ secrets.AKAMAI_CLIENT_TOKEN }}
       AKAMAI_CLIENT_SECRET: ${{ secrets.AKAMAI_CLIENT_SECRET }}
       AKAMAI_ACCESS_TOKEN: ${{ secrets.AKAMAI_ACCESS_TOKEN }}
-      AKAMAI_ACCOUNT_KEY: "1-5BYUG1:1-8BYUX"
-      DATADOG_TOKEN: ${{ secrets.DATADOG_TOKEN }}
-      GCS_KEY: ${{ secrets.GCS_KEY }}
-      LOGGLY_TOKEN: ${{ secrets.LOGGLY_TOKEN }}
-      NEWRELIC_TOKEN: ${{ secrets.NEWRELIC_TOKEN }}
-      OSS_ACCESS: ${{ secrets.OSS_ACCESS }}
-      OSS_SECRET: ${{ secrets.OSS_SECRET }}
-      LINODE_ACCESS: ${{ secrets.LINODE_ACCESS }}
-      LINODE_SECRET: ${{ secrets.LINODE_SECRET }}
-      SUMOLOGIC_TOKEN: ${{ secrets.SUMOLOGIC_TOKEN }}
-
-
-
+      AKAMAI_ACCOUNT_KEY: "1-6JHGX:1-8BYUX"
+      AKAMAI_HOST_EDNS: ${{ secrets.AKAMAI_HOST_EDNS }}
+      AKAMAI_CLIENT_TOKEN_EDNS: ${{ secrets.AKAMAI_CLIENT_TOKEN_EDNS }}
+      AKAMAI_CLIENT_SECRET_EDNS: ${{ secrets.AKAMAI_CLIENT_SECRET_EDNS }}
+      AKAMAI_ACCESS_TOKEN_EDNS: ${{ secrets.AKAMAI_ACCESS_TOKEN_EDNS }}
 
     steps:
       - name: Checkout
@@ -123,9 +115,8 @@ jobs:
             end
           ')
 
-          if [[ "${{ inputs.module_source }}" == "ds2" ]]; then
-            cat "${{ inputs.module_source }}/tests/${CONNECTOR}.tpl" >> "$TFVARS_TEMPLATE"
-            cat "$TFVARS_TEMPLATE
+          if [[ "${{ inputs.module_source }}" == "third-party-cert" ]]; then
+            envsubst < "${{ inputs.module_source }}/tests/letsencrypt.tfvars.tpl" > "${{ inputs.module_source }}//letsencrypt.tf"
           fi
 
           cd "${{ inputs.module_source }}"
@@ -135,7 +126,7 @@ jobs:
           echo 'provider "akamai" {}' >> "provider.tf"
           terraform init
                     
-      - name: Terraform plan
+      - name: Phase 1 Create Enrollment and Get Cert
         run: |
           cd "${{ inputs.module_source }}"
 
@@ -172,13 +163,6 @@ jobs:
             exit 1
           fi
 
-      - name: Terraform apply
-        run: |
-          cd "${{ inputs.module_source }}"
-          
-          set -uo pipefail
-          set +e
-          set -x
 
           terraform apply -input=false -auto-approve -no-color tfplan > >(tee -a apply.out) 2> >(tee -a apply.out >&2)
           EXIT_CODE=$?
@@ -202,9 +186,72 @@ jobs:
             exit 1
           fi
 
+      - name: Phase 2 CUpload cert
+        run: |
+          cd "${{ inputs.module_source }}"
 
-      - name: Wait
-        run: sleep 60
+          # -u        → fail on undefined variables
+          # pipefail  → detect failures in pipes
+          # +e        → DO NOT exit on errors
+          # -x        → print commands
+          #           set -uo pipefail
+          #           set -x
+          
+          set -uo pipefail
+          set +e
+          set -x
+
+
+
+          echo "certificate_ecdsa_pem = \"ecdsa_certificate.pem\"" >> terraform.tfvars
+          echo "trust_chain_ecdsa_pem = \"ecdsa_certificate_ca.pem\"" >> terraform.tfvars
+          echo "certificate_rsa_pem = \"rsa_certificate.pem\"" >> terraform.tfvars
+          echo "trust_chain_rsa_pem = \"rsa_certificate_ca.pem\"" >> terraform.tfvars
+
+          terraform plan -input=false -detailed-exitcode -no-color -out=tfplan > >(tee -a plan.out) 2> >(tee -a plan.out >&2)
+          EXIT_CODE=$?
+          set -e
+
+          if [ "$EXIT_CODE" -ne 0 ]; then
+            echo "::error title=Terraform Plan Failed::Check summary for details"
+            
+            echo "## ❌ Terraform Plan Failed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
+            echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
+            echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
+ 
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            tail -n 50 plan.out >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+
+            exit 1
+          fi
+
+
+          terraform apply -input=false -auto-approve -no-color tfplan > >(tee -a apply.out) 2> >(tee -a apply.out >&2)
+          EXIT_CODE=$?
+          set -e
+
+          if [ "$EXIT_CODE" -ne 0 ]; then
+            echo "::error title=Terraform Plan Failed::Check summary for details"
+            
+            echo "## ❌ Terraform Apply Failed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
+            echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
+            echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
+
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            tail -n 50 apply.out >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+
+            exit 1
+          fi
 
       - name: Terraform destroy
         if: always()

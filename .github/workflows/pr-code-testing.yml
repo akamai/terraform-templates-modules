@@ -91,7 +91,7 @@ jobs:
   dv-san-cert:
     needs: detect_changes
     if: needs.detect_changes.outputs.dv-san-cert == 'true'
-    uses: ./.github/workflows/pr-tests.yml
+    uses: ./.github/workflows/pr-tests-cps.yml
     with:
         module_source: dv-san-cert
     secrets: inherit
@@ -107,7 +107,7 @@ jobs:
   third-party-cert:
     needs: detect_changes
     if: needs.detect_changes.outputs.third-party-cert == 'true'
-    uses: ./.github/workflows/pr-tests.yml
+    uses: ./.github/workflows/pr-tests-cps.yml
     with:
         module_source: third-party-cert
     secrets: inherit  
