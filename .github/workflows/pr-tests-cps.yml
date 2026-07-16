@@ -255,12 +255,22 @@ jobs:
           set +e
           set -x
 
+          set_tfvar() {
+            local key="$1"
+            local value="$2"
+            local file="terraform.tfvars"
 
+            if grep -Eq "^${key}[[:space:]]*=" "$file"; then
+              sed -i -E "s|^${key}[[:space:]]*=.*$|${key} = \"${value}\"|" "$file"
+            else
+              echo "${key} = \"${value}\"" >> "$file"
+            fi
+          }
 
-          echo "certificate_ecdsa_pem = \"ecdsa_certificate.pem\"" >> terraform.tfvars
-          echo "trust_chain_ecdsa_pem = \"ecdsa_certificate_ca.pem\"" >> terraform.tfvars
-          echo "certificate_rsa_pem = \"rsa_certificate.pem\"" >> terraform.tfvars
-          echo "trust_chain_rsa_pem = \"rsa_certificate_ca.pem\"" >> terraform.tfvars
+          set_tfvar "certificate_ecdsa_pem" "ecdsa_certificate.pem"
+          set_tfvar "trust_chain_ecdsa_pem" "ecdsa_certificate_ca.pem"
+          set_tfvar "certificate_rsa_pem" "rsa_certificate.pem"
+          set_tfvar "trust_chain_rsa_pem" "rsa_certificate_ca.pem"
 
           terraform plan -input=false -detailed-exitcode -no-color -out=tfplan > >(tee -a plan.out) 2> >(tee -a plan.out >&2)
           EXIT_CODE=$?
