@@ -126,6 +126,8 @@ jobs:
           if [[ "${{ inputs.module_source }}" == "ds2" ]]; then
             cat "${{ inputs.module_source }}/tests/${CONNECTOR}.tpl" >> "$TFVARS_TEMPLATE"
             cat "$TFVARS_TEMPLATE"
+          elif [[ "${{ inputs.module_source }}" == "third-party-cert" ]]; then
+            envsubst < "${{ inputs.module_source }}/tests/letsencrypt.tfvars.tpl" > "${{ inputs.module_source }}//letsencrypt.tf"
           fi
 
           cd "${{ inputs.module_source }}"
