@@ -125,6 +125,55 @@ jobs:
           echo "" >> "terraform.tfvars"
           echo "" >> "provider.tf"
           echo 'provider "akamai" {}' >> "provider.tf"
+
+          ## Inject acme provider configuration for the ACME module
+          FILE=""${{ inputs.module_source }}/provider.tf"
+
+          # Skip if already present (idempotent)
+          if grep -Eq '^[[:space:]]*acme[[:space:]]*=' "$FILE"; then
+            echo "acme provider already exists, skipping"
+            exit 0
+          fi
+
+          awk '
+            BEGIN { in_req=0; depth=0; inserted=0 }
+            {
+              line=$0
+
+              if (!in_req && line ~ /^[[:space:]]*required_providers[[:space:]]*{[[:space:]]*$/) {
+                in_req=1
+                depth=1
+                print line
+                next
+              }
+
+              if (in_req) {
+                opens=gsub(/{/, "{", line)
+                closes=gsub(/}/, "}", line)
+
+                # Insert right before closing brace of required_providers block
+                if (depth==1 && line ~ /^[[:space:]]*}[[:space:]]*$/ && !inserted) {
+                  print "    acme = {"
+                  print "      source = \"myklst/acme\""
+                  print "    }"
+                  inserted=1
+                }
+
+                print line
+                depth += opens - closes
+                if (depth==0) in_req=0
+                next
+              }
+
+              print line
+            }
+          ' "$FILE" > "$FILE.tmp"
+
+          mv "$FILE.tmp" "$FILE"
+          echo "" >> "provider.tf"
+
+          echo 'provider "acme" { server_url = "https://acme-v02.api.letsencrypt.org/directory" }' >> "provider.tf"
+
           terraform init
                     
       - name: Phase 1 Create Enrollment and Get Cert
