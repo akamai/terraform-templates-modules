@@ -6,6 +6,10 @@ on:
       - testing_branch
     paths:
       - '**/*.tf'
+
+permissions:
+  contents: read
+  pull-requests: read
     
 jobs:
   detect_changes:
