@@ -25,7 +25,6 @@ module "example" {
 	 # Optional variables
   	 client_lists_pragmabypass  = <list(string)> | default: []
   	 client_lists_rcbypass  = <list(string)> | default: []
-  	 client_lists_reputationbypass  = <list(string)> | default: []
   	 client_lists_securitybypass  = <list(string)> | default: []
   	 enable_client_reputation  = <bool> | default: false
   	 inspection_size  = <number> | default: 32
@@ -37,7 +36,7 @@ module "example" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
-| <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | ~> 9.0 |
+| <a name="requirement_akamai"></a> [akamai](#requirement\_akamai) | ~> 10.1 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.7 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | ~> 0.13 |
 
@@ -96,7 +95,6 @@ No modules.
 | <a name="input_version_notes"></a> [version\_notes](#input\_version\_notes) | Notes for the configuration version | `string` | n/a | yes |
 | <a name="input_client_lists_pragmabypass"></a> [client\_lists\_pragmabypass](#input\_client\_lists\_pragmabypass) | ID(s) for the Pragma Bypass Client List | `list(string)` | `[]` | no |
 | <a name="input_client_lists_rcbypass"></a> [client\_lists\_rcbypass](#input\_client\_lists\_rcbypass) | ID(s) for the Rate Control Bypass Client List | `list(string)` | `[]` | no |
-| <a name="input_client_lists_reputationbypass"></a> [client\_lists\_reputationbypass](#input\_client\_lists\_reputationbypass) | ID(s) for the Reputation Bypass Client List | `list(string)` | `[]` | no |
 | <a name="input_client_lists_securitybypass"></a> [client\_lists\_securitybypass](#input\_client\_lists\_securitybypass) | ID(s) for the Security Bypass Client List | `list(string)` | `[]` | no |
 | <a name="input_enable_client_reputation"></a> [enable\_client\_reputation](#input\_enable\_client\_reputation) | Enable Client Reputation profiles at config level | `bool` | `false` | no |
 | <a name="input_inspection_size"></a> [inspection\_size](#input\_inspection\_size) | Request body inspection limit | `number` | `32` | no |
@@ -107,6 +105,7 @@ No modules.
 |------|-------------|
 | <a name="output_bypass_network_lists"></a> [bypass\_network\_lists](#output\_bypass\_network\_lists) | Bypass network lists with ID and name |
 | <a name="output_config_id"></a> [config\_id](#output\_config\_id) | Security Configuration ID |
+| <a name="output_config_name"></a> [config\_name](#output\_config\_name) | Security Configuration name (referencing this output defers by-name lookups until the config exists) |
 | <a name="output_rate_policy_origin_error_id"></a> [rate\_policy\_origin\_error\_id](#output\_rate\_policy\_origin\_error\_id) | Rate Policy ID for Origin Error |
 | <a name="output_rate_policy_page_view_requests_id"></a> [rate\_policy\_page\_view\_requests\_id](#output\_rate\_policy\_page\_view\_requests\_id) | Rate Policy ID for Page View Requests |
 | <a name="output_rate_policy_post_page_requests_id"></a> [rate\_policy\_post\_page\_requests\_id](#output\_rate\_policy\_post\_page\_requests\_id) | Rate Policy ID for POST Page Requests |
