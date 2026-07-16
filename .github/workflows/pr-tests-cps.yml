@@ -123,6 +123,7 @@ jobs:
           
           envsubst < "../$TFVARS_TEMPLATE" > "terraform.tfvars"
           echo "" >> "terraform.tfvars"
+          echo "" >> "provider.tf"
           echo 'provider "akamai" {}' >> "provider.tf"
           terraform init
                     
