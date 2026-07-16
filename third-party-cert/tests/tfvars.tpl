@@ -1,23 +1,23 @@
-edgerc_section = "<Account section name>"
+edgerc_section = "default"
 
-contract_id = "ctr_contactID"
+contract_id = "ctr_1-1NC95D"
 
 # Enrollment details
-common_name                 = "<comman_name>"
+common_name                 = "a${MATRIX_NAME}.rafa.cr"
 allow_duplicate_common_name = false
-sans                        = ["example.com", "example1.com"]
-secure_network              = "<standard-tls/enhanced-tls>"
-sni_only                    = true
+sans                        = ["a${MATRIX_NAME}1.rafa.cr", "a${MATRIX_NAME}2.rafa.cr"]
+secure_network              = "enhanced-tls"
+sni_only                    = false
 acknowledge_pre_verification_warnings = true
 auto_approve_warnings       = []
 
 # Admin contact
 admin_contact = {
-  first_name       = "<name>"
-  last_name        = "<last name>"
+  first_name       = "GSS DevOps"
+  last_name        = "Terraform"
   organization     = ""
-  email            = "<email for notifications>"
-  phone            = "<contact details>"
+  email            = "gssdevps@akamai.com"
+  phone            = "8888888888"
   address_line_one = "" 
   address_line_two = ""
   city             = ""
@@ -28,21 +28,21 @@ admin_contact = {
 
 # CSR details
 csr = {
-  country_code        = "<country code here>"
-  city                = "<fill city here>"
-  organization        = "<org details here>"
+  country_code        = "CR"
+  city                = "Atenas"
+  organization        = "GSS DevOps Terraform"
   organizational_unit = ""
-  state               = "<state name here>"
+  state               = "Alajuela"
 }
 
 # Network config
 network_configuration = {
   disallowed_tls_versions = ["TLSv1", "TLSv1_1"]
-  clone_dns_names         = true
+  clone_dns_names         = false
   geography               = "core"
-  must_have_ciphers       = "ak-akamai-2018q3"
+  must_have_ciphers       = "ak-akamai-2020q1"
   ocsp_stapling           = "on"
-  preferred_ciphers       = "ak-akamai-2018q3"
+  preferred_ciphers       = "ak-akamai-2020q1"
   quic_enabled            = true
 }
 
@@ -50,11 +50,11 @@ signature_algorithm = ""
 
 # Tech contact
 tech_contact = {
-  first_name       = "<fill name here>"
-  last_name        = "<last name>"
+  first_name       = "GSS DevOps"
+  last_name        = "GSS DevOps Terraform"
   organization     = ""
-  email            = "<email for notifications>"
-  phone            = "<contact details>"
+  email            = "gssdevops@akamai.com"
+  phone            = "8888888888"
   address_line_one = ""
   city             = ""
   region           = ""
@@ -80,14 +80,13 @@ certificate_chain_type = "default"
 
 change_management = true
 
-enrollment_id     = 12345
 
 # Upload Certificate
 
 # ECDSA Certificate files (If there is no certificate to upload, leave the fields blank while maintaining the same format shown below)
-certificate_ecdsa_pem = ""
+certificate_ecdsa_pem = "ecdsa_certificate.pem"
 
-trust_chain_ecdsa_pem = ""
+trust_chain_ecdsa_pem = "ecdsa_certificate_ca.pem"
 
 # RSA Certificate files, Provide the signed RSA certificate file name here. You may rename the files as shown below or use the same names as downloaded
 
