@@ -52,22 +52,22 @@ resource "acme_certificate" "certificate_ecdsa" {
 }
 
 resource "local_file" "rsa_pem" {
-  filename = var.certificate_rsa_pem
+  filename = "rsa_certificate.pem" 
   content  = acme_certificate.certificate_rsa.certificate_pem
 }
 
 resource "local_file" "rsa_chain_pem" {
-  filename = var.trust_chain_rsa_pem
+  filename = "rsa_certificate_ca.pem"
   content  = local.trust_chain_without_root_rsa
 }
 
   resource "local_file" "ecdsa_pem" {
-  filename = var.certificate_ecdsa_pem
+  filename = "ecdsa_certificate.pem"
   content  = acme_certificate.certificate_ecdsa.certificate_pem
 }
 
 
 resource "local_file" "ecdsa_chain_pem" {
-  filename = var.trust_chain_ecdsa_pem
+  filename = "ecdsa_certificate_ca.pem"
   content  = local.trust_chain_without_root_ecdsa
 }
