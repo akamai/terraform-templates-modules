@@ -197,7 +197,7 @@ jobs:
               exit 1
             fi
 
-            if ! grep -Eq '^[[:space:]]*timeouts[[:space:]]*{' "$FILE"; then
+            if ! grep -Eq '^[[:space:]]*timeouts[[:space:]]*=' "$FILE"; then
               awk '
                 BEGIN { in_res=0; depth=0; inserted=0 }
                 {
@@ -215,9 +215,7 @@ jobs:
                     closes=gsub(/}/, "}", line)
 
                     if (depth==1 && line ~ /^[[:space:]]*}[[:space:]]*$/ && !inserted) {
-                      print "  timeouts {"
-                      print "    delete = \"10m\""
-                      print "  }"
+                      print "  timeouts = \"10m\""
                       inserted=1
                     }
 
@@ -233,7 +231,7 @@ jobs:
 
               mv "$FILE.tmp" "$FILE"
             else
-              echo "timeouts block already exists, skipping"
+              echo "timeouts argument already exists, skipping"
             fi
           fi   
 
