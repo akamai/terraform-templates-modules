@@ -63,7 +63,7 @@ resource "local_file" "rsa_chain_pem" {
   content  = local.trust_chain_without_root_rsa
 }
 
-  resource "local_file" "ecdsa_pem" {
+resource "local_file" "ecdsa_pem" {
   filename = "ecdsa_certificate.pem"
   content  = acme_certificate.certificate_ecdsa.certificate_pem
 }
@@ -73,3 +73,11 @@ resource "local_file" "ecdsa_chain_pem" {
   filename = "ecdsa_certificate_ca.pem"
   content  = local.trust_chain_without_root_ecdsa
 }
+
+#Used to save the enrollment id in order to fix the deletion that the prodvider does not handle gracefully
+resource "local_file" "enrollment_id" {
+  filename = "enrollment_id.txt"
+  content  = akamai_cps_third_party_enrollment.this.id
+}
+
+

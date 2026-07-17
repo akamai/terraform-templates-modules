@@ -99,10 +99,8 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v4
 
-      - name: Prepare Terraform
+      - name: Export Matrix Variables to env vars
         run: |
-          TFVARS_TEMPLATE="${{ inputs.module_source }}/tests/tfvars.tpl"
-
           # Dynamically export all matrix variables as uppercase env vars
           while IFS= read -r line; do
             export "$line"
@@ -114,15 +112,24 @@ jobs:
             else "\(.key | ascii_upcase)=\(.value)"
             end
           ')
+      - name: Prepare Terraform tfvars    
+        run: |
+          TFVARS_TEMPLATE="${{ inputs.module_source }}/tests/tfvars.tpl"
+          cd "${{ inputs.module_source }}"
+          envsubst < "../$TFVARS_TEMPLATE" > "terraform.tfvars"
+          echo "" >> "terraform.tfvars"
+      
+      - name: Prepare LetsEncrypt Terraform 
+        run: |
 
           if [[ "${{ inputs.module_source }}" == "third-party-cert" ]]; then
             envsubst < "${{ inputs.module_source }}/tests/letsencrypt.tf.tpl" > "${{ inputs.module_source }}//letsencrypt.tf"
           fi
 
+      - name: Set proper provider values for acme provider
+        run: |
+
           cd "${{ inputs.module_source }}"
-          
-          envsubst < "../$TFVARS_TEMPLATE" > "terraform.tfvars"
-          echo "" >> "terraform.tfvars"
           echo "" >> "provider.tf"
 
           if [[ "${{ inputs.module_source }}" == "third-party-cert" ]]; then
@@ -177,7 +184,62 @@ jobs:
               echo "acme provider configuration already exists, skipping"
             fi
           fi
+          
+      - name: Modify akamai_cps_third_party_enrollment resource to reduce the time out on destroy
+        run: |
+          cd "${{ inputs.module_source }}"
+          
+          if [[ "${{ inputs.module_source }}" == "third-party-cert" ]]; then
+            FILE="main.tf"
 
+            if [[ ! -f "$FILE" ]]; then
+              echo "::error title=Missing main.tf::Expected $FILE in $PWD"
+              exit 1
+            fi
+
+            if ! grep -Eq '^[[:space:]]*timeouts[[:space:]]*{' "$FILE"; then
+              awk '
+                BEGIN { in_res=0; depth=0; inserted=0 }
+                {
+                  line=$0
+
+                  if (!in_res && line ~ /^resource[[:space:]]+"akamai_cps_third_party_enrollment"[[:space:]]+"this"[[:space:]]*{[[:space:]]*$/) {
+                    in_res=1
+                    depth=1
+                    print line
+                    next
+                  }
+
+                  if (in_res) {
+                    opens=gsub(/{/, "{", line)
+                    closes=gsub(/}/, "}", line)
+
+                    if (depth==1 && line ~ /^[[:space:]]*}[[:space:]]*$/ && !inserted) {
+                      print "  timeouts {"
+                      print "    delete = \"10m\""
+                      print "  }"
+                      inserted=1
+                    }
+
+                    print line
+                    depth += opens - closes
+                    if (depth==0) in_res=0
+                    next
+                  }
+
+                  print line
+                }
+              ' "$FILE" > "$FILE.tmp"
+
+              mv "$FILE.tmp" "$FILE"
+            else
+              echo "timeouts block already exists, skipping"
+            fi
+          fi   
+
+      - name: Initialize Terraform
+        run: |
+          cd "${{ inputs.module_source }}"
           terraform init
                     
       - name: Phase 1 Create Enrollment and Get Cert
@@ -374,4 +436,23 @@ jobs:
       - name: Acknowledgement of deletion (overcome CPS terraform provider bug on deletions)
         if: always()
         run: |
-          echo "1"
+          cd "${{ inputs.module_source }}"
+
+          if [[ ! -f enrollment_id.txt ]]; then
+            echo "::warning title=CPS Acknowledgement Skipped::enrollment_id.txt not found."
+            exit 0
+          fi
+
+          enrollment_id=$(< enrollment_id.txt)
+          enrollment_id="${enrollment_id//[[:space:]]/}"
+
+          if [[ -z "$enrollment_id" ]]; then
+            echo "::warning title=CPS Acknowledgement Skipped::enrollment_id is empty."
+            exit 0
+          fi
+
+          python3 -m pip install --quiet edgegrid-python requests
+
+          python3 ../.github/scripts/cps_acknowledge_change.py "$enrollment_id"
+
+
