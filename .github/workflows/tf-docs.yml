@@ -138,6 +138,24 @@ jobs:
           output-method: inject
           git-push: true
 
+      - name: Generate terraform-docs for DOM
+        uses: terraform-docs/gh-actions@v1.4.1
+        with:
+          working-dir: ./dom
+          config-file: ../.terraform-docs.yaml
+          output-file: README.md
+          output-method: inject
+          git-push: true
+
+      - name: Generate terraform-docs for DS2
+        uses: terraform-docs/gh-actions@v1.4.1
+        with:
+          working-dir: ./ds2
+          config-file: ../.terraform-docs.yaml
+          output-file: README.md
+          output-method: inject
+          git-push: true
+
       - name: Generate terraform-docs for CPS - DV SAN
         uses: terraform-docs/gh-actions@v1.4.1
         with:
@@ -154,8 +172,8 @@ jobs:
           config-file: ../.terraform-docs.yaml
           output-file: README.md
           output-method: inject
-          git-push: true      
-
+          git-push: true     
+          
       - name: Generate terraform-docs for CPS - Third Party
         uses: terraform-docs/gh-actions@v1.4.1
         with:
@@ -164,3 +182,6 @@ jobs:
           output-file: README.md
           output-method: inject
           git-push: true
+
+ 
+
