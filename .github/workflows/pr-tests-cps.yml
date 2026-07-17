@@ -216,7 +216,7 @@ jobs:
 
                     if (depth==1 && line ~ /^[[:space:]]*}[[:space:]]*$/ && !inserted) {
                       print "  timeouts {"
-                      print "    default = \"10m\""
+                      print "    default = \"3m\""
                       print "  }"
                       inserted=1
                     }
@@ -301,6 +301,8 @@ jobs:
 
             exit 1
           fi
+
+          cp enrollment_id.txt enrollment_id_backup.txt
 
       - name: Phase 2 Certificate Upload cert
         run: |
@@ -432,18 +434,17 @@ jobs:
             exit 1
           fi
 
-
       - name: Acknowledgement of deletion (overcome CPS terraform provider bug on deletions)
         if: always()
         run: |
           cd "${{ inputs.module_source }}"
 
-          if [[ ! -f enrollment_id.txt ]]; then
-            echo "::warning title=CPS Acknowledgement Skipped::enrollment_id.txt not found."
+          if [[ ! -f enrollment_id_backup.txt ]]; then
+            echo "::warning title=CPS Acknowledgement Skipped::enrollment_id_backup.txt not found."
             exit 0
           fi
 
-          enrollment_id=$(< enrollment_id.txt)
+          enrollment_id=$(< enrollment_id_backup.txt)
           enrollment_id="${enrollment_id//[[:space:]]/}"
 
           if [[ -z "$enrollment_id" ]]; then
