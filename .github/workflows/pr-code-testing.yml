@@ -111,7 +111,7 @@ jobs:
   third-party-cert:
     needs: detect_changes
     if: needs.detect_changes.outputs.third-party-cert == 'true'
-    uses: ./.github/workflows/pr-tests-cps-2.yml
+    uses: ./.github/workflows/pr-tests-cps.yml
     with:
         module_source: third-party-cert
     secrets: inherit  
