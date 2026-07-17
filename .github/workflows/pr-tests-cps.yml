@@ -240,7 +240,7 @@ jobs:
             exit 1
           fi
 
-      - name: Phase 2 CUpload cert
+      - name: Phase 2 Certificate Upload cert
         run: |
           cd "${{ inputs.module_source }}"
 
@@ -325,8 +325,31 @@ jobs:
           set +e
           set -x
 
+          set_tfvar() {
+            local key="$1"
+            local value="$2"
+            local file="terraform.tfvars"
+
+            if grep -Eq "^${key}[[:space:]]*=" "$file"; then
+              sed -i -E "s|^${key}[[:space:]]*=.*$|${key} = \"${value}\"|" "$file"
+            else
+              echo "${key} = \"${value}\"" >> "$file"
+            fi
+          }
+
+          set_tfvar "wait_for_deployment" "false"
+
           terraform destroy -input=false -auto-approve -no-color > >(tee -a destroy.out) 2> >(tee -a destroy.out >&2)
           EXIT_CODE=$?
+
+          DESTROY_TAIL="$(tail -n 50 destroy.out 2>/dev/null || true)"
+          DESTROY_ERROR_LINES="$(printf '%s\n' "$DESTROY_TAIL" | grep '^Error:' || true)"
+
+          if [ "$EXIT_CODE" -ne 0 ] && [ -n "$DESTROY_ERROR_LINES" ] && printf '%s\n' "$DESTROY_ERROR_LINES" | grep -Eq '^Error: timed out waiting for enrollment deletion: context deadline exceeded$'; then
+            echo "::warning title=Terraform Destroy Timeout::Known enrollment deletion timeout; skipping failure."
+            EXIT_CODE=0
+          fi
+
           set -e
 
           if [ "$EXIT_CODE" -ne 0 ]; then
@@ -346,3 +369,9 @@ jobs:
 
             exit 1
           fi
+
+
+      - name: Acknowledgement of deletion (overcome CPS terraform provider bug on deletions)
+        if: always()
+        run: |
+          echo "1"
