@@ -28,5 +28,6 @@ jobs:
         run: |
           python3 -m pip install --quiet edgegrid-python requests
           pwd
+          ls -al
           python3 .github/scripts/cps_acknowledge_change.py "329754"
      
