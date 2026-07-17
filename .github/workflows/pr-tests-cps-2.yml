@@ -24,6 +24,8 @@ jobs:
       AKAMAI_ACCESS_TOKEN_EDNS: ${{ secrets.AKAMAI_ACCESS_TOKEN_EDNS }}
 
     steps:
+      - uses: actions/checkout@v6
+
       - name: Checkout
         run: |
           python3 -m pip install --quiet edgegrid-python requests
