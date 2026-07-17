@@ -8,9 +8,6 @@ import requests
 from akamai.edgegrid import EdgeGridAuth
 
 
-ACK_CONTENT_TYPE = "application/vnd.akamai.cps.acknowledgement.v1+json"
-
-
 def require_env(name: str) -> str:
     value = os.environ.get(name, "").strip()
     if not value:
@@ -57,7 +54,7 @@ def main() -> int:
     enrollment_resp = session.get(
         enrollment_url,
         params=params,
-        headers={"Accept": "application/json"},
+        headers={"Accept": "application/vnd.akamai.cps.enrollment.v7+json"},
         timeout=60,
     )
     enrollment_resp.raise_for_status()
@@ -87,8 +84,8 @@ def main() -> int:
         ack_url,
         params=params,
         headers={
-            "content-type": ACK_CONTENT_TYPE,
-            "accept": ACK_CONTENT_TYPE,
+            "content-type": "application/vnd.akamai.cps.acknowledgement.v1+json",
+            "accept": "application/vnd.akamai.cps.change-id.v1+json",
         },
         data=json.dumps({"acknowledgement": "acknowledge"}),
         timeout=60,
