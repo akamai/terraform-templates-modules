@@ -12,10 +12,6 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
 
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
-
     env:
       AKAMAI_HOST: ${{ secrets.AKAMAI_HOST }}
       AKAMAI_CLIENT_TOKEN: ${{ secrets.AKAMAI_CLIENT_TOKEN }}
