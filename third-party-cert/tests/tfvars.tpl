@@ -3,9 +3,9 @@
 contract_id = "ctr_1-1NC95D"
 
 # Enrollment details
-common_name                 = "a${MATRIX_NAME}.rafa.cr"
+common_name                 = "${MATRIX_NAME}.rafa.cr"
 allow_duplicate_common_name = false
-sans                        = ["a${MATRIX_NAME}1.rafa.cr", "a${MATRIX_NAME}2.rafa.cr"]
+sans                        = ["${MATRIX_NAME}1.rafa.cr", "${MATRIX_NAME}2.rafa.cr"]
 secure_network              = "enhanced-tls"
 sni_only                    = false
 acknowledge_pre_verification_warnings = true
