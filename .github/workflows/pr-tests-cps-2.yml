@@ -1,0 +1,36 @@
+name: Delivery Tests
+
+on:
+  workflow_call:
+    inputs:
+      module_source:
+        required: true
+        type: string
+jobs:
+        
+  tests:
+    name: Test
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+
+    env:
+      AKAMAI_HOST: ${{ secrets.AKAMAI_HOST }}
+      AKAMAI_CLIENT_TOKEN: ${{ secrets.AKAMAI_CLIENT_TOKEN }}
+      AKAMAI_CLIENT_SECRET: ${{ secrets.AKAMAI_CLIENT_SECRET }}
+      AKAMAI_ACCESS_TOKEN: ${{ secrets.AKAMAI_ACCESS_TOKEN }}
+      AKAMAI_ACCOUNT_KEY: "1-6JHGX:1-8BYUX"
+      AKAMAI_HOST_EDNS: ${{ secrets.AKAMAI_HOST_EDNS }}
+      AKAMAI_CLIENT_TOKEN_EDNS: ${{ secrets.AKAMAI_CLIENT_TOKEN_EDNS }}
+      AKAMAI_CLIENT_SECRET_EDNS: ${{ secrets.AKAMAI_CLIENT_SECRET_EDNS }}
+      AKAMAI_ACCESS_TOKEN_EDNS: ${{ secrets.AKAMAI_ACCESS_TOKEN_EDNS }}
+
+    steps:
+      - name: Checkout
+        run: |
+          python3 -m pip install --quiet edgegrid-python requests
+
+          python3 ../.github/scripts/cps_acknowledge_change.py "329754"
+     
