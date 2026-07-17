@@ -36,6 +36,15 @@ resource "akamai_clientlist_list" "client-lists-geoblock-list" {
   group_id    = var.group_id
 }
 
+resource "akamai_clientlist_list" "client-lists-asnblock-list" {
+  name        = "${var.client_lists_prefix}-ASN Block List"
+  type        = "ASN"
+  notes       = "ASN Block List for ${var.config_name}"
+  tags        = []
+  contract_id = var.contract_id
+  group_id    = var.group_id
+}
+
 resource "akamai_clientlist_list" "client-lists-securitybypass-list" {
   name        = "${var.client_lists_prefix}-Security Bypass List"
   type        = "IP"
@@ -58,15 +67,6 @@ resource "akamai_clientlist_list" "client-lists-pragmabypass-list" {
   name        = "${var.client_lists_prefix}-Pragma Bypass List"
   type        = "IP"
   notes       = "Pragma Bypass List for ${var.config_name}"
-  tags        = []
-  contract_id = var.contract_id
-  group_id    = var.group_id
-}
-
-resource "akamai_clientlist_list" "client-lists-reputationbypass-list" {
-  name        = "${var.client_lists_prefix}-Reputation Bypass List"
-  type        = "IP"
-  notes       = "Reputation Bypass List for ${var.config_name}"
   tags        = []
   contract_id = var.contract_id
   group_id    = var.group_id
