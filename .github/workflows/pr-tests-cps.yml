@@ -216,7 +216,7 @@ jobs:
 
                     if (depth==1 && line ~ /^[[:space:]]*}[[:space:]]*$/ && !inserted) {
                       print "  timeouts {"
-                      print "    default = \"3m\""
+                      print "    default = \"10m\""
                       print "  }"
                       inserted=1
                     }
