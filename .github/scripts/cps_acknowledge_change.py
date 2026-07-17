@@ -92,7 +92,7 @@ def main() -> int:
     )
     ack_resp.raise_for_status()
 
-    print(f"Acknowledged CPS change {change_id} for enrollment {enrollment_id}.")
+    print(f"Acknowledged CPS deletion id {change_id} for enrollment {enrollment_id}.")
     return 0
 
 
