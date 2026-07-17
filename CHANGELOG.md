@@ -1,3 +1,12 @@
+## [2.0.1](https://github.com/akamai/terraform-templates-modules/compare/v2.0.0...v2.0.1) (2026-07-17)
+
+
+### Bug Fixes
+
+* Include DOM and DS2 to GH validations and docs workflows ([d351d08](https://github.com/akamai/terraform-templates-modules/commit/d351d08639e61e9388c948be6470fa44ccc8af7d))
+
+
+
 # [2.0.0](https://github.com/akamai/terraform-templates-modules/compare/v1.5.0...v2.0.0) (2026-07-17)
 
 
