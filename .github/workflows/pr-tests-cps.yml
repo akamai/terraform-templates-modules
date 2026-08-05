@@ -123,7 +123,9 @@ jobs:
         run: |
 
           if [[ "${{ inputs.module_source }}" == "third-party-cert" ]]; then
-            envsubst < "${{ inputs.module_source }}/tests/letsencrypt.tf.tpl" > "${{ inputs.module_source }}//letsencrypt.tf"
+            envsubst < "${{ inputs.module_source }}/tests/letsencrypt.tf.tpl" > "${{ inputs.module_source }}/letsencrypt.tf"
+          elif [[ "${{ inputs.module_source }}" == "dv-san-cert" ]]; then
+            cp "${{ inputs.module_source }}/tests/validation.tf.tpl"  "${{ inputs.module_source }}/validation.tf"
           fi
 
       - name: Set proper provider values for acme provider
