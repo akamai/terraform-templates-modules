@@ -308,79 +308,81 @@ jobs:
 
       - name: Phase 2 Certificate Upload cert
         run: |
-          cd "${{ inputs.module_source }}"
+          if [[ "${{ inputs.module_source }}" == "third-party-cert" ]]; then
+            cd "${{ inputs.module_source }}"
 
-          # -u        → fail on undefined variables
-          # pipefail  → detect failures in pipes
-          # +e        → DO NOT exit on errors
-          # -x        → print commands
-          #           set -uo pipefail
-          #           set -x
-          
-          set -uo pipefail
-          set +e
-          set -x
+            # -u        → fail on undefined variables
+            # pipefail  → detect failures in pipes
+            # +e        → DO NOT exit on errors
+            # -x        → print commands
+            #           set -uo pipefail
+            #           set -x
+            
+            set -uo pipefail
+            set +e
+            set -x
 
-          set_tfvar() {
-            local key="$1"
-            local value="$2"
-            local file="terraform.tfvars"
+            set_tfvar() {
+              local key="$1"
+              local value="$2"
+              local file="terraform.tfvars"
 
-            if grep -Eq "^${key}[[:space:]]*=" "$file"; then
-              sed -i -E "s|^${key}[[:space:]]*=.*$|${key} = \"${value}\"|" "$file"
-            else
-              echo "${key} = \"${value}\"" >> "$file"
+              if grep -Eq "^${key}[[:space:]]*=" "$file"; then
+                sed -i -E "s|^${key}[[:space:]]*=.*$|${key} = \"${value}\"|" "$file"
+              else
+                echo "${key} = \"${value}\"" >> "$file"
+              fi
+            }
+
+            set_tfvar "certificate_ecdsa_pem" "ecdsa_certificate.pem"
+            set_tfvar "trust_chain_ecdsa_pem" "ecdsa_certificate_ca.pem"
+            set_tfvar "certificate_rsa_pem" "rsa_certificate.pem"
+            set_tfvar "trust_chain_rsa_pem" "rsa_certificate_ca.pem"
+
+            terraform plan -input=false -detailed-exitcode -no-color -out=tfplan > >(tee -a plan.out) 2> >(tee -a plan.out >&2)
+            EXIT_CODE=$?
+            set -e
+
+            if [ "$EXIT_CODE" -ne 0 ]; then
+              echo "::error title=Terraform Plan Failed::Check summary for details"
+              
+              echo "## ❌ Terraform Plan Failed" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
+              echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
+              echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
+  
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+              tail -n 50 plan.out >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+
+              exit 1
             fi
-          }
-
-          set_tfvar "certificate_ecdsa_pem" "ecdsa_certificate.pem"
-          set_tfvar "trust_chain_ecdsa_pem" "ecdsa_certificate_ca.pem"
-          set_tfvar "certificate_rsa_pem" "rsa_certificate.pem"
-          set_tfvar "trust_chain_rsa_pem" "rsa_certificate_ca.pem"
-
-          terraform plan -input=false -detailed-exitcode -no-color -out=tfplan > >(tee -a plan.out) 2> >(tee -a plan.out >&2)
-          EXIT_CODE=$?
-          set -e
-
-          if [ "$EXIT_CODE" -ne 0 ]; then
-            echo "::error title=Terraform Plan Failed::Check summary for details"
-            
-            echo "## ❌ Terraform Plan Failed" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
-            echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
-            echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
- 
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            tail -n 50 plan.out >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-
-            exit 1
-          fi
 
 
-          terraform apply -input=false -auto-approve -no-color tfplan > >(tee -a apply.out) 2> >(tee -a apply.out >&2)
-          EXIT_CODE=$?
-          set -e
+            terraform apply -input=false -auto-approve -no-color tfplan > >(tee -a apply.out) 2> >(tee -a apply.out >&2)
+            EXIT_CODE=$?
+            set -e
 
-          if [ "$EXIT_CODE" -ne 0 ]; then
-            echo "::error title=Terraform Plan Failed::Check summary for details"
-            
-            echo "## ❌ Terraform Apply Failed" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
-            echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
-            echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
+            if [ "$EXIT_CODE" -ne 0 ]; then
+              echo "::error title=Terraform Plan Failed::Check summary for details"
+              
+              echo "## ❌ Terraform Apply Failed" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
+              echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
+              echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
 
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            tail -n 50 apply.out >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+              tail -n 50 apply.out >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
 
-            exit 1
+              exit 1
+            fi
           fi
 
       - name: Terraform destroy
