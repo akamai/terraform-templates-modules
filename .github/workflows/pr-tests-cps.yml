@@ -387,8 +387,9 @@ jobs:
             fi
           else
             mkdir wait_for_deployment
+            cp "${{ inputs.module_source }}/tests/wait_deployment.tf.tpl"  "wait_for_deployment/wait_deployment.tf"
             cd wait_for_deployment
-            cp "${{ inputs.module_source }}/tests/wait_deployment.tf.tpl"  "wait_deployment.tf"
+            
             terraform init
             is_cert_pending="true"
             while [ "$is_cert_pending" = "true" ]; do
