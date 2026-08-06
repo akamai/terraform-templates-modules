@@ -369,7 +369,7 @@ jobs:
             set -e
 
             if [ "$EXIT_CODE" -ne 0 ]; then
-              echo "::error title=Terraform Plan Failed::Check summary for details"
+              echo "::error title=Terraform Apply Failed::Check summary for details"
               
               echo "## ❌ Terraform Apply Failed" >> $GITHUB_STEP_SUMMARY
               echo "" >> $GITHUB_STEP_SUMMARY
@@ -386,7 +386,17 @@ jobs:
               exit 1
             fi
           else
-            sleep 10m
+            mkdir wait_for_deployment
+            cd wait_for_deployment
+            cp "${{ inputs.module_source }}/tests/wait_deployment.tf.tpl"  "wait_deployment.tf"
+            terraform init
+            is_cert_pending="true"
+            while [ "$is_cert_pending" = "true" ]; do
+              terraform apply -input=false -auto-approve -no-color
+              is_cert_pending=$(< enrollment_pending_changes.txt)
+              is_cert_pending="${is_cert_pending//[[:space:]]/}"
+            done
+            cd ..
           fi
 
       - name: Terraform destroy
