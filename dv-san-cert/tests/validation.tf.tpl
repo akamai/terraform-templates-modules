@@ -26,3 +26,9 @@ resource "akamai_cps_dv_validation" "my-dv-validation" {
   }
   depends_on = [akamai_dns_record.enrollment_validation]
 }
+
+#Used to save the enrollment id in order to fix the deletion that the prodvider does not handle gracefully
+resource "local_file" "enrollment_id" {
+  filename = "enrollment_id.txt"
+  content  = akamai_cps_dv_enrollment.this.id
+}

@@ -1,5 +1,3 @@
-edgerc_section = "PS"
-
 contract_id = "1-1NC95D"
 
 common_name = "${MATRIX_NAME}.rafa.cr"
