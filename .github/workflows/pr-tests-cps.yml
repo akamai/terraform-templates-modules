@@ -304,9 +304,11 @@ jobs:
             exit 1
           fi
 
+                   
           cp enrollment_id.txt enrollment_id_backup.txt
+            
 
-      - name: Phase 2 Certificate Upload cert
+      - name: Phase 2 Certificate Upload/Deployment
         run: |
           if [[ "${{ inputs.module_source }}" == "third-party-cert" ]]; then
             cd "${{ inputs.module_source }}"
@@ -383,6 +385,8 @@ jobs:
 
               exit 1
             fi
+          else
+            sleep 10m
           fi
 
       - name: Terraform destroy
