@@ -392,6 +392,7 @@ jobs:
             terraform init
             is_cert_pending="true"
             while [ "$is_cert_pending" = "true" ]; do
+              sleep 5m
               terraform apply -input=false -auto-approve -no-color
               is_cert_pending=$(< enrollment_pending_changes.txt)
               is_cert_pending="${is_cert_pending//[[:space:]]/}"
