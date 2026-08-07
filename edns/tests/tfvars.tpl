@@ -7,9 +7,9 @@ edgerc_section = "default" // your section name if not default
 ## ----------------------------------------------------------------------------
 # Zone settings
 ## ----------------------------------------------------------------------------
-zone_name   = ""${MATRIX_NAME}.edns.terra.rafa.cr"" # your zone name
-contract_id = "1-1NC95D"
-group_id = "grp_290842"
+zone_name   = "${MATRIX_NAME}.edns.terra.gssdevops.cr"
+contract_id = "ctr_1-5C13O2"
+group_id = "grp_315874"
 zone_type="${ZONE_TYPE}"
 ## ----------------------------------------------------------------------------
 # SOA (managed only if not null)
