@@ -1,3 +1,3 @@
-output force_change2{
-    value=5
+output force_change{
+    value=6
 }
