@@ -1,3 +1,3 @@
 output force_change{
-    value=
+    value=7
 }
