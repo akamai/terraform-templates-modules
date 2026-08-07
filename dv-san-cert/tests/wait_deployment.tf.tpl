@@ -12,10 +12,15 @@ terraform {
 }
 
 data "akamai_cps_enrollment" "my-enrollment" {
-  enrollment_id = trimspace(file("../enrollment_id.txt"))
+  enrollment_id = var.enrollment_id
 }
 
-resource "local_file" "enrollment_id" {
+resource "local_file" "enrollment_id_pending_changes" {
   filename = "enrollment_pending_changes.txt"
   content  = data.akamai_cps_enrollment.my-enrollment.pending_changes
+}
+
+variable "enrollment_id"{
+  description = "enrollment id"
+  type        = number
 }
