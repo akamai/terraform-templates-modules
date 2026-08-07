@@ -19,12 +19,3 @@ variable "client_lists_prefix" {
   type        = string
 }
 
-variable "version_notes" {
-  description = "Notes for the version"
-  type        = string
-}
-
-variable "notification_emails" {
-  description = "List or emails for notifications"
-  type        = list(string)
-}

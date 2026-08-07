@@ -75,15 +75,6 @@ jobs:
           output-method: inject
           git-push: true
 
-      - name: Generate terraform-docs for AAP/ASM - Bot Manager Module
-        uses: terraform-docs/gh-actions@v1.4.1
-        with:
-          working-dir: ./aap-asm/bot-manager
-          config-file: ../../.terraform-docs.yaml
-          output-file: README.md
-          output-method: inject
-          git-push: true
-
       - name: Generate terraform-docs for AAP/ASM - Client Lists Module
         uses: terraform-docs/gh-actions@v1.4.1
         with:
@@ -93,19 +84,19 @@ jobs:
           output-method: inject
           git-push: true
 
-      - name: Generate terraform-docs for AAP/ASM - Client Reputation Module
+      - name: Generate terraform-docs for AAP/ASM - Security Config Module
         uses: terraform-docs/gh-actions@v1.4.1
         with:
-          working-dir: ./aap-asm/client-reputation
+          working-dir: ./aap-asm/security-config
           config-file: ../../.terraform-docs.yaml
           output-file: README.md
           output-method: inject
           git-push: true
 
-      - name: Generate terraform-docs for AAP/ASM - Security Module
+      - name: Generate terraform-docs for AAP/ASM - Security Policy Module
         uses: terraform-docs/gh-actions@v1.4.1
         with:
-          working-dir: ./aap-asm/security
+          working-dir: ./aap-asm/security-policy
           config-file: ../../.terraform-docs.yaml
           output-file: README.md
           output-method: inject
@@ -147,6 +138,24 @@ jobs:
           output-method: inject
           git-push: true
 
+      - name: Generate terraform-docs for DOM
+        uses: terraform-docs/gh-actions@v1.4.1
+        with:
+          working-dir: ./dom
+          config-file: ../.terraform-docs.yaml
+          output-file: README.md
+          output-method: inject
+          git-push: true
+
+      - name: Generate terraform-docs for DS2
+        uses: terraform-docs/gh-actions@v1.4.1
+        with:
+          working-dir: ./ds2
+          config-file: ../.terraform-docs.yaml
+          output-file: README.md
+          output-method: inject
+          git-push: true
+
       - name: Generate terraform-docs for CPS - DV SAN
         uses: terraform-docs/gh-actions@v1.4.1
         with:
@@ -163,8 +172,8 @@ jobs:
           config-file: ../.terraform-docs.yaml
           output-file: README.md
           output-method: inject
-          git-push: true      
-
+          git-push: true     
+          
       - name: Generate terraform-docs for CPS - Third Party
         uses: terraform-docs/gh-actions@v1.4.1
         with:
@@ -173,3 +182,6 @@ jobs:
           output-file: README.md
           output-method: inject
           git-push: true
+
+ 
+

@@ -1,3 +1,35 @@
+## [2.0.1](https://github.com/akamai/terraform-templates-modules/compare/v2.0.0...v2.0.1) (2026-07-17)
+
+
+### Bug Fixes
+
+* Include DOM and DS2 to GH validations and docs workflows ([d351d08](https://github.com/akamai/terraform-templates-modules/commit/d351d08639e61e9388c948be6470fa44ccc8af7d))
+
+
+
+# [2.0.0](https://github.com/akamai/terraform-templates-modules/compare/v1.5.0...v2.0.0) (2026-07-17)
+
+
+### Bug Fixes
+
+* **aapasm:** added fix for CR and moved rate accounting type to aggregated ([e7ce10e](https://github.com/akamai/terraform-templates-modules/commit/e7ce10e073ffdca664388492dd3bb428b9a268db))
+* **dom:** removed late validation, updated versions.tf ([e212185](https://github.com/akamai/terraform-templates-modules/commit/e212185c56e66011cb63a88a168e965b82e2cd3d))
+
+
+### Features
+
+* **aapasm:** add ASN blocking and simplify reputation profiles ([30df923](https://github.com/akamai/terraform-templates-modules/commit/30df9231e04c02dd90e5ddcdf859c54351b56b38))
+* **aapasm:** add multi-policy support for AAP+ASM templates ([442d13f](https://github.com/akamai/terraform-templates-modules/commit/442d13f9f074befd6282d3ad5535a1b433c94cbf))
+* **dom:** add Domain Ownership Management module ([28cf7eb](https://github.com/akamai/terraform-templates-modules/commit/28cf7eb13fc64f1350a5b7b735355a7920dad593))
+* **dom:** add Domain Ownership Management module with README documentation ([7abc32f](https://github.com/akamai/terraform-templates-modules/commit/7abc32fbd5217eedbad11275435f8e242909aabc))
+
+
+### BREAKING CHANGES
+
+* **aapasm:** Replaced single-policy variables with policy_defaults + policies map. Module sources now reference security-config and security-policy modules.
+
+
+
 # [1.5.0](https://github.com/akamai/terraform-templates-modules/compare/v1.4.0...v1.5.0) (2026-07-02)
 
 
