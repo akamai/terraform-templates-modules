@@ -281,11 +281,11 @@ jobs:
             exit 1
           fi
           
-          MAX_RETRIES=
+          MAX_RETRIES=5
           RETRY_COUNT=0
           APPLY_EXIT_CODE=1
           SUCCESS=0
-          EXPECTED_APPLY_REGEX="^Error: cannot delete configuration '[^']+' as version [0-9]+ has been active in staging or production$"
+          EXPECTED_APPLY_REGEX="CPS could not create your enrollment because you recently created another enrollment that is still in process"
           set +e
           
           while [ "$SUCCESS" -eq 0 ] && [ "$RETRY_COUNT" -lt "$MAX_RETRIES" ]; do
