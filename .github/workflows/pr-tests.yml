@@ -128,7 +128,7 @@ jobs:
             cat "$TFVARS_TEMPLATE
           elif [[ "${{ inputs.module_source }}" == "edns" ]]; then
             echo 'masters = ["192.168.1.1", "192.168.2.2"]' >> "$TFVARS_TEMPLATE"
-            cat "$TFVARS_TEMPLATE
+            cat "$TFVARS_TEMPLATE"
           fi
 
           cd "${{ inputs.module_source }}"
