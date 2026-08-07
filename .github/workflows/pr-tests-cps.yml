@@ -310,8 +310,8 @@ jobs:
 
       - name: Phase 2 Certificate Upload/Deployment
         run: |
+          cd "${{ inputs.module_source }}"
           if [[ "${{ inputs.module_source }}" == "third-party-cert" ]]; then
-            cd "${{ inputs.module_source }}"
 
             # -u        → fail on undefined variables
             # pipefail  → detect failures in pipes
