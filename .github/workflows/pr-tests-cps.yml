@@ -280,10 +280,51 @@ jobs:
 
             exit 1
           fi
+          
+          MAX_RETRIES=
+          RETRY_COUNT=0
+          APPLY_EXIT_CODE=1
+          SUCCESS=0
+          EXPECTED_APPLY_REGEX="^Error: cannot delete configuration '[^']+' as version [0-9]+ has been active in staging or production$"
+          set +e
+          
+          while [ "$SUCCESS" -eq 0 ] && [ "$RETRY_COUNT" -lt "$MAX_RETRIES" ]; do
+            terraform apply -input=false -auto-approve -no-color tfplan > >(tee -a apply.out) 2> >(tee -a apply.out >&2)
+            EXIT_CODE=$?
 
+            if [ "$EXIT_CODE" -eq 0 ]; then
+              SUCCESS=1
+              break
+            fi
 
-          terraform apply -input=false -auto-approve -no-color tfplan > >(tee -a apply.out) 2> >(tee -a apply.out >&2)
-          EXIT_CODE=$?
+            APPLY_TAIL="$(tail -n 50 apply.out 2>/dev/null || true)"
+            APPLY_ERROR_LINES="$(printf '%s\n' "$APPLY_TAIL" | grep '^Error:' || true)"
+            
+            if [ -n "$APPLY_ERROR_LINES" ] && ! printf '%s\n' "$APPLY_ERROR_LINES" | grep -Ev "$EXPECTED_APPLY_REGEX" >/dev/null; then
+              echo "::warning title=We are hitting the the known rate limit of 5 minutes on entitlement creation::Will retry after 5 minutes. This is a known issue with CPS."
+            else
+              break
+            fi
+
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+            if [ "$RETRY_COUNT" -ge "$MAX_RETRIES" ]; then
+              break
+            fi
+
+            echo "Re-planning before retry..."
+            terraform plan -input=false -detailed-exitcode -no-color -out=tfplan > >(tee -a replan.out) 2> >(tee -a replan.out >&2)
+            REPLAN_EXIT_CODE=$?
+
+            if [ "$REPLAN_EXIT_CODE" -ne 0 ] && [ "$REPLAN_EXIT_CODE" -ne 2 ]; then
+              EXIT_CODE=$REPLAN_EXIT_CODE
+              cp replan.out apply.out
+              break
+            fi
+
+            echo "Will Retry terraform apply after 5 min..."
+            sleep 5m
+          done
+
           set -e
 
           if [ "$EXIT_CODE" -ne 0 ]; then
@@ -307,7 +348,6 @@ jobs:
                    
           cp enrollment_id.txt enrollment_id_backup.txt
             
-
       - name: Phase 2 Certificate Upload/Deployment
         run: |
           cd "${{ inputs.module_source }}"
@@ -387,7 +427,7 @@ jobs:
             fi
           else
             mkdir wait_for_deployment
-            cp "${{ inputs.module_source }}/tests/wait_deployment.tf.tpl"  "wait_for_deployment/wait_deployment.tf"
+            cp "tests/wait_deployment.tf.tpl"  "wait_for_deployment/wait_deployment.tf"
             enrollment_id=$(< enrollment_id_backup.txt)
             enrollment_id="${enrollment_id//[[:space:]]/}"
             

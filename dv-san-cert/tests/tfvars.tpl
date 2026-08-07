@@ -8,7 +8,7 @@ sans = ["${MATRIX_NAME}1.rafa.cr", "${MATRIX_NAME}2.rafa.cr"]
 
 secure_network = "enhanced-tls"
 
-sni_only = true
+sni_only = ${SNI}
 
 # Whether to acknowledge post-verification warnings defined in auto_approve_warnings. Provide true to acknowledge them.
 
