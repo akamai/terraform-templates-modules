@@ -296,7 +296,7 @@ jobs:
               SUCCESS=1
               break
             fi
-
+          
             APPLY_TAIL="$(tail -n 50 apply.out 2>/dev/null || true)"
             APPLY_ERROR_LINES="$(printf '%s\n' "$APPLY_TAIL" | grep '^Error:' || true)"
             
