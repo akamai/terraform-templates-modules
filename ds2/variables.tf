@@ -332,6 +332,7 @@ variable "oracle_connector" {
   })
   default = null
 }
+
 variable "app_sec_configs" {
   type        = list(number)
   description = "App & API Protector security config IDs to associate with the stream."
