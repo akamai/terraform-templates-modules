@@ -1,3 +1,12 @@
+## [2.0.3](https://github.com/akamai/terraform-templates-modules/compare/v2.0.2...v2.0.3) (2026-09-07)
+
+
+### Bug Fixes
+
+* **ds2:** add app_sec_configs to prevent provider 10.3 drift ([c4a87ef](https://github.com/akamai/terraform-templates-modules/commit/c4a87ef186c1aa8cbc7ad582bddff560aa215b94))
+
+
+
 ## [2.0.2](https://github.com/akamai/terraform-templates-modules/compare/v2.0.1...v2.0.2) (2026-09-07)
 
 
