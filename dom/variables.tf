@@ -14,14 +14,16 @@ variable "enable_validation" {
 
 #tflint-ignore: terraform_unused_declarations
 variable "edgerc_path" {
-  description = "Path to the .edgerc file"
+  description = "Path to the .edgerc file (unused; provider is configured by the parent)."
   type        = string
+  default     = "~/.edgerc"
 }
 
 #tflint-ignore: terraform_unused_declarations
 variable "edgerc_section" {
-  description = "Section in the .edgerc file"
+  description = "Section in the .edgerc file (unused; provider is configured by the parent)."
   type        = string
+  default     = "default"
 }
 
 variable "domain_search_entries" {

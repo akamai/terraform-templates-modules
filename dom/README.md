@@ -17,8 +17,6 @@ module "example" {
     validation_scope  = string
     validation_method = string
   }))>
-  	 edgerc_path  = <string>
-  	 edgerc_section  = <string>
   	 enable_validation  = <bool>
   
 	 # Optional variables
@@ -26,6 +24,8 @@ module "example" {
     domain_name      = string
     validation_scope = string
   }))> | default: []
+  	 edgerc_path  = <string> | default: "~/.edgerc"
+  	 edgerc_section  = <string> | default: "default"
 }
  ```
 
@@ -53,10 +53,10 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_domain_validation_entries"></a> [domain\_validation\_entries](#input\_domain\_validation\_entries) | A list of objects with hostnames, domains, or wildcards to DOM validate | <pre>list(object({<br/>    domain_name       = string<br/>    validation_scope  = string<br/>    validation_method = string<br/>  }))</pre> | n/a | yes |
-| <a name="input_edgerc_path"></a> [edgerc\_path](#input\_edgerc\_path) | Path to the .edgerc file | `string` | n/a | yes |
-| <a name="input_edgerc_section"></a> [edgerc\_section](#input\_edgerc\_section) | Section in the .edgerc file | `string` | n/a | yes |
 | <a name="input_enable_validation"></a> [enable\_validation](#input\_enable\_validation) | Set to true to enable domain validation | `bool` | n/a | yes |
 | <a name="input_domain_search_entries"></a> [domain\_search\_entries](#input\_domain\_search\_entries) | List of domains to search validation status for | <pre>list(object({<br/>    domain_name      = string<br/>    validation_scope = string<br/>  }))</pre> | `[]` | no |
+| <a name="input_edgerc_path"></a> [edgerc\_path](#input\_edgerc\_path) | Path to the .edgerc file (unused; provider is configured by the parent). | `string` | `"~/.edgerc"` | no |
+| <a name="input_edgerc_section"></a> [edgerc\_section](#input\_edgerc\_section) | Section in the .edgerc file (unused; provider is configured by the parent). | `string` | `"default"` | no |
 
 ## Outputs
 
