@@ -1,3 +1,12 @@
+## [2.0.2](https://github.com/akamai/terraform-templates-modules/compare/v2.0.1...v2.0.2) (2026-09-07)
+
+
+### Bug Fixes
+
+* adding wildcard support for dom in main.tf ([684e7bc](https://github.com/akamai/terraform-templates-modules/commit/684e7bcb2c9999243b363e91d6853f844fc62425))
+
+
+
 ## [2.0.1](https://github.com/akamai/terraform-templates-modules/compare/v2.0.0...v2.0.1) (2026-07-17)
 
 
