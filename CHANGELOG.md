@@ -1,3 +1,12 @@
+## [2.0.4](https://github.com/akamai/terraform-templates-modules/compare/v2.0.3...v2.0.4) (2026-09-07)
+
+
+### Bug Fixes
+
+* changes to dom modules so that edgerc imput is optional ([7244e64](https://github.com/akamai/terraform-templates-modules/commit/7244e64229396c3eb50b2c34f5613c774633ad96))
+
+
+
 ## [2.0.3](https://github.com/akamai/terraform-templates-modules/compare/v2.0.2...v2.0.3) (2026-09-07)
 
 
