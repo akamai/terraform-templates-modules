@@ -79,3 +79,10 @@ config.backend
 
 # Custom
 .DS_Store
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.plan
+.DS_Store
+*.tfvars
