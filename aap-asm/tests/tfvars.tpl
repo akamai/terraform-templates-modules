@@ -103,7 +103,7 @@ policy_defaults = {
   rep_web_scrapers_low_shared    = "alert"
 
   # --- Bot Manager General Settings ---
-  botman_type               = ${BOTMAN_TYPE}"
+  botman_type               = "${BOTMAN_TYPE}"
   add_akamai_bot_header     = false
   enable_active_detections  = true
   enable_browser_validation = false
