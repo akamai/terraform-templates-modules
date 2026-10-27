@@ -208,7 +208,7 @@ policies = {
   # HOW TO EDIT: Add any field from policy_defaults to override it.
   # Only the fields you specify here will differ from the defaults.
   api = {
-    policy_name   = "api-${MATRIX_NAME}""
+    policy_name   = "api-${MATRIX_NAME}"
     policy_prefix = "TF02"
     hostnames     = ["${MATRIX_NAME}-api.terra.rafa.cr"]
 
