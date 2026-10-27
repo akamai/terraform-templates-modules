@@ -16,12 +16,14 @@ variable "enable_validation" {
 variable "edgerc_path" {
   description = "Path to the .edgerc file"
   type        = string
+  default     = "~/.edgerc"
 }
 
 #tflint-ignore: terraform_unused_declarations
 variable "edgerc_section" {
   description = "Section in the .edgerc file"
   type        = string
+  default     = "default"
 }
 
 variable "domain_search_entries" {

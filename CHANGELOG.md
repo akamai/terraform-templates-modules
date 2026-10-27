@@ -1,3 +1,30 @@
+## [2.0.4](https://github.com/akamai/terraform-templates-modules/compare/v2.0.3...v2.0.4) (2026-09-07)
+
+
+### Bug Fixes
+
+* changes to dom modules so that edgerc imput is optional ([7244e64](https://github.com/akamai/terraform-templates-modules/commit/7244e64229396c3eb50b2c34f5613c774633ad96))
+
+
+
+## [2.0.3](https://github.com/akamai/terraform-templates-modules/compare/v2.0.2...v2.0.3) (2026-09-07)
+
+
+### Bug Fixes
+
+* **ds2:** add app_sec_configs to prevent provider 10.3 drift ([c4a87ef](https://github.com/akamai/terraform-templates-modules/commit/c4a87ef186c1aa8cbc7ad582bddff560aa215b94))
+
+
+
+## [2.0.2](https://github.com/akamai/terraform-templates-modules/compare/v2.0.1...v2.0.2) (2026-09-07)
+
+
+### Bug Fixes
+
+* adding wildcard support for dom in main.tf ([684e7bc](https://github.com/akamai/terraform-templates-modules/commit/684e7bcb2c9999243b363e91d6853f844fc62425))
+
+
+
 ## [2.0.1](https://github.com/akamai/terraform-templates-modules/compare/v2.0.0...v2.0.1) (2026-07-17)
 
 

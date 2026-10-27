@@ -20,6 +20,7 @@ resource "akamai_datastream" "this" {
   dataset_fields      = var.dataset_fields_ids
   collect_midgress    = var.enable_midgress
   sampling_percentage = var.sampling_percentage
+  app_sec_configs     = var.app_sec_configs
 
   delivery_configuration {
     format             = var.log_format
