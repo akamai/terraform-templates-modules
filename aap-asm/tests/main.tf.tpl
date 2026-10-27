@@ -299,7 +299,7 @@ locals {
 # -------------------------------------------------
 module "security-policy" {
   for_each = local.resolved_policies
-  source   = "./security_policy"
+  source   = "./security-policy"
 
   config_id     = module.security-config.config_id
   policy_name   = each.value.policy_name
