@@ -6,7 +6,7 @@ module "delivery" {
   source = "../../delivery"
   contract_id = trimprefix(data.akamai_contract.contract.id, "ctr_")
   group_id = trimprefix(data.akamai_contract.contract.group_id, "grp_")
-  hostnames = ["${MATRIX_NAME}.terra.rafa.cr"]
+  hostnames = ["${MATRIX_NAME}.terra.rafa.cr","${MATRIX_NAME}-static.terra.rafa.cr", "${MATRIX_NAME}-cdn.terra.rafa.cr","${MATRIX_NAME}-api.terra.rafa.cr"]
   name = "${MATRIX_NAME}.terra.rafa.cr"
   cpcode_name = "${MATRIX_NAME}.terra.rafa.cr"
   default_origin = "flexibleorigin.rafa.cr"
