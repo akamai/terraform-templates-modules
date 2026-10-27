@@ -230,7 +230,7 @@ policies = {
   # Minimal protections — static content doesn't need bot detection,
   # client reputation scoring, or slow POST protection.
   static = {
-    policy_name   = "static-assets-${MATRIX_NAME}""
+    policy_name   = "static-assets-${MATRIX_NAME}"
     policy_prefix = "TF03"
     hostnames     = ["${MATRIX_NAME}-static.terra.rafa.cr", "${MATRIX_NAME}-cdn.terra.rafa.cr"]
 
