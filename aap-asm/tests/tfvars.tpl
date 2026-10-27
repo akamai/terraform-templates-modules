@@ -194,7 +194,7 @@ policies = {
   # -------------------------------------------------------
   # No overrides — inherits everything from policy_defaults.
   main = {
-    policy_name   = ${MATRIX_NAME}"
+    policy_name   = "${MATRIX_NAME}"
     policy_prefix = "TF01"
     hostnames     = ["${MATRIX_NAME}.terra.rafa.cr"]
   }
