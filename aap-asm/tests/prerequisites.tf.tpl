@@ -17,8 +17,8 @@ module "delivery" {
   peer_reviewed_by = "test@na.com"
   customer_email = "test@akamai.com"
   unit_tested = true
-  ticket_id = "some-ticket-id"
-  noncompliance_reason = ["NONE"]
+  ticket_id = "111"
+  noncompliance_reason = ["NO_PRODUCTION_TRAFFIC"]
   other_noncompliance_reason = "test"
   td_region = "CH2"
   ip_behavior = "IPV6_COMPLIANCE"
@@ -30,5 +30,5 @@ module "delivery" {
   secure_by_default = true
   product_id = "Fresca"
   activate_to_staging = true
-  activate_to_production = false
+  activate_to_production = true
 }
