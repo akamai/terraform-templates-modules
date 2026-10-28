@@ -216,8 +216,32 @@ jobs:
           set +e
           set -x
 
-          terraform destroy -input=false -auto-approve -no-color > >(tee -a destroy.out) 2> >(tee -a destroy.out >&2)
-          EXIT_CODE=$?
+          MAX_ATTEMPTS=5
+          ATTEMPT=1
+          EXIT_CODE=1
+          RETRYABLE_ERROR="Record not found"
+
+          while [ "$ATTEMPT" -le "$MAX_ATTEMPTS" ]; do
+            : > destroy.out
+            echo "Terraform destroy attempt $ATTEMPT of $MAX_ATTEMPTS"
+            terraform destroy -input=false -auto-approve -no-color >destroy.out 2>&1
+            EXIT_CODE=$?
+
+            cat destroy.out
+
+            if [ "$EXIT_CODE" -eq 0 ]; then
+              break
+            fi
+
+            if ! grep -Fq "$RETRYABLE_ERROR" destroy.out || [ "$ATTEMPT" -ge "$MAX_ATTEMPTS" ]; then
+              break
+            fi
+
+            echo "::warning title=Transient Akamai DNS error::Record not found during destroy; retrying with a fresh destroy plan in 60 seconds."
+            sleep 60
+            ATTEMPT=$((ATTEMPT + 1))
+          done
+
           set -e
 
           if [ "$EXIT_CODE" -ne 0 ]; then
