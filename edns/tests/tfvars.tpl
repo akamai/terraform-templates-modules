@@ -21,20 +21,23 @@ zone_type="${ZONE_TYPE}"
 # Basic records
 ## ----------------------------------------------------------------------------
 a_records = [
+  { name = "www", target = ["96.6.114.83"], ttl = 300 },
   { name = "@",   target = ["72.246.2.76"], ttl = 300 },
 ]
 
 aaaa_records = [
-  { name = "www", target = ["2001:db8:85a3::8a2e:370:7334"], ttl = 300 },
+  { name = "www", target = ["2001:4860:4860::8888"], ttl = 300 },
 ]
 
 cname_records = [
-  { name = "blog", target = ["your.cname.target.name."], ttl = 300 },
+  { name = "blog", target = ["example.com."], ttl = 300 },
+  { name = "cdn",  target = ["example.net."], ttl = 300 },
 ]
 
 txt_records = [
   { name = "@",        target = ["v=spf1 include:_spf.google.com ~all"], ttl = 3600 },
   { name = "_dmarc",   target = ["v=DMARC1; p=quarantine; rua=mailto:dmarc@example.com"], ttl = 3600 },
+  { name = "_acme-challenge", target = ["test-acme-challenge-token"], ttl = 300 },
 ]
 
 ns_records = [
