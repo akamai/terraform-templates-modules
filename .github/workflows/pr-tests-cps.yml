@@ -440,7 +440,7 @@ jobs:
             is_cert_pending="true"
 
             while [ "$is_cert_pending" = "true" ]; do
-              echo "Sleeping for 5 minutes..."
+              echo "Certificate status is still pending. Sleeping for 5 minutes..."
               sleep 5m
               terraform apply -input=false -auto-approve -no-color -var="enrollment_id=$enrollment_id"
               is_cert_pending=$(< enrollment_pending_changes.txt)
