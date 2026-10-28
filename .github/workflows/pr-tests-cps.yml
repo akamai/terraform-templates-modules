@@ -79,7 +79,6 @@ jobs:
 
     strategy:
       fail-fast: false
-      max-parallel: 1
       matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
 
     env:
@@ -260,11 +259,14 @@ jobs:
           set +e
           set -x
 
-          terraform plan -input=false -detailed-exitcode -no-color -out=tfplan > >(tee -a plan.out) 2> >(tee -a plan.out >&2)
+          : > plan.out
+          terraform plan -input=false -detailed-exitcode -no-color -out=tfplan >plan.out 2>&1
           EXIT_CODE=$?
+          cat plan.out
           set -e
 
-          if [ "$EXIT_CODE" -ne 0 ]; then
+          # With -detailed-exitcode, 2 means the plan has changes.
+          if [ "$EXIT_CODE" -ne 0 ] && [ "$EXIT_CODE" -ne 2 ]; then
             echo "::error title=Terraform Plan Failed::Check summary for details"
             
             echo "## ❌ Terraform Plan Failed" >> $GITHUB_STEP_SUMMARY
@@ -282,60 +284,60 @@ jobs:
             exit 1
           fi
           
-          MAX_RETRIES=5
-          RETRY_COUNT=0
+          MAX_ATTEMPTS=5
+          ATTEMPT=1
           APPLY_EXIT_CODE=1
-          SUCCESS=0
-          EXPECTED_APPLY_REGEX="CPS could not create your enrollment because you recently created another enrollment that is still in process"
+          EXPECTED_APPLY_ERROR="CPS could not create your enrollment because you recently created another enrollment that is still in process"
           set +e
           
-          while [ "$SUCCESS" -eq 0 ] && [ "$RETRY_COUNT" -lt "$MAX_RETRIES" ]; do
-            terraform apply -input=false -auto-approve -no-color tfplan > >(tee -a apply.out) 2> >(tee -a apply.out >&2)
-            EXIT_CODE=$?
+          while [ "$ATTEMPT" -le "$MAX_ATTEMPTS" ]; do
+            : > apply.out
+            terraform apply -input=false -auto-approve -no-color tfplan >apply.out 2>&1
+            APPLY_EXIT_CODE=$?
+            cat apply.out
 
-            if [ "$EXIT_CODE" -eq 0 ]; then
-              SUCCESS=1
-              break
-            fi
-          
-            APPLY_TAIL="$(tail -n 50 apply.out 2>/dev/null || true)"
-            APPLY_ERROR_LINES="$(printf '%s\n' "$APPLY_TAIL" | grep '^Error:' || true)"
-            
-            if [ -n "$APPLY_ERROR_LINES" ] && ! printf '%s\n' "$APPLY_ERROR_LINES" | grep -Ev "$EXPECTED_APPLY_REGEX" >/dev/null; then
-              echo "::warning title=We are hitting the the known rate limit of 5 minutes on entitlement creation::Will retry after 5 minutes. This is a known issue with CPS."
-            else
+            if [ "$APPLY_EXIT_CODE" -eq 0 ]; then
               break
             fi
 
-            RETRY_COUNT=$((RETRY_COUNT + 1))
-            if [ "$RETRY_COUNT" -ge "$MAX_RETRIES" ]; then
+            # The rate-limit message is in the API response detail, not necessarily an Error: line.
+            if ! grep -Fq "$EXPECTED_APPLY_ERROR" apply.out; then
               break
             fi
 
+            if [ "$ATTEMPT" -ge "$MAX_ATTEMPTS" ]; then
+              break
+            fi
+
+            echo "::warning title=CPS enrollment rate limit::Rate limit detected; waiting 5 minutes before retry."
+            echo "Sleeping for 5 minutes before retry..."
+            sleep 5m
+
+            : > replan.out
             echo "Re-planning before retry..."
-            terraform plan -input=false -detailed-exitcode -no-color -out=tfplan > >(tee -a replan.out) 2> >(tee -a replan.out >&2)
+            terraform plan -input=false -detailed-exitcode -no-color -out=tfplan >replan.out 2>&1
             REPLAN_EXIT_CODE=$?
+            cat replan.out
 
             if [ "$REPLAN_EXIT_CODE" -ne 0 ] && [ "$REPLAN_EXIT_CODE" -ne 2 ]; then
-              EXIT_CODE=$REPLAN_EXIT_CODE
+              APPLY_EXIT_CODE=$REPLAN_EXIT_CODE
               cp replan.out apply.out
               break
             fi
 
-            echo "Will Retry terraform apply after 5 min..."
-            sleep 5m
+            ATTEMPT=$((ATTEMPT + 1))
           done
 
           set -e
 
-          if [ "$EXIT_CODE" -ne 0 ]; then
-            echo "::error title=Terraform Plan Failed::Check summary for details"
+          if [ "$APPLY_EXIT_CODE" -ne 0 ]; then
+            echo "::error title=Terraform Apply Failed::Check summary for details"
             
             echo "## ❌ Terraform Apply Failed" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
             echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
-            echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
+            echo "**Exit Code:** $APPLY_EXIT_CODE" >> $GITHUB_STEP_SUMMARY
 
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
