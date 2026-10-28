@@ -515,7 +515,21 @@ resource "akamai_dns_record" "sshfp_records" {
 ## ----------------------------------
 resource "time_sleep" "wait_for_zone" {
   create_duration = local.normalized_zone_type == "primary" ? "120s" : "0s"
-  depends_on      = [akamai_dns_zone.dns_zone]
+  depends_on      = [akamai_dns_record.ptr_records,
+                    akamai_dns_record.loc_records,
+                    akamai_dns_record.spf_records,
+                    akamai_dns_record.rp_records,
+                    akamai_dns_record.hinfo_records,
+                    akamai_dns_record.cert_records,
+                    akamai_dns_record.mx_records,
+                    akamai_dns_record.srv_records,
+                    akamai_dns_record.caa_records,
+                    akamai_dns_record.naptr_records,
+                    akamai_dns_record.https_records,
+                    akamai_dns_record.svcb_records,
+                    akamai_dns_record.ds_records,
+                    akamai_dns_record.dnskey_records,
+                    akamai_dns_record.sshfp_records]
 }
 
 ## ----------------------------------
