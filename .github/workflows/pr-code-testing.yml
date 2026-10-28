@@ -103,7 +103,7 @@ jobs:
   edns:
     needs: detect_changes
     if: needs.detect_changes.outputs.edns == 'true'
-    uses: ./.github/workflows/pr-tests.yml
+    uses: ./.github/workflows/pr-tests-edns.yml
     with:
         module_source: edns
     secrets: inherit

@@ -1,0 +1,251 @@
+name: Delivery Tests
+
+on:
+  workflow_call:
+    inputs:
+      module_source:
+        required: true
+        type: string
+jobs:
+  
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Generate test permutations matrix
+        id: set-matrix
+        run: |
+          CONFIG_FILE="${{ inputs.module_source }}/tests/config.json"
+          MAX=50
+
+          if [ ! -s "$CONFIG_FILE" ] || jq -e 'type == "object" and length == 0' "$CONFIG_FILE" >/dev/null 2>&1; then
+            r="a$(LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c 10)"
+            MATRIX=$(jq -cn --arg r "$r" '[{name: $r, label: ("name=" + $r)}]')
+          else
+            MATRIX=$(jq -cn \
+              --argjson cfg "$(cat "$CONFIG_FILE")" \
+              --argjson max "$MAX" '
+              
+              def build(idx; current; keys):
+                if idx == (keys | length) then
+                  current
+                else
+                  keys[idx] as $k
+                  | $cfg[$k][] as $val
+                  | build(idx + 1; current + { ($k): $val }; keys)
+                end;
+
+              [
+                limit($max; build(0; {}; $cfg | keys_unsorted))
+                | . + {
+                    label: (
+                      to_entries
+                      | map("\(.key)=\(.value)")
+                      | join(", ")
+                    )
+                  }
+              ]
+            ')
+
+            MATRIX=$(echo "$MATRIX" | jq -c '.[]' | while read -r item; do
+            r="a$(LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c 10)"
+            echo "$item" | jq -c --arg r "$r" '
+              . + { 
+                name: $r, 
+                label: (.label + ", name=\($r)") 
+              }'
+            done | jq -cs '.')
+          fi
+
+          echo "Generated matrix:"
+          echo "$MATRIX"
+
+          echo "matrix={\"include\":$MATRIX}" >> "$GITHUB_OUTPUT"
+
+
+      - name: Print all permutations
+        run: |
+          echo "===== ALL GENERATED PERMUTATIONS ====="
+          echo '${{ steps.set-matrix.outputs.matrix }}' | jq '.'
+            
+  tests:
+    name: ${{ matrix.label }}
+    needs: generate-matrix
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+
+    env:
+      AKAMAI_HOST: ${{ secrets.AKAMAI_HOST }}
+      AKAMAI_CLIENT_TOKEN: ${{ secrets.AKAMAI_CLIENT_TOKEN }}
+      AKAMAI_CLIENT_SECRET: ${{ secrets.AKAMAI_CLIENT_SECRET }}
+      AKAMAI_ACCESS_TOKEN: ${{ secrets.AKAMAI_ACCESS_TOKEN }}
+      AKAMAI_ACCOUNT_KEY: "1-5BYUG1:1-8BYUX"
+      DATADOG_TOKEN: ${{ secrets.DATADOG_TOKEN }}
+      GCS_KEY: ${{ secrets.GCS_KEY }}
+      LOGGLY_TOKEN: ${{ secrets.LOGGLY_TOKEN }}
+      NEWRELIC_TOKEN: ${{ secrets.NEWRELIC_TOKEN }}
+      OSS_ACCESS: ${{ secrets.OSS_ACCESS }}
+      OSS_SECRET: ${{ secrets.OSS_SECRET }}
+      LINODE_ACCESS: ${{ secrets.LINODE_ACCESS }}
+      LINODE_SECRET: ${{ secrets.LINODE_SECRET }}
+      SUMOLOGIC_TOKEN: ${{ secrets.SUMOLOGIC_TOKEN }}
+
+
+
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+
+      - name: Prepare Terraform
+        run: |
+          TFVARS_TEMPLATE="${{ inputs.module_source }}/tests/tfvars.tpl"
+
+          # Dynamically export all matrix variables as uppercase env vars
+          while IFS= read -r line; do
+            export "$line"
+            echo "$line" >> "$GITHUB_ENV"
+          done < <(echo '${{ toJson(matrix) }}' | jq -r '
+            to_entries[] |
+            if .key == "name" then "MATRIX_NAME=\(.value)"
+            elif .key == "label" then empty
+            else "\(.key | ascii_upcase)=\(.value)"
+            end
+          ')
+
+          if [[ "${{ inputs.module_source }}" == "ds2" ]]; then
+            cat "${{ inputs.module_source }}/tests/${CONNECTOR}.tpl" >> "$TFVARS_TEMPLATE"
+            cat "$TFVARS_TEMPLATE"
+          elif [[ "${{ inputs.module_source }}" == "edns" ]]; then
+            echo 'masters = ["192.168.1.1", "192.168.2.2"]' >> "$TFVARS_TEMPLATE"
+            cat "$TFVARS_TEMPLATE"
+          fi
+
+          cd "${{ inputs.module_source }}"
+          
+          envsubst < "../$TFVARS_TEMPLATE" > "terraform.tfvars"
+          echo "" >> "terraform.tfvars"
+          echo 'provider "akamai" {}' >> "provider.tf"
+          terraform init
+                    
+      - name: Terraform plan and apply with retry
+        run: |
+          cd "${{ inputs.module_source }}"
+          
+          set -uo pipefail
+          set +e
+          set -x
+
+          MAX_ATTEMPTS=5
+          ATTEMPT=1
+          RETRYABLE_ERROR="Record not found"
+          FINAL_EXIT_CODE=1
+          FAILURE_PHASE="Terraform plan"
+          FAILURE_LOG="plan.out"
+
+          while [ "$ATTEMPT" -le "$MAX_ATTEMPTS" ]; do
+            echo "Terraform attempt $ATTEMPT of $MAX_ATTEMPTS"
+            : > plan.out
+            terraform plan -input=false -detailed-exitcode -no-color -out=tfplan >plan.out 2>&1
+            PLAN_EXIT_CODE=$?
+            cat plan.out
+
+            if [ "$PLAN_EXIT_CODE" -ne 0 ] && [ "$PLAN_EXIT_CODE" -ne 2 ]; then
+              FINAL_EXIT_CODE=$PLAN_EXIT_CODE
+              FAILURE_PHASE="Terraform plan"
+              FAILURE_LOG="plan.out"
+
+              if grep -Fq "$RETRYABLE_ERROR" plan.out && [ "$ATTEMPT" -lt "$MAX_ATTEMPTS" ]; then
+                echo "::warning title=Transient Akamai DNS error::Record not found during plan; retrying plan and apply in 60 seconds."
+                sleep 60
+                ATTEMPT=$((ATTEMPT + 1))
+                continue
+              fi
+              break
+            fi
+
+            : > apply.out
+            terraform apply -input=false -auto-approve -no-color tfplan >apply.out 2>&1
+            APPLY_EXIT_CODE=$?
+            cat apply.out
+
+            if [ "$APPLY_EXIT_CODE" -eq 0 ]; then
+              FINAL_EXIT_CODE=0
+              break
+            fi
+
+            FINAL_EXIT_CODE=$APPLY_EXIT_CODE
+            FAILURE_PHASE="Terraform apply"
+            FAILURE_LOG="apply.out"
+
+            if grep -Fq "$RETRYABLE_ERROR" apply.out && [ "$ATTEMPT" -lt "$MAX_ATTEMPTS" ]; then
+              echo "::warning title=Transient Akamai DNS error::Record not found during apply; retrying plan and apply in 60 seconds."
+              sleep 60
+              ATTEMPT=$((ATTEMPT + 1))
+              continue
+            fi
+            break
+          done
+
+          set -e
+
+          if [ "$FINAL_EXIT_CODE" -ne 0 ]; then
+            echo "::error title=$FAILURE_PHASE Failed::Check summary for details"
+
+            echo "## ❌ $FAILURE_PHASE Failed" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "**Module:** ${{ inputs.module_source }}" >> "$GITHUB_STEP_SUMMARY"
+            echo "**Test:** ${{ matrix.label }}" >> "$GITHUB_STEP_SUMMARY"
+            echo "**Exit Code:** $FINAL_EXIT_CODE" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "### Error Output" >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            tail -n 50 "$FAILURE_LOG" >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+            exit 1
+          fi
+
+
+      - name: Wait
+        run: sleep 60
+
+      - name: Terraform destroy
+        if: always()
+        run: |
+          cd "${{ inputs.module_source }}"
+          set -uo pipefail
+          set +e
+          set -x
+
+          terraform destroy -input=false -auto-approve -no-color > >(tee -a destroy.out) 2> >(tee -a destroy.out >&2)
+          EXIT_CODE=$?
+          set -e
+
+          if [ "$EXIT_CODE" -ne 0 ]; then
+            echo "::error title=Terraform Destroy Failed::Check summary for details"
+            
+            echo "## ❌ Terraform Destroy Failed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
+            echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
+            echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
+
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            tail -n 50 destroy.out >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+
+            exit 1
+          fi
