@@ -209,6 +209,8 @@ locals {
 # Akamai-specific record (PRIMARY only)
 ## ----------------------------------
 resource "akamai_dns_record" "akamaicdn_records" {
+    depends_on = [time_sleep.wait_for_zone]
+
   for_each   = local.akamaicdn_records_map
   zone       = akamai_dns_zone.dns_zone.zone
   name       = each.key == "@" ? akamai_dns_zone.dns_zone.zone : "${each.key}.${akamai_dns_zone.dns_zone.zone}"
@@ -221,8 +223,9 @@ resource "akamai_dns_record" "akamaicdn_records" {
 # SOA (PRIMARY only)
 ## ----------------------------------
 resource "akamai_dns_record" "apex_soa" {
+  
   for_each   = local.normalized_zone_type == "primary" && var.soa != null ? { "apex" = var.soa } : {}
-  depends_on = [akamai_dns_zone.dns_zone]
+  depends_on = [time_sleep.wait_for_zone]
 
   zone       = akamai_dns_zone.dns_zone.zone
   name       = akamai_dns_zone.dns_zone.zone
@@ -241,6 +244,7 @@ resource "akamai_dns_record" "apex_soa" {
 # A (PRIMARY only)
 ## ----------------------------------
 resource "akamai_dns_record" "a_records" {
+  depends_on = [time_sleep.wait_for_zone]
   for_each   = local.a_records_map
   zone       = akamai_dns_zone.dns_zone.zone
   name       = each.key == "@" ? akamai_dns_zone.dns_zone.zone : "${each.key}.${akamai_dns_zone.dns_zone.zone}"
@@ -253,6 +257,7 @@ resource "akamai_dns_record" "a_records" {
 # AAAA (PRIMARY only)
 ## ----------------------------------
 resource "akamai_dns_record" "aaaa_records" {
+  depends_on = [time_sleep.wait_for_zone]
   for_each   = local.aaaa_records_map
   zone       = akamai_dns_zone.dns_zone.zone
   name       = each.key == "@" ? akamai_dns_zone.dns_zone.zone : "${each.key}.${akamai_dns_zone.dns_zone.zone}"
@@ -265,6 +270,7 @@ resource "akamai_dns_record" "aaaa_records" {
 # CNAME (PRIMARY only)
 ## ----------------------------------
 resource "akamai_dns_record" "cname_records" {
+  depends_on = [time_sleep.wait_for_zone]
   for_each   = local.cname_records_map
   zone       = akamai_dns_zone.dns_zone.zone
   name       = each.key == "@" ? akamai_dns_zone.dns_zone.zone : "${each.key}.${akamai_dns_zone.dns_zone.zone}"
@@ -277,6 +283,7 @@ resource "akamai_dns_record" "cname_records" {
 # TXT (PRIMARY only)
 ## ----------------------------------
 resource "akamai_dns_record" "txt_records" {
+  depends_on = [time_sleep.wait_for_zone]
   for_each   = local.txt_records_map
   zone       = akamai_dns_zone.dns_zone.zone
   name       = each.key == "@" ? akamai_dns_zone.dns_zone.zone : "${each.key}.${akamai_dns_zone.dns_zone.zone}"
@@ -301,6 +308,7 @@ resource "akamai_dns_record" "ns_records" {
 # PTR (PRIMARY only)
 ## ----------------------------------
 resource "akamai_dns_record" "ptr_records" {
+  depends_on = [time_sleep.wait_for_zone]
   for_each   = local.ptr_records_map
   zone       = akamai_dns_zone.dns_zone.zone
   name       = each.key == "@" ? akamai_dns_zone.dns_zone.zone : "${each.key}.${akamai_dns_zone.dns_zone.zone}"
@@ -313,6 +321,7 @@ resource "akamai_dns_record" "ptr_records" {
 # LOC (PRIMARY only)
 ## ----------------------------------
 resource "akamai_dns_record" "loc_records" {
+  depends_on = [time_sleep.wait_for_zone]
   for_each   = local.loc_records_map
   zone       = akamai_dns_zone.dns_zone.zone
   name       = each.key == "@" ? akamai_dns_zone.dns_zone.zone : "${each.key}.${akamai_dns_zone.dns_zone.zone}"
@@ -325,6 +334,7 @@ resource "akamai_dns_record" "loc_records" {
 # SPF (PRIMARY only)
 ## ----------------------------------
 resource "akamai_dns_record" "spf_records" {
+  depends_on = [time_sleep.wait_for_zone]
   for_each   = local.spf_records_map
   zone       = akamai_dns_zone.dns_zone.zone
   name       = each.key == "@" ? akamai_dns_zone.dns_zone.zone : "${each.key}.${akamai_dns_zone.dns_zone.zone}"
@@ -337,6 +347,7 @@ resource "akamai_dns_record" "spf_records" {
 # RP (PRIMARY only) – uses mailbox/txt
 ## ----------------------------------
 resource "akamai_dns_record" "rp_records" {
+  depends_on = [time_sleep.wait_for_zone]
   for_each   = local.rp_records_map
   zone       = akamai_dns_zone.dns_zone.zone
   name       = each.key == "@" ? akamai_dns_zone.dns_zone.zone : "${each.key}.${akamai_dns_zone.dns_zone.zone}"
@@ -365,6 +376,7 @@ resource "akamai_dns_record" "hinfo_records" {
 # CERT (PRIMARY only) – uses type_mnemonic/type_value and keytag
 ## ----------------------------------
 resource "akamai_dns_record" "cert_records" {
+  depends_on = [time_sleep.wait_for_zone]
   for_each   = local.cert_records_map
   zone       = akamai_dns_zone.dns_zone.zone
   name       = each.key == "@" ? akamai_dns_zone.dns_zone.zone : "${each.key}.${akamai_dns_zone.dns_zone.zone}"
@@ -384,6 +396,7 @@ resource "akamai_dns_record" "cert_records" {
 # MX (PRIMARY only)
 ## ----------------------------------
 resource "akamai_dns_record" "mx_records" {
+  depends_on = [time_sleep.wait_for_zone]
   for_each   = local.mx_records_map
   zone       = akamai_dns_zone.dns_zone.zone
   name       = each.key == "@" ? akamai_dns_zone.dns_zone.zone : "${each.key}.${akamai_dns_zone.dns_zone.zone}"
@@ -397,6 +410,7 @@ resource "akamai_dns_record" "mx_records" {
 # SRV (PRIMARY only)
 ## ----------------------------------
 resource "akamai_dns_record" "srv_records" {
+  depends_on = [time_sleep.wait_for_zone]
   for_each   = local.srv_records_map
   zone       = akamai_dns_zone.dns_zone.zone
   name       = each.key == "@" ? akamai_dns_zone.dns_zone.zone : "${each.key}.${akamai_dns_zone.dns_zone.zone}"
@@ -412,6 +426,7 @@ resource "akamai_dns_record" "srv_records" {
 # CAA (PRIMARY only)
 ## ----------------------------------
 resource "akamai_dns_record" "caa_records" {
+  depends_on = [time_sleep.wait_for_zone]
   for_each   = local.caa_records_map
   zone       = akamai_dns_zone.dns_zone.zone
   name       = each.key == "@" ? akamai_dns_zone.dns_zone.zone : "${each.key}.${akamai_dns_zone.dns_zone.zone}"
@@ -424,6 +439,7 @@ resource "akamai_dns_record" "caa_records" {
 # NAPTR (PRIMARY only) – uses flagsnaptr/service
 ## ----------------------------------
 resource "akamai_dns_record" "naptr_records" {
+  depends_on = [time_sleep.wait_for_zone]
   for_each   = local.naptr_records_map
   zone       = akamai_dns_zone.dns_zone.zone
   name       = each.key == "@" ? akamai_dns_zone.dns_zone.zone : "${each.key}.${akamai_dns_zone.dns_zone.zone}"
@@ -442,6 +458,7 @@ resource "akamai_dns_record" "naptr_records" {
 # HTTPS (PRIMARY only)
 ## ----------------------------------
 resource "akamai_dns_record" "https_records" {
+  depends_on = [time_sleep.wait_for_zone]
   for_each   = local.https_records_map
   zone       = akamai_dns_zone.dns_zone.zone
   name       = each.key == "@" ? akamai_dns_zone.dns_zone.zone : "${each.key}.${akamai_dns_zone.dns_zone.zone}"
@@ -455,6 +472,7 @@ resource "akamai_dns_record" "https_records" {
 # SVCB (PRIMARY only)
 ## ----------------------------------
 resource "akamai_dns_record" "svcb_records" {
+  depends_on = [time_sleep.wait_for_zone]
   for_each   = local.svcb_records_map
   zone       = akamai_dns_zone.dns_zone.zone
   name       = each.key == "@" ? akamai_dns_zone.dns_zone.zone : "${each.key}.${akamai_dns_zone.dns_zone.zone}"
@@ -468,6 +486,7 @@ resource "akamai_dns_record" "svcb_records" {
 # DS (PRIMARY only) – uses keytag
 ## ----------------------------------
 resource "akamai_dns_record" "ds_records" {
+  depends_on = [time_sleep.wait_for_zone]
   for_each   = local.ds_records_map
   zone       = akamai_dns_zone.dns_zone.zone
   name       = each.key == "@" ? akamai_dns_zone.dns_zone.zone : "${each.key}.${akamai_dns_zone.dns_zone.zone}"
@@ -484,6 +503,7 @@ resource "akamai_dns_record" "ds_records" {
 # DNSKEY (PRIMARY only) – uses key
 ## ----------------------------------
 resource "akamai_dns_record" "dnskey_records" {
+  depends_on = [time_sleep.wait_for_zone]
   for_each   = local.dnskey_records_map
   zone       = akamai_dns_zone.dns_zone.zone
   name       = each.key == "@" ? akamai_dns_zone.dns_zone.zone : "${each.key}.${akamai_dns_zone.dns_zone.zone}"
@@ -500,6 +520,7 @@ resource "akamai_dns_record" "dnskey_records" {
 # SSHFP (PRIMARY only)
 ## ----------------------------------
 resource "akamai_dns_record" "sshfp_records" {
+  depends_on = [time_sleep.wait_for_zone]
   for_each         = local.sshfp_records_map
   zone             = akamai_dns_zone.dns_zone.zone
   name             = each.key == "@" ? akamai_dns_zone.dns_zone.zone : "${each.key}.${akamai_dns_zone.dns_zone.zone}"
@@ -515,21 +536,7 @@ resource "akamai_dns_record" "sshfp_records" {
 ## ----------------------------------
 resource "time_sleep" "wait_for_zone" {
   create_duration = local.normalized_zone_type == "primary" ? "120s" : "0s"
-  depends_on      = [akamai_dns_record.ptr_records,
-                    akamai_dns_record.loc_records,
-                    akamai_dns_record.spf_records,
-                    akamai_dns_record.rp_records,
-                    akamai_dns_record.hinfo_records,
-                    akamai_dns_record.cert_records,
-                    akamai_dns_record.mx_records,
-                    akamai_dns_record.srv_records,
-                    akamai_dns_record.caa_records,
-                    akamai_dns_record.naptr_records,
-                    akamai_dns_record.https_records,
-                    akamai_dns_record.svcb_records,
-                    akamai_dns_record.ds_records,
-                    akamai_dns_record.dnskey_records,
-                    akamai_dns_record.sshfp_records]
+  depends_on      = [akamai_dns_zone.dns_zone]
 }
 
 ## ----------------------------------
