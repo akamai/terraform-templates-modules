@@ -87,18 +87,6 @@ jobs:
       AKAMAI_CLIENT_SECRET: ${{ secrets.AKAMAI_CLIENT_SECRET }}
       AKAMAI_ACCESS_TOKEN: ${{ secrets.AKAMAI_ACCESS_TOKEN }}
       AKAMAI_ACCOUNT_KEY: "1-5BYUG1:1-8BYUX"
-      DATADOG_TOKEN: ${{ secrets.DATADOG_TOKEN }}
-      GCS_KEY: ${{ secrets.GCS_KEY }}
-      LOGGLY_TOKEN: ${{ secrets.LOGGLY_TOKEN }}
-      NEWRELIC_TOKEN: ${{ secrets.NEWRELIC_TOKEN }}
-      OSS_ACCESS: ${{ secrets.OSS_ACCESS }}
-      OSS_SECRET: ${{ secrets.OSS_SECRET }}
-      LINODE_ACCESS: ${{ secrets.LINODE_ACCESS }}
-      LINODE_SECRET: ${{ secrets.LINODE_SECRET }}
-      SUMOLOGIC_TOKEN: ${{ secrets.SUMOLOGIC_TOKEN }}
-
-
-
 
     steps:
       - name: Checkout
@@ -228,7 +216,28 @@ jobs:
           set +e
           set -x
 
-          terraform destroy -input=false -auto-approve -no-color > >(tee -a destroy.out) 2> >(tee -a destroy.out >&2)
+          : > destroy.out
+          if ! terraform state list > state-resources.txt; then
+            echo "::error title=Terraform State List Failed::Unable to read Terraform state"
+            exit 1
+          fi
+
+          mapfile -t STATE_RESOURCES < state-resources.txt
+          TARGET_ARGS=()
+          for RESOURCE in "${STATE_RESOURCES[@]}"; do
+            if [[ "$RESOURCE" =~ (^|\.)akamai_dns_zone\.dns_zone$ ]] || [[ "$RESOURCE" =~ (^|\.)akamai_dns_record\.ns_records(\[|$) ]]; then
+              echo "Preserving resource: $RESOURCE"
+              continue
+            fi
+            TARGET_ARGS+=("-target=$RESOURCE")
+          done
+
+          if [ "${#TARGET_ARGS[@]}" -eq 0 ]; then
+            echo "No resources to destroy after excluding the DNS zone and NS records."
+            exit 0
+          fi
+
+          terraform destroy -input=false -auto-approve -no-color "${TARGET_ARGS[@]}" > >(tee -a destroy.out) 2> >(tee -a destroy.out >&2)
           EXIT_CODE=$?
           set -e
 
