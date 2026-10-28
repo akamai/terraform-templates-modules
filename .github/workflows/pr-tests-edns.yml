@@ -217,28 +217,38 @@ jobs:
           set -x
 
           : > destroy.out
-          if ! terraform state list > state-resources.txt; then
-            echo "::error title=Terraform State List Failed::Unable to read Terraform state"
-            exit 1
-          fi
-
-          mapfile -t STATE_RESOURCES < state-resources.txt
-          TARGET_ARGS=()
-          for RESOURCE in "${STATE_RESOURCES[@]}"; do
-            if [[ "$RESOURCE" =~ (^|\.)akamai_dns_zone\.dns_zone$ ]] || [[ "$RESOURCE" =~ (^|\.)akamai_dns_record\.ns_records(\[|$) ]]; then
-              echo "Preserving resource: $RESOURCE"
-              continue
+          if [[ "${ZONE_TYPE,,}" == "primary" ]]; then
+            if ! terraform state list > state-resources.txt; then
+              echo "::error title=Terraform State List Failed::Unable to read Terraform state"
+              exit 1
             fi
-            TARGET_ARGS+=("-target=$RESOURCE")
-          done
 
-          if [ "${#TARGET_ARGS[@]}" -eq 0 ]; then
-            echo "No resources to destroy after excluding the DNS zone and NS records."
-            exit 0
+            mapfile -t STATE_RESOURCES < state-resources.txt
+            TARGET_ARGS=()
+            for RESOURCE in "${STATE_RESOURCES[@]}"; do
+              if [[ "$RESOURCE" =~ (^|\.)akamai_dns_zone\.dns_zone$ ]] || [[ "$RESOURCE" =~ (^|\.)akamai_dns_record\.ns_records(\[|$) ]]; then
+                echo "Preserving resource: $RESOURCE"
+                continue
+              fi
+              TARGET_ARGS+=("-target=$RESOURCE")
+            done
+
+            if [ "${#TARGET_ARGS[@]}" -eq 0 ]; then
+              echo "No resources to destroy after excluding the DNS zone and NS records."
+              EXIT_CODE=0
+            else
+              terraform destroy -input=false -auto-approve -no-color "${TARGET_ARGS[@]}" > >(tee -a destroy.out) 2> >(tee -a destroy.out >&2)
+              EXIT_CODE=$?
+            fi
+            sleep 5m
+            akamai_dns_zone\.dns_zone
+            terraform destroy -input=false -auto-approve -no-color -target akamai_dns_zone.dns_zone > >(tee -a destroy.out) 2> >(tee -a destroy.out >&2)
+          else
+            echo "Zone type is ${ZONE_TYPE}; running a full Terraform destroy."
+            terraform destroy -input=false -auto-approve -no-color > >(tee -a destroy.out) 2> >(tee -a destroy.out >&2)
+            EXIT_CODE=$?
           fi
 
-          terraform destroy -input=false -auto-approve -no-color "${TARGET_ARGS[@]}" > >(tee -a destroy.out) 2> >(tee -a destroy.out >&2)
-          EXIT_CODE=$?
           set -e
 
           if [ "$EXIT_CODE" -ne 0 ]; then
