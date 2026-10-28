@@ -295,6 +295,9 @@ resource "akamai_dns_record" "ns_records" {
   recordtype = "NS"
   ttl        = each.value.ttl
   target     = each.value.target
+   lifecycle { 
+    prevent_destroy = true
+  }
 }
 
 ## ----------------------------------
