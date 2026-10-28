@@ -220,6 +220,7 @@ jobs:
           ATTEMPT=1
           EXIT_CODE=1
           RETRYABLE_ERROR="Record not found"
+          MINIMUM_NS_ERROR="must have at least 1 NS record"
 
           while [ "$ATTEMPT" -le "$MAX_ATTEMPTS" ]; do
             : > destroy.out
@@ -231,6 +232,43 @@ jobs:
 
             if [ "$EXIT_CODE" -eq 0 ]; then
               break
+            fi
+
+            if grep -Fq "$MINIMUM_NS_ERROR" destroy.out; then
+              if [ "$ATTEMPT" -ge "$MAX_ATTEMPTS" ]; then
+                break
+              fi
+
+              if ! terraform state list > state-resources.txt; then
+                echo "::error title=Terraform State List Failed::Unable to read Terraform state"
+                break
+              fi
+
+              APEX_NS_RESOURCES=()
+              while IFS= read -r RESOURCE; do
+                if [[ "$RESOURCE" == *'akamai_dns_record.ns_records["@"]' ]]; then
+                  APEX_NS_RESOURCES+=("$RESOURCE")
+                fi
+              done < state-resources.txt
+
+              if [ "${#APEX_NS_RESOURCES[@]}" -eq 0 ]; then
+                echo "Akamai rejected deletion of the last NS record, but no apex NS resource was found in state."
+                break
+              fi
+
+              echo "Akamai requires an NS record until the zone is deleted; removing the apex NS address from state before retrying full destroy."
+              terraform state rm "${APEX_NS_RESOURCES[@]}" >>destroy.out 2>&1
+              STATE_RM_EXIT_CODE=$?
+              cat destroy.out
+              if [ "$STATE_RM_EXIT_CODE" -ne 0 ]; then
+                EXIT_CODE=$STATE_RM_EXIT_CODE
+                break
+              fi
+
+              echo "::warning title=Apex NS cleanup recovery::Retrying full destroy after preserving the apex NS record for zone deletion."
+              sleep 60
+              ATTEMPT=$((ATTEMPT + 1))
+              continue
             fi
 
             if ! grep -Fq "$RETRYABLE_ERROR" destroy.out || [ "$ATTEMPT" -ge "$MAX_ATTEMPTS" ]; then
