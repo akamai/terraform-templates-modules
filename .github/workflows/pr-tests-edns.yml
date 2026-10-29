@@ -225,16 +225,17 @@ jobs:
           while [ "$ATTEMPT" -le "$MAX_ATTEMPTS" ]; do
             : > destroy.out
             echo "Terraform destroy attempt $ATTEMPT of $MAX_ATTEMPTS"
-            terraform destroy -input=false -auto-approve -no-color >destroy.out 2>&1
+            terraform destroy -input=false -auto-approve -no-color > temp.out 2>&1
             EXIT_CODE=$?
 
-            cat destroy.out
+            cat temp.out
+            cat temp.out >> destroy.out
 
             if [ "$EXIT_CODE" -eq 0 ]; then
               break
             fi
 
-            if grep -Fq "$MINIMUM_NS_ERROR" destroy.out; then
+            if grep -Fq "$MINIMUM_NS_ERROR" temp.out; then
               if [ "$ATTEMPT" -ge "$MAX_ATTEMPTS" ]; then
                 break
               fi
@@ -257,9 +258,11 @@ jobs:
               fi
 
               echo "Akamai requires an NS record until the zone is deleted; removing the apex NS address from state before retrying full destroy."
-              terraform state rm "${APEX_NS_RESOURCES[@]}" >>destroy.out 2>&1
+              terraform state rm "${APEX_NS_RESOURCES[@]}" > temp.out 2>&1
               STATE_RM_EXIT_CODE=$?
-              cat destroy.out
+              cat temp.out
+              cat temp.out >> destroy.out
+              
               if [ "$STATE_RM_EXIT_CODE" -ne 0 ]; then
                 EXIT_CODE=$STATE_RM_EXIT_CODE
                 break
