@@ -138,59 +138,53 @@ jobs:
           echo 'provider "akamai" {}' >> "provider.tf"
           terraform init
                     
-      - name: Terraform plan
+      - name: Terraform plan and apply with retry
         run: |
           cd "${{ inputs.module_source }}"
 
-          # -u        → fail on undefined variables
-          # pipefail  → detect failures in pipes
-          # +e        → DO NOT exit on errors
-          # -x        → print commands
-          #           set -uo pipefail
-          #           set -x
-          
           set -uo pipefail
           set +e
-          set -x
 
-          terraform plan -input=false -detailed-exitcode -no-color -out=tfplan > >(tee -a plan.out) 2> >(tee -a plan.out >&2)
-          EXIT_CODE=$?
+          MAX_ATTEMPTS=3
+          ATTEMPT=1
+          EXIT_CODE=1
+          FAILURE_PHASE="Terraform plan"
+          FAILURE_LOG="plan.out"
+
+          while [ "$ATTEMPT" -le "$MAX_ATTEMPTS" ]; do
+            : > plan.out
+            : > apply.out
+            echo "Terraform attempt $ATTEMPT of $MAX_ATTEMPTS"
+            # Re-plan after a failed apply because it may have updated state.
+            terraform plan -input=false -detailed-exitcode -no-color -out=tfplan >plan.out 2>&1
+            EXIT_CODE=$?
+            cat plan.out
+            FAILURE_PHASE="Terraform plan"
+            FAILURE_LOG="plan.out"
+
+            if [ "$EXIT_CODE" -eq 0 ] || [ "$EXIT_CODE" -eq 2 ]; then
+              terraform apply -input=false -auto-approve -no-color tfplan >apply.out 2>&1
+              EXIT_CODE=$?
+              cat apply.out
+              FAILURE_PHASE="Terraform apply"
+              FAILURE_LOG="apply.out"
+            fi
+
+            if [ "$EXIT_CODE" -eq 0 ] || [ "$ATTEMPT" -ge "$MAX_ATTEMPTS" ]; then
+              break
+            fi
+
+            echo "::warning title=Terraform retry::$FAILURE_PHASE failed (exit code $EXIT_CODE) on attempt $ATTEMPT of $MAX_ATTEMPTS; retrying plan and apply in 60 seconds."
+            sleep 180
+            ATTEMPT=$((ATTEMPT + 1))
+          done
+
           set -e
 
           if [ "$EXIT_CODE" -ne 0 ]; then
-            echo "::error title=Terraform Plan Failed::Check summary for details"
+            echo "::error title=$FAILURE_PHASE Failed::Check summary for details"
             
-            echo "## ❌ Terraform Plan Failed" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
-            echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
-            echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
- 
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            tail -n 50 plan.out >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-
-            exit 1
-          fi
-
-      - name: Terraform apply
-        run: |
-          cd "${{ inputs.module_source }}"
-          
-          set -uo pipefail
-          set +e
-          set -x
-
-          terraform apply -input=false -auto-approve -no-color tfplan > >(tee -a apply.out) 2> >(tee -a apply.out >&2)
-          EXIT_CODE=$?
-          set -e
-
-          if [ "$EXIT_CODE" -ne 0 ]; then
-            echo "::error title=Terraform Plan Failed::Check summary for details"
-            
-            echo "## ❌ Terraform Apply Failed" >> $GITHUB_STEP_SUMMARY
+            echo "## ❌ $FAILURE_PHASE Failed" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
             echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
@@ -199,7 +193,7 @@ jobs:
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
-            tail -n 50 apply.out >> $GITHUB_STEP_SUMMARY
+            tail -n 50 "$FAILURE_LOG" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
 
             exit 1
@@ -215,10 +209,27 @@ jobs:
           cd "${{ inputs.module_source }}"
           set -uo pipefail
           set +e
-          set -x
 
-          terraform destroy -input=false -auto-approve -no-color > >(tee -a destroy.out) 2> >(tee -a destroy.out >&2)
-          EXIT_CODE=$?
+          MAX_ATTEMPTS=3
+          ATTEMPT=1
+          EXIT_CODE=1
+
+          while [ "$ATTEMPT" -le "$MAX_ATTEMPTS" ]; do
+            : > destroy.out
+            echo "Terraform destroy attempt $ATTEMPT of $MAX_ATTEMPTS"
+            terraform destroy -input=false -auto-approve -no-color >destroy.out 2>&1
+            EXIT_CODE=$?
+            cat destroy.out
+
+            if [ "$EXIT_CODE" -eq 0 ] || [ "$ATTEMPT" -ge "$MAX_ATTEMPTS" ]; then
+              break
+            fi
+
+            echo "::warning title=Terraform retry::Terraform destroy failed (exit code $EXIT_CODE) on attempt $ATTEMPT of $MAX_ATTEMPTS; retrying in 60 seconds."
+            sleep 60
+            ATTEMPT=$((ATTEMPT + 1))
+          done
+
           set -e
 
           if [ "$EXIT_CODE" -ne 0 ]; then
