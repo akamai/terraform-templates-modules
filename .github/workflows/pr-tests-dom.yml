@@ -86,6 +86,7 @@ jobs:
       AKAMAI_CLIENT_TOKEN: ${{ secrets.AKAMAI_CLIENT_TOKEN_EDNS }}
       AKAMAI_CLIENT_SECRET: ${{ secrets.AKAMAI_CLIENT_SECRET_EDNS }}
       AKAMAI_ACCESS_TOKEN: ${{ vars.AKAMAI_ACCESS_TOKEN_EDNS }}
+      
     steps:
       - name: Checkout
         uses: actions/checkout@v6

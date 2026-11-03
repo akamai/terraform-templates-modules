@@ -122,7 +122,7 @@ jobs:
   dom:
     needs: detect_changes
     if: needs.detect_changes.outputs.dom == 'true'
-    uses: ./.github/workflows/pr-tests.yml
+    uses: ./.github/workflows/pr-tests-dom.yml
     with:
         module_source: dom
     secrets: inherit
