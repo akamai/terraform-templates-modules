@@ -137,16 +137,14 @@ jobs:
             : > apply.out
             echo "Terraform attempt $ATTEMPT of $MAX_ATTEMPTS"
             # Re-plan after a failed apply because it may have updated state.
-            terraform plan -input=false -detailed-exitcode -no-color -out=tfplan >plan.out 2>&1
+            terraform plan -input=false -detailed-exitcode -no-color -out=tfplan 2>&1 | tee plan.out
             EXIT_CODE=$?
-            cat plan.out
             FAILURE_PHASE="Terraform plan"
             FAILURE_LOG="plan.out"
 
             if [ "$EXIT_CODE" -eq 0 ] || [ "$EXIT_CODE" -eq 2 ]; then
-              terraform apply -input=false -auto-approve -no-color tfplan >apply.out 2>&1
+              terraform apply -input=false -auto-approve -no-color tfplan 2>&1 | tee apply.out
               EXIT_CODE=$?
-              cat apply.out
               FAILURE_PHASE="Terraform apply"
               FAILURE_LOG="apply.out"
             fi
@@ -206,16 +204,14 @@ jobs:
             : > apply.out
             echo "Terraform attempt $ATTEMPT of $MAX_ATTEMPTS"
             # Re-plan after a failed apply because it may have updated state.
-            terraform plan -input=false -detailed-exitcode -no-color -out=tfplan >plan.out 2>&1
+            terraform plan -input=false -detailed-exitcode -no-color -out=tfplan 2>&1 | tee plan.out
             EXIT_CODE=$?
-            cat plan.out
             FAILURE_PHASE="Terraform plan"
             FAILURE_LOG="plan.out"
 
             if [ "$EXIT_CODE" -eq 0 ] || [ "$EXIT_CODE" -eq 2 ]; then
-              terraform apply -input=false -auto-approve -no-color tfplan >apply.out 2>&1
+              terraform apply -input=false -auto-approve -no-color tfplan 2>&1 | tee apply.out
               EXIT_CODE=$?
-              cat apply.out
               FAILURE_PHASE="Terraform apply"
               FAILURE_LOG="apply.out"
             fi
@@ -287,9 +283,8 @@ jobs:
           while [ "$ATTEMPT" -le "$MAX_ATTEMPTS" ]; do
             : > destroy.out
             echo "Terraform destroy attempt $ATTEMPT of $MAX_ATTEMPTS"
-            terraform destroy -input=false -auto-approve -no-color >destroy.out 2>&1
+            terraform destroy -input=false -auto-approve -no-color 2>&1 | tee destroy.out
             EXIT_CODE=$?
-            cat destroy.out
 
             if [ "$EXIT_CODE" -eq 0 ] || [ "$ATTEMPT" -ge "$MAX_ATTEMPTS" ]; then
               break
