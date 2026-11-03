@@ -1,0 +1,3 @@
+{
+  "connector": ["s3_compatible", "GCS", "OSS", "Datadog", "HTTPS", "SumoLogic", "Loggly", "NewRelic"]
+}
