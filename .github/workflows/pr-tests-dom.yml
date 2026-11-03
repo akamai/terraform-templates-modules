@@ -255,8 +255,24 @@ jobs:
       - name: Validate validation
         run: |
           cd "${{ inputs.module_source }}"
-          cat apply.out
+          VALIDATION=$(cat apply.out|grep '"domain_status"' | cut -f2 -d"=" |cut -f2 -d'"' | sort| uniq )
+          VALIDATION_NUMBER=$(cat apply.out|grep '"domain_status"' | cut -f2 -d"=" |cut -f2 -d'"' | sort| uniq | wc -l) 
 
+          echo "Validation Status: $VALIDATION"
+          echo "Number of Unique Validation Status: $VALIDATION_NUMBER"
+
+          if [ "$VALIDATION_NUMBER" -ne 1 ]; then
+            echo "::error::Expected exactly one distinct domain_status, got $VALIDATION_NUMBER"
+            exit 1
+          fi
+
+          if [ "$VALIDATION" != "VALIDATED" ]; then
+            echo "::error::Expected domain_status VALIDATED, got: $VALIDATION"
+            exit 1
+          fi
+          
+          echo "Validation is Successful"
+          
       - name: Terraform destroy
         if: always()
         run: |
