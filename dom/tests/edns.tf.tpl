@@ -9,5 +9,5 @@ resource "akamai_dns_record" "dom_validation_record" {
     name       = each.value.name
     recordtype = "TXT"
     ttl        = 120
-    target     = [each.value.target]
+    target     = [each.value.value]
 }
