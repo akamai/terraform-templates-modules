@@ -1,0 +1,6 @@
+{
+  "etls": ["true", "false"],
+  "secure_by_default": ["true", "false"],
+  "product_id": ["Site_Accel", "SPM", "Fresca"],
+  "default_cpcode": ["true", "false"]
+}
