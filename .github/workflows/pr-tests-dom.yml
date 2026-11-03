@@ -188,7 +188,9 @@ jobs:
         run: |
           cd "${{ inputs.module_source }}"
           sed -i 's/enable validation = false/enable validation = true/' terraform.tfvars
-
+          
+          cat terraform.tfvars
+          
           set -uo pipefail
           set +e
 
