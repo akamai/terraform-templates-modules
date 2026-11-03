@@ -187,8 +187,9 @@ jobs:
       - name: Prepare and Execute Second apply 
         run: |
           cd "${{ inputs.module_source }}"
-          sed -i 's/enable validation = false/enable validation = true/' terraform.tfvars
-          
+          sed -i 's/^enable_validation = false/enable_validation = true/' terraform.tfvars
+          grep -q '^enable_validation = true' terraform.tfvars || { echo "Failed to enable validation in terraform.tfvars"; exit 1; }
+
           cat terraform.tfvars
           
           set -uo pipefail
