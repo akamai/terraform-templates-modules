@@ -14,6 +14,8 @@ edgerc_section = "default"
 group_name = "GSSDEVOPS Terraform templates"
 
 activate_to_staging = true
+activate_to_production = true
+
 
 
 # =================================================
