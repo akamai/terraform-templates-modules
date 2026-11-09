@@ -1,8 +1,9 @@
 /**
  * # Onboarding: Application Security Configuration for Client Lists
  *
- * The use case for this module is to quickly create new Client Lists for and Application Security Configuration
- * serving a set of hostnames following Akamai Professional Services Best Practices.
+ * The use case for this module is to create and populate Client Lists for an Application Security Configuration
+ * serving a set of hostnames following Akamai Professional Services Best Practices. Lists can optionally be
+ * activated on staging and/or production.
  *
  * Read on to find out which resources are provisioned as part of this
  * process, and how to customize!
@@ -16,6 +17,15 @@ resource "akamai_clientlist_list" "client-lists-ipblock" {
   tags        = []
   contract_id = var.contract_id
   group_id    = var.group_id
+
+  dynamic "items" {
+    for_each = var.client_list_entries.ipblock
+    content {
+      value       = try(items.value.value, items.value)
+      description = try(items.value.description, null)
+      tags        = try(items.value.tags, null)
+    }
+  }
 }
 
 resource "akamai_clientlist_list" "client-lists-ipblock-list-exceptions" {
@@ -25,6 +35,15 @@ resource "akamai_clientlist_list" "client-lists-ipblock-list-exceptions" {
   tags        = []
   contract_id = var.contract_id
   group_id    = var.group_id
+
+  dynamic "items" {
+    for_each = var.client_list_entries.ipblock_exceptions
+    content {
+      value       = try(items.value.value, items.value)
+      description = try(items.value.description, null)
+      tags        = try(items.value.tags, null)
+    }
+  }
 }
 
 resource "akamai_clientlist_list" "client-lists-geoblock-list" {
@@ -34,6 +53,15 @@ resource "akamai_clientlist_list" "client-lists-geoblock-list" {
   tags        = []
   contract_id = var.contract_id
   group_id    = var.group_id
+
+  dynamic "items" {
+    for_each = var.client_list_entries.geoblock
+    content {
+      value       = try(items.value.value, items.value)
+      description = try(items.value.description, null)
+      tags        = try(items.value.tags, null)
+    }
+  }
 }
 
 resource "akamai_clientlist_list" "client-lists-asnblock-list" {
@@ -43,6 +71,15 @@ resource "akamai_clientlist_list" "client-lists-asnblock-list" {
   tags        = []
   contract_id = var.contract_id
   group_id    = var.group_id
+
+  dynamic "items" {
+    for_each = var.client_list_entries.asnblock
+    content {
+      value       = try(items.value.value, items.value)
+      description = try(items.value.description, null)
+      tags        = try(items.value.tags, null)
+    }
+  }
 }
 
 resource "akamai_clientlist_list" "client-lists-securitybypass-list" {
@@ -52,6 +89,15 @@ resource "akamai_clientlist_list" "client-lists-securitybypass-list" {
   tags        = []
   contract_id = var.contract_id
   group_id    = var.group_id
+
+  dynamic "items" {
+    for_each = var.client_list_entries.securitybypass
+    content {
+      value       = try(items.value.value, items.value)
+      description = try(items.value.description, null)
+      tags        = try(items.value.tags, null)
+    }
+  }
 }
 
 resource "akamai_clientlist_list" "client-lists-rcbypass-list" {
@@ -61,6 +107,15 @@ resource "akamai_clientlist_list" "client-lists-rcbypass-list" {
   tags        = []
   contract_id = var.contract_id
   group_id    = var.group_id
+
+  dynamic "items" {
+    for_each = var.client_list_entries.rcbypass
+    content {
+      value       = try(items.value.value, items.value)
+      description = try(items.value.description, null)
+      tags        = try(items.value.tags, null)
+    }
+  }
 }
 
 resource "akamai_clientlist_list" "client-lists-pragmabypass-list" {
@@ -70,4 +125,47 @@ resource "akamai_clientlist_list" "client-lists-pragmabypass-list" {
   tags        = []
   contract_id = var.contract_id
   group_id    = var.group_id
+
+  dynamic "items" {
+    for_each = var.client_list_entries.pragmabypass
+    content {
+      value       = try(items.value.value, items.value)
+      description = try(items.value.description, null)
+      tags        = try(items.value.tags, null)
+    }
+  }
+}
+
+locals {
+  client_lists = {
+    ipblock = {
+      id = akamai_clientlist_list.client-lists-ipblock.id
+    }
+    ipblock_exceptions = {
+      id = akamai_clientlist_list.client-lists-ipblock-list-exceptions.id
+    }
+    geoblock = {
+      id = akamai_clientlist_list.client-lists-geoblock-list.id
+    }
+    asnblock = {
+      id = akamai_clientlist_list.client-lists-asnblock-list.id
+    }
+    securitybypass = {
+      id = akamai_clientlist_list.client-lists-securitybypass-list.id
+    }
+    rcbypass = {
+      id = akamai_clientlist_list.client-lists-rcbypass-list.id
+    }
+    pragmabypass = {
+      id = akamai_clientlist_list.client-lists-pragmabypass-list.id
+    }
+  }
+
+  client_list_activations = {
+    for activation in setproduct(keys(local.client_lists), var.activation_networks) :
+    "${activation[0]}-${lower(activation[1])}" => {
+      list_id = local.client_lists[activation[0]].id
+      network = activation[1]
+    }
+  }
 }
