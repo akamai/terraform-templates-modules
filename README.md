@@ -9,6 +9,7 @@ The Terraform Modules contained in this repository cover various onboarding scen
 * DSA
 * Ion
 * Ion-Premier
+* AMD - Adaptive Media Delivery
 * CPS - DV SAN and Third Party certificates
 * Edge DNS (EDNS)
 * BMP - API Definitions & Transactional Endpoints
