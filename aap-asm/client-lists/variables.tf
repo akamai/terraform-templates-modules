@@ -20,7 +20,7 @@ variable "client_lists_prefix" {
 }
 
 variable "client_list_entries" {
-  description = "Entries for each list. Each entry can be a string value or an object with value and optional description and tags fields. Values must match the list type, such as IP addresses or CIDRs, country codes, or ASNs."
+  description = "Entries to add to each client list. Use ipblock, ipblock_exceptions, geoblock, asnblock, securitybypass, rcbypass, and pragmabypass to configure the corresponding lists. Each entry can be a string or an object with a value and optional description and tags. Values must match the list type, such as an IP address or CIDR, country code, or ASN."
   type = object({
     ipblock            = optional(list(any), [])
     ipblock_exceptions = optional(list(any), [])
@@ -34,7 +34,7 @@ variable "client_list_entries" {
 }
 
 variable "activation_networks" {
-  description = "Networks on which to activate every client list. Removing a network deactivates the lists there."
+  description = "Networks on which to activate all seven client lists. Specify STAGING, PRODUCTION, or both. Defaults to no activation; removing a network from this set deactivates the lists there."
   type        = set(string)
   default     = []
 

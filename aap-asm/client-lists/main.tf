@@ -1,9 +1,25 @@
 /**
  * # Onboarding: Application Security Configuration for Client Lists
  *
- * The use case for this module is to create and populate Client Lists for an Application Security Configuration
- * serving a set of hostnames following Akamai Professional Services Best Practices. Lists can optionally be
- * activated on staging and/or production.
+ * Create the IP block, IP block exceptions, GEO block, ASN block, security bypass, rate control bypass, and
+ * pragma bypass lists for an Application Security Configuration.
+ *
+ * Use client_list_entries to populate each list. Entries can be plain string values or objects with a value
+ * and optional description and tags. For example:
+ *
+ * ```hcl
+ * client_list_entries = {
+ *   ipblock = [{
+ *     value       = "203.0.113.10"
+ *     description = "Trusted office address"
+ *     tags        = ["office"]
+ *   }]
+ *   geoblock = ["US", "CA"]
+ * }
+ * ```
+ *
+ * Set activation_networks to STAGING and/or PRODUCTION to activate all seven lists on those networks. The
+ * default is no activation; removing a network from the set deactivates the lists there.
  *
  * Read on to find out which resources are provisioned as part of this
  * process, and how to customize!
