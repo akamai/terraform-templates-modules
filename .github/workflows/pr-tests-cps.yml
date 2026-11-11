@@ -1,0 +1,515 @@
+name: Delivery Tests
+
+on:
+  workflow_call:
+    inputs:
+      module_source:
+        required: true
+        type: string
+jobs:
+  
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Generate test permutations matrix
+        id: set-matrix
+        run: |
+          CONFIG_FILE="${{ inputs.module_source }}/tests/config.json"
+          MAX=50
+
+          if [ ! -s "$CONFIG_FILE" ] || jq -e 'type == "object" and length == 0' "$CONFIG_FILE" >/dev/null 2>&1; then
+            r="a$(LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c 10)"
+            MATRIX=$(jq -cn --arg r "$r" '[{name: $r, label: ("name=" + $r)}]')
+          else
+            MATRIX=$(jq -cn \
+              --argjson cfg "$(cat "$CONFIG_FILE")" \
+              --argjson max "$MAX" '
+              
+              def build(idx; current; keys):
+                if idx == (keys | length) then
+                  current
+                else
+                  keys[idx] as $k
+                  | $cfg[$k][] as $val
+                  | build(idx + 1; current + { ($k): $val }; keys)
+                end;
+
+              [
+                limit($max; build(0; {}; $cfg | keys_unsorted))
+                | . + {
+                    label: (
+                      to_entries
+                      | map("\(.key)=\(.value)")
+                      | join(", ")
+                    )
+                  }
+              ]
+            ')
+
+            MATRIX=$(echo "$MATRIX" | jq -c '.[]' | while read -r item; do
+            r="a$(LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c 10)"
+            echo "$item" | jq -c --arg r "$r" '
+              . + { 
+                name: $r, 
+                label: (.label + ", name=\($r)") 
+              }'
+            done | jq -cs '.')
+          fi
+
+          echo "Generated matrix:"
+          echo "$MATRIX"
+
+          echo "matrix={\"include\":$MATRIX}" >> "$GITHUB_OUTPUT"
+
+
+      - name: Print all permutations
+        run: |
+          echo "===== ALL GENERATED PERMUTATIONS ====="
+          echo '${{ steps.set-matrix.outputs.matrix }}' | jq '.'
+            
+  tests:
+    name: ${{ matrix.label }}
+    needs: generate-matrix
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+
+    env:
+      ## AKAMAI_CLIENT_SECRET -> can be any credentials with multiaccount support
+      ##AKAMAI_CLIENT_SECRET_EDNS -> needs to be an account only targetting PS account as acme does not support account switch key
+      AKAMAI_HOST: ${{ vars.AKAMAI_HOST }}
+      AKAMAI_CLIENT_TOKEN: ${{ secrets.AKAMAI_CLIENT_TOKEN }}
+      AKAMAI_CLIENT_SECRET: ${{ secrets.AKAMAI_CLIENT_SECRET }}
+      AKAMAI_ACCESS_TOKEN: ${{ vars.AKAMAI_ACCESS_TOKEN }}
+      AKAMAI_ACCOUNT_KEY: "1-6JHGX:1-8BYUX"
+      AKAMAI_HOST_EDNS: ${{ vars.AKAMAI_HOST_EDNS }}
+      AKAMAI_CLIENT_TOKEN_EDNS: ${{ secrets.AKAMAI_CLIENT_TOKEN_EDNS }}
+      AKAMAI_CLIENT_SECRET_EDNS: ${{ secrets.AKAMAI_CLIENT_SECRET_EDNS }}
+      AKAMAI_ACCESS_TOKEN_EDNS: ${{ vars.AKAMAI_ACCESS_TOKEN_EDNS }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+
+      - name: Export Matrix Variables to env vars
+        run: |
+          # Dynamically export all matrix variables as uppercase env vars
+          while IFS= read -r line; do
+            export "$line"
+            echo "$line" >> "$GITHUB_ENV"
+          done < <(echo '${{ toJson(matrix) }}' | jq -r '
+            to_entries[] |
+            if .key == "name" then "MATRIX_NAME=\(.value)"
+            elif .key == "label" then empty
+            else "\(.key | ascii_upcase)=\(.value)"
+            end
+          ')
+      - name: Prepare Terraform tfvars    
+        run: |
+          TFVARS_TEMPLATE="${{ inputs.module_source }}/tests/tfvars.tpl"
+          cd "${{ inputs.module_source }}"
+          envsubst < "../$TFVARS_TEMPLATE" > "terraform.tfvars"
+          echo "" >> "terraform.tfvars"
+      
+      - name: Prepare LetsEncrypt Terraform 
+        run: |
+
+          if [[ "${{ inputs.module_source }}" == "third-party-cert" ]]; then
+            envsubst < "${{ inputs.module_source }}/tests/letsencrypt.tf.tpl" > "${{ inputs.module_source }}/letsencrypt.tf"
+          elif [[ "${{ inputs.module_source }}" == "dv-san-cert" ]]; then
+            cp "${{ inputs.module_source }}/tests/validation.tf.tpl"  "${{ inputs.module_source }}/validation.tf"
+          fi
+
+      - name: Set proper provider values for acme provider
+        run: |
+
+          cd "${{ inputs.module_source }}"
+          echo "" >> "provider.tf"
+
+          if [[ "${{ inputs.module_source }}" == "third-party-cert" ]]; then
+            ## Inject acme provider configuration for the ACME module
+            FILE="provider.tf"
+
+            # Add required provider only if missing (idempotent)
+            if ! grep -Eq '^[[:space:]]*acme[[:space:]]*=' "$FILE"; then
+              awk '
+                BEGIN { in_req=0; depth=0; inserted=0 }
+                {
+                  line=$0
+
+                  if (!in_req && line ~ /^[[:space:]]*required_providers[[:space:]]*{[[:space:]]*$/) {
+                    in_req=1
+                    depth=1
+                    print line
+                    next
+                  }
+
+                  if (in_req) {
+                    opens=gsub(/{/, "{", line)
+                    closes=gsub(/}/, "}", line)
+
+                    # Insert right before closing brace of required_providers block
+                    if (depth==1 && line ~ /^[[:space:]]*}[[:space:]]*$/ && !inserted) {
+                      print "    acme = {"
+                      print "      source = \"myklst/acme\""
+                      print "    }"
+                      inserted=1
+                    }
+
+                    print line
+                    depth += opens - closes
+                    if (depth==0) in_req=0
+                    next
+                  }
+
+                  print line
+                }
+              ' "$FILE" > "$FILE.tmp"
+
+              mv "$FILE.tmp" "$FILE"
+            else
+              echo "acme required provider already exists, skipping"
+            fi
+
+            if ! grep -Eq '^provider[[:space:]]+"acme"' "provider.tf"; then
+              echo "" >> "provider.tf"
+              echo 'provider "acme" { server_url = "https://acme-v02.api.letsencrypt.org/directory" }' >> "provider.tf"
+            else
+              echo "acme provider configuration already exists, skipping"
+            fi
+          fi
+          
+      - name: Modify akamai_cps_third_party_enrollment resource to reduce the time out on destroy
+        run: |
+          cd "${{ inputs.module_source }}"
+          
+          if [[ "${{ inputs.module_source }}" == "third-party-cert" ]]; then
+            FILE="main.tf"
+
+            if [[ ! -f "$FILE" ]]; then
+              echo "::error title=Missing main.tf::Expected $FILE in $PWD"
+              exit 1
+            fi
+
+            if ! grep -Eq '^[[:space:]]*timeouts[[:space:]]*{' "$FILE"; then
+              awk '
+                BEGIN { in_res=0; depth=0; inserted=0 }
+                {
+                  line=$0
+
+                  if (!in_res && line ~ /^resource[[:space:]]+"akamai_cps_third_party_enrollment"[[:space:]]+"this"[[:space:]]*{[[:space:]]*$/) {
+                    in_res=1
+                    depth=1
+                    print line
+                    next
+                  }
+
+                  if (in_res) {
+                    opens=gsub(/{/, "{", line)
+                    closes=gsub(/}/, "}", line)
+
+                    if (depth==1 && line ~ /^[[:space:]]*}[[:space:]]*$/ && !inserted) {
+                      print "  timeouts {"
+                      print "    default = \"10m\""
+                      print "  }"
+                      inserted=1
+                    }
+
+                    print line
+                    depth += opens - closes
+                    if (depth==0) in_res=0
+                    next
+                  }
+
+                  print line
+                }
+              ' "$FILE" > "$FILE.tmp"
+
+              mv "$FILE.tmp" "$FILE"
+            else
+              echo "timeouts block already exists, skipping"
+            fi
+          fi   
+
+      - name: Initialize Terraform
+        run: |
+          cd "${{ inputs.module_source }}"
+          terraform init
+                    
+      - name: Phase 1 Create Enrollment and Get Cert
+        run: |
+          cd "${{ inputs.module_source }}"
+
+          # -u        → fail on undefined variables
+          # pipefail  → detect failures in pipes
+          # +e        → DO NOT exit on errors
+          # -x        → print commands
+          #           set -uo pipefail
+          #           set -x
+          
+          set -uo pipefail
+          set +e
+          set -x
+
+          : > plan.out
+          terraform plan -input=false -detailed-exitcode -no-color -out=tfplan >plan.out 2>&1
+          EXIT_CODE=$?
+          cat plan.out
+          set -e
+
+          # With -detailed-exitcode, 2 means the plan has changes.
+          if [ "$EXIT_CODE" -ne 0 ] && [ "$EXIT_CODE" -ne 2 ]; then
+            echo "::error title=Terraform Plan Failed::Check summary for details"
+            
+            echo "## ❌ Terraform Plan Failed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
+            echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
+            echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
+ 
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            tail -n 50 plan.out >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+
+            exit 1
+          fi
+          
+          MAX_ATTEMPTS=5
+          ATTEMPT=1
+          APPLY_EXIT_CODE=1
+          EXPECTED_APPLY_ERROR="CPS could not create your enrollment because you recently created another enrollment that is still in process"
+          set +e
+          
+          while [ "$ATTEMPT" -le "$MAX_ATTEMPTS" ]; do
+            : > apply.out
+            terraform apply -input=false -auto-approve -no-color tfplan >apply.out 2>&1
+            APPLY_EXIT_CODE=$?
+            cat apply.out
+
+            if [ "$APPLY_EXIT_CODE" -eq 0 ]; then
+              break
+            fi
+
+            # The rate-limit message is in the API response detail, not necessarily an Error: line.
+            if ! grep -Fq "$EXPECTED_APPLY_ERROR" apply.out; then
+              break
+            fi
+
+            if [ "$ATTEMPT" -ge "$MAX_ATTEMPTS" ]; then
+              break
+            fi
+
+            echo "::warning title=CPS enrollment rate limit::Rate limit detected; waiting 5 minutes before retry."
+            echo "Sleeping for 5 minutes before retry..."
+            sleep 5m
+
+            : > replan.out
+            echo "Re-planning before retry..."
+            terraform plan -input=false -detailed-exitcode -no-color -out=tfplan >replan.out 2>&1
+            REPLAN_EXIT_CODE=$?
+            cat replan.out
+
+            if [ "$REPLAN_EXIT_CODE" -ne 0 ] && [ "$REPLAN_EXIT_CODE" -ne 2 ]; then
+              APPLY_EXIT_CODE=$REPLAN_EXIT_CODE
+              cp replan.out apply.out
+              break
+            fi
+
+            ATTEMPT=$((ATTEMPT + 1))
+          done
+
+          set -e
+
+          if [ "$APPLY_EXIT_CODE" -ne 0 ]; then
+            echo "::error title=Terraform Apply Failed::Check summary for details"
+            
+            echo "## ❌ Terraform Apply Failed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
+            echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
+            echo "**Exit Code:** $APPLY_EXIT_CODE" >> $GITHUB_STEP_SUMMARY
+
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            tail -n 50 apply.out >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+
+            exit 1
+          fi
+
+                   
+          cp enrollment_id.txt enrollment_id_backup.txt
+            
+      - name: Phase 2 Certificate Upload/Deployment
+        run: |
+          cd "${{ inputs.module_source }}"
+          if [[ "${{ inputs.module_source }}" == "third-party-cert" ]]; then
+
+            # -u        → fail on undefined variables
+            # pipefail  → detect failures in pipes
+            # +e        → DO NOT exit on errors
+            # -x        → print commands
+            #           set -uo pipefail
+            #           set -x
+            
+            set -uo pipefail
+            set +e
+            set -x
+
+            set_tfvar() {
+              local key="$1"
+              local value="$2"
+              local file="terraform.tfvars"
+
+              if grep -Eq "^${key}[[:space:]]*=" "$file"; then
+                sed -i -E "s|^${key}[[:space:]]*=.*$|${key} = \"${value}\"|" "$file"
+              else
+                echo "${key} = \"${value}\"" >> "$file"
+              fi
+            }
+
+            set_tfvar "certificate_ecdsa_pem" "ecdsa_certificate.pem"
+            set_tfvar "trust_chain_ecdsa_pem" "ecdsa_certificate_ca.pem"
+            set_tfvar "certificate_rsa_pem" "rsa_certificate.pem"
+            set_tfvar "trust_chain_rsa_pem" "rsa_certificate_ca.pem"
+
+            terraform plan -input=false -detailed-exitcode -no-color -out=tfplan > >(tee -a plan.out) 2> >(tee -a plan.out >&2)
+            EXIT_CODE=$?
+            set -e
+
+            if [ "$EXIT_CODE" -ne 0 ]; then
+              echo "::error title=Terraform Plan Failed::Check summary for details"
+              
+              echo "## ❌ Terraform Plan Failed" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
+              echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
+              echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
+  
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+              tail -n 50 plan.out >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+
+              exit 1
+            fi
+
+
+            terraform apply -input=false -auto-approve -no-color tfplan > >(tee -a apply.out) 2> >(tee -a apply.out >&2)
+            EXIT_CODE=$?
+            set -e
+
+            if [ "$EXIT_CODE" -ne 0 ]; then
+              echo "::error title=Terraform Apply Failed::Check summary for details"
+              
+              echo "## ❌ Terraform Apply Failed" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
+              echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
+              echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
+
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+              tail -n 50 apply.out >> $GITHUB_STEP_SUMMARY
+              echo '```' >> $GITHUB_STEP_SUMMARY
+
+              exit 1
+            fi
+          else
+            mkdir wait_for_deployment
+            cp "tests/wait_deployment.tf.tpl"  "wait_for_deployment/wait_deployment.tf"
+            enrollment_id=$(< enrollment_id_backup.txt)
+            enrollment_id="${enrollment_id//[[:space:]]/}"
+            
+            cd wait_for_deployment
+            
+            terraform init
+            is_cert_pending="true"
+
+            while [ "$is_cert_pending" = "true" ]; do
+              echo "Certificate status is still pending. Sleeping for 5 minutes..."
+              sleep 5m
+              terraform apply -input=false -auto-approve -no-color -var="enrollment_id=$enrollment_id"
+              is_cert_pending=$(< enrollment_pending_changes.txt)
+              is_cert_pending="${is_cert_pending//[[:space:]]/}"
+            done
+            cd ..
+          fi
+
+      - name: Terraform destroy
+        if: always()
+        run: |
+          cd "${{ inputs.module_source }}"
+          set -uo pipefail
+          set +e
+          set -x
+
+          terraform destroy -refresh=false -input=false -auto-approve -no-color > >(tee -a destroy.out) 2> >(tee -a destroy.out >&2)
+          EXIT_CODE=$?
+
+          DESTROY_TAIL="$(tail -n 50 destroy.out 2>/dev/null || true)"
+          DESTROY_ERROR_LINES="$(printf '%s\n' "$DESTROY_TAIL" | grep '^Error:' || true)"
+
+          if [ "$EXIT_CODE" -ne 0 ] && [ -n "$DESTROY_ERROR_LINES" ] && printf '%s\n' "$DESTROY_ERROR_LINES" | grep -Eq '^Error: timed out waiting for enrollment deletion: context deadline exceeded$'; then
+            echo "::warning title=Terraform Destroy Timeout::Known enrollment deletion timeout; skipping failure."
+            EXIT_CODE=0
+          fi
+
+          set -e
+
+          if [ "$EXIT_CODE" -ne 0 ]; then
+            echo "::error title=Terraform Destroy Failed::Check summary for details"
+            
+            echo "## ❌ Terraform Destroy Failed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Module:**  ${{ inputs.module_source }} " >> $GITHUB_STEP_SUMMARY
+            echo "**Test:** ${{ matrix.label }}" >> $GITHUB_STEP_SUMMARY
+            echo "**Exit Code:** $EXIT_CODE" >> $GITHUB_STEP_SUMMARY
+
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 🧾 Error Output" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            tail -n 50 destroy.out >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+
+            exit 1
+          fi
+
+      - name: Acknowledgement of deletion (overcome CPS terraform provider bug on deletions)
+        if: always()
+        run: |
+          cd "${{ inputs.module_source }}"
+
+          if [[ ! -f enrollment_id_backup.txt ]]; then
+            echo "::warning title=CPS Acknowledgement Skipped::enrollment_id_backup.txt not found."
+            exit 0
+          fi
+
+          enrollment_id=$(< enrollment_id_backup.txt)
+          enrollment_id="${enrollment_id//[[:space:]]/}"
+
+          if [[ -z "$enrollment_id" ]]; then
+            echo "::warning title=CPS Acknowledgement Skipped::enrollment_id is empty."
+            exit 0
+          fi
+
+          python3 -m pip install --quiet edgegrid-python requests
+
+          python3 ../.github/scripts/cps_acknowledge_change.py "$enrollment_id"
+
+
