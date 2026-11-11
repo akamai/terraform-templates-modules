@@ -1,3 +1,20 @@
+# [2.1.0](https://github.com/akamai/terraform-templates-modules/compare/v2.0.4...v2.1.0) (2026-11-11)
+
+
+### Bug Fixes
+
+* **delivery-media:** address PR review suggestions ([4461be3](https://github.com/akamai/terraform-templates-modules/commit/4461be3fbab42b0be2de674c9f5b28987aaa01d1))
+
+
+### Features
+
+* add AMD delivery media module ([6126237](https://github.com/akamai/terraform-templates-modules/commit/6126237df94408d0472c581d4ccaeb8c1cdfa5de))
+* **amd:** add adaptive media delivery module ([d89efd6](https://github.com/akamai/terraform-templates-modules/commit/d89efd614b41a70bba5be8ab0bcad4eb13506397))
+* **delivery-media:** add AMD delivery module ([ce61541](https://github.com/akamai/terraform-templates-modules/commit/ce6154197c9f4dd8c79bbb34e6ac4fa272fec577))
+* **delivery-media:** default enable_debug=false, drop prod-activation validations ([7a62082](https://github.com/akamai/terraform-templates-modules/commit/7a6208203f07d8408a7f8d79bcbf6b81e56e8a28))
+
+
+
 ## [2.0.4](https://github.com/akamai/terraform-templates-modules/compare/v2.0.3...v2.0.4) (2026-09-07)
 
 
