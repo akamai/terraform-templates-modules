@@ -57,6 +57,9 @@ def main() -> int:
         headers={"Accept": "application/vnd.akamai.cps.enrollment.v7+json"},
         timeout=60,
     )
+    if enrollment_resp.status_code == 404:
+         print("Enrollment already deleted; acknowledgement skipped.")
+         return 0
     enrollment_resp.raise_for_status()
 
     enrollment_json = enrollment_resp.json()
