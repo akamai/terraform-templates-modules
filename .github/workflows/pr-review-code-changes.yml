@@ -6,6 +6,9 @@ on:
       - integration
     paths:
       - '**/*.tf'
+      - '**/*.tpl'
+      - '**/*.json'
+      - '**/*.hcl'
 
 permissions:
   contents: read
