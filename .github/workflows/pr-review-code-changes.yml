@@ -76,6 +76,9 @@ jobs:
   bmp:
     needs: detect_changes
     if: needs.detect_changes.outputs.bmp == 'true'
+    concurrency:
+       group: bmp-shared-security-config
+       cancel-in-progress: false
     uses: ./.github/workflows/pr-tests-appsec.yml
     with:
         module_source: bmp
