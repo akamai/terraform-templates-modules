@@ -390,7 +390,7 @@ jobs:
             EXIT_CODE=$?
             set -e
 
-            if [ "$EXIT_CODE" -ne 0 ]; then
+            if [ "$EXIT_CODE" -ne 0 ] && [ "$EXIT_CODE" -ne 2 ]; then
               echo "::error title=Terraform Plan Failed::Check summary for details"
               
               echo "## ❌ Terraform Plan Failed" >> $GITHUB_STEP_SUMMARY
